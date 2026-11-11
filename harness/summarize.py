@@ -21,7 +21,7 @@ rows = []
 for d in sorted(glob.glob(os.path.join(a.root, '*'))):
     if not os.path.isdir(d): continue
     run = os.path.basename(d); base = d
-    r0 = glob.glob(os.path.join(d, 'rank0-*'))
+    r0 = [x for x in glob.glob(os.path.join(d, 'rank0-*')) if os.path.isdir(x)]
     if r0: base = r0[0]
     bench = [r for r in jl(os.path.join(base, 'bench.jsonl')) if r.get('kind') == 'bench' and r.get('status') == 200]
     steady = [r for r in jl(os.path.join(base, 'steady.jsonl')) if r.get('status') == 200]

@@ -25,8 +25,8 @@
 ## Qwen3.5-122B-A10B
 - INT4 IR = **64.3 GB** (built here from the GPTQ-Int4 checkpoint; no public OpenVINO IR exists). It fits **no single Panther Lake box** (52 GB GPU window /
   61 GB RAM at 64 GB; 17.7 GB at 32 GB); the smallest GPU layouts are 2 x 64 GB boxes (29 + 33 GB) or 3 NUCs + a 64 GB tail (12–26 GB per stage).
-- **Not runnable today**: the GPTQ-built IR validates on CPU but the OpenVINO 2026.4.1 GPU plugin fails to compile its MoE layers (`MOECompressed` fusion
-  error on every stage). The CPU path needs ~2x the IR in RAM and does not fit. Prerequisite: fix the builder's expert-constant layout for the GPU plugin.
+- **GPU compile failure found and fixed**: the GPTQ-built IR's experts are symmetric (zero point 8 everywhere) and the OpenVINO 2026.4.1 GPU MoE fusion
+  rejects that form; the builder now emits signed INT4 experts (`--expert-sym`), which compile. The rebuilt 35B validates the fix at model scale (A6). {{D3_122B}}
 - On the vendor's benchmarks the 122B-A10B is 1–3 points ahead of the 35B-A3B on knowledge/reasoning and behind on coding/agentic tasks, at 3.3x the
   weights and 3.3x the active parameters per token (~3x slower per stream on the same silicon).
 

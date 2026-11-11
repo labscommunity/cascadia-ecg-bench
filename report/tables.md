@@ -12,6 +12,12 @@
 | C2-3nuc-3shard | 0.86 s | 3.48 s | 31.19 s | 17.8 | 18.1 | 13.8 |
 | A1c-tate07-whole-gpu-rerun | 0.12 s | 0.61 s | 3.27 s | 48.0 | 42.7 | 38.9 |
 | A6-tate07-whole-gpu-gptq-sym | 0.12 s | 0.60 s | 3.23 s | 53.4 | 45.7 | 41.3 |
+| B3-alpha-whole-gpu-pin85 | 0.59 s | 1.18 s | 4.16 s | 1.9 |  |  |
+| B4-alpha-whole-gpu-pin85-seg26 | 0.52 s | 1.20 s | 4.06 s | 2.1 |  |  |
+| C3-mixed-alphaGPU-charlieCPU | 1.01 s | 18.00 s | 174.39 s | 11.4 |  |  |
+| E-charlie-35b-hetero3 | 0.73 s | 1.34 s | 3.97 s | 1.4 |  |  |
+| E-delta-q3-0.6b-CPU | 0.07 s | 1.52 s | 35.52 s | 118.1 |  |  |
+| E-delta-q3-0.6b-GPU | 0.09 s | 0.06 s | 0.60 s | 149.2 |  |  |
 | E-delta-q3-8b-CPU | 0.73 s | 22.15 s | 222.70 s | 258.4 |  |  |
 | E-delta-q3-8b-GPU | 0.11 s | 0.35 s | 3.99 s | 22.9 |  |  |
 
@@ -29,6 +35,12 @@
 | C2-3nuc-3shard | 3.5 | 27.6 | 0.65 | 8.5 | 5.25 | 28.9 | 27.65 | 0.0 | 6.1 | 6.6 | 10.3 |
 | A1c-tate07-whole-gpu-rerun |  | 34.7 | 1.23 | 81.13 | 17.35 | 97.3 | 8.6 | 0.0 | 19.1 | 19.5 | 32.9 |
 | A6-tate07-whole-gpu-gptq-sym | 6.8 | 34.7 | 1.32 | 75.89 | 16.5 | 98.7 | 9 | 0 | 19.4 | 19.9 | 33.0 |
+| B3-alpha-whole-gpu-pin85 | 3.7 | 25.4 |  | 7.39 | 21.15 | 107.25 | 1.5 | 0.0 | 17.9 | 19.6 | 23.2 |
+| B4-alpha-whole-gpu-pin85-seg26 | 8.6 | 3.2 |  | 0.24 | 0.8 | 0.0 | 0.0 | 0.0 | 0.0 | 5.5 | 9.0 |
+| C3-mixed-alphaGPU-charlieCPU |  |  |  |  |  |  |  |  |  |  |  |
+| E-charlie-35b-hetero3 |  |  |  |  |  |  |  |  |  |  |  |
+| E-delta-q3-0.6b-CPU |  |  |  |  |  |  |  |  |  |  |  |
+| E-delta-q3-0.6b-GPU |  |  |  |  |  |  |  |  |  |  |  |
 | E-delta-q3-8b-CPU |  |  |  |  |  |  |  |  |  |  |  |
 | E-delta-q3-8b-GPU |  |  |  |  |  |  |  |  |  |  |  |
 
@@ -50,6 +62,12 @@
 | C2-3nuc-3shard | 3 | 0.43x | 5.80x | 10.79x | 0.81x | 0.53x | 0.96x |
 | A1c-tate07-whole-gpu-rerun | 1 | 1.02x | 1.02x | 1.13x | 1.01x | 1.00x | 1.00x |
 | A6-tate07-whole-gpu-gptq-sym | 1 | 1.09x | 1.00x | 1.12x | 1.01x | 1.07x | 1.02x |
+| B3-alpha-whole-gpu-pin85 | 1 |  | 1.97x | 1.44x | 0.74x |  | 0.94x |
+| B4-alpha-whole-gpu-pin85-seg26 | 1 |  | 2.00x | 1.40x | 0.09x |  |  |
+| C3-mixed-alphaGPU-charlieCPU | 2 |  | 30.00x | 60.34x |  |  |  |
+| E-charlie-35b-hetero3 | 1 |  | 2.23x | 1.37x |  |  |  |
+| E-delta-q3-0.6b-CPU | 1 |  | 2.53x | 12.29x |  |  |  |
+| E-delta-q3-0.6b-GPU | 1 |  | 0.10x | 0.21x |  |  |  |
 | E-delta-q3-8b-CPU | 1 |  | 36.92x | 77.06x |  |  |  |
 | E-delta-q3-8b-GPU | 1 |  | 0.58x | 1.38x |  |  |  |
 
@@ -66,6 +84,8 @@
 | C2-3nuc-3shard | 6 | 0/6 | 0.085 |
 | A1c-tate07-whole-gpu-rerun | 6 | 6/6 | 1.0 |
 | A6-tate07-whole-gpu-gptq-sym | 6 | 0/6 | 0.028 |
+| B3-alpha-whole-gpu-pin85 | 6 | 6/6 | 1.0 |
+| B4-alpha-whole-gpu-pin85-seg26 | 0 | 0/0 | 0.0 |
 
 ## GSM8K-40 (exact match, greedy, thinking off, max 512 tokens)
 
