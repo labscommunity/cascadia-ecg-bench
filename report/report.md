@@ -91,7 +91,7 @@ is the prerequisite for any 122B measurement on this hardware.
 
 **Update (follow-up round, same day):** the builder gap was found and fixed (`--expert-sym`, §6.4), and the 122B now compiles and runs on Panther
 Lake GPUs: all-local on three NUCs it thrashes at 0.57 tok/s because each stage exceeds the 18.4 GB resident segment (§7.5); with four stages that
-fit their GPUs (three NUCs + the 64 GB tail over the relay) it runs at D2SYM_RATE tok/s and scores D2SYM_GSM on GSM8K-20 (§7.6).
+fit their GPUs (three NUCs + the 64 GB tail over the relay) it runs at 1.2–2.7 tok/s and scores D2SYM_GSM on GSM8K-20 (§7.6).
 
 ### 4.3 Sharded vs. whole: accuracy, performance multiplier, utilization multiplier
 - **Token-level parity.** The whole model is deterministic: re-running it after a server restart with the same client reproduces all six 160-token greedy outputs byte-for-byte (A1c vs A1b, 6/6). The sharded engine is *not* token-identical to it: 2 or 3 co-located shards agree on the first ~50 characters of every answer and then take a different (equally coherent) continuation (A3/A4 vs A1b: 0/6 exact, ~8% common prefix). This is the f16 fusion-order / near-tie behaviour the exporter documents (its own check still shows chain-vs-full top-1 match and 8/8 greedy tokens on a short probe), so token agreement over long generations is the wrong yardstick; task accuracy is the right one. A side finding: the request path matters too, since the first client (streaming requests, no 1-token warm call) got different continuations from the same whole model (A1 vs A1b: 0/6), which argues for pinning the client method when comparing deployments.
@@ -254,7 +254,20 @@ i.e. **four or more 32 GB nodes** (16 GB per stage) or a 64 GB node for the tail
 pass was moved to the 4-stage layout below.
 
 ### 7.6 122B with every stage inside its GPU segment (D2sym): three NUCs + a 64 GB tail over the relay
-D2SYM_SECTION
+Same IR, 4 stages (13 / 16 / 16 / 26 GB): alpha → beta → charlie over the LAN, charlie → tate-07 (Tiber, 64 GB) over the Tailscale relay, and the
+token back from tate-07 to alpha over the relay. Every stage fits its GPU with room to spare (head: 13.2 GB GPU shared, copy engine 3%: no paging).
+
+| D2sym: 122B, 3 NUCs + 64 GB tail | TTFT short / medium / long | decode tok/s | head GPU busy | head W (idle → steady) | chain power | GSM8K-20 |
+|---|---|---|---|---|---|---|
+| 2 repeats | 2.0 / 18.5 / 108–137 s | 1.2–2.7 (medium 1.6–2.4, long 1.9–2.0) | 5% | 3.1 → 6.8 | D2SYM_POWER | D2SYM_GSM |
+
+This is the first configuration in which the 122B runs the way it should on Panther Lake GPUs, and its speed has nothing to do with the GPUs: each
+token crosses the NUC→Tiber relay twice (activations out to the tail, the sampled token back to the head), at 110–350 ms a crossing, so decode is
+~2 tok/s at every prompt length and the GPUs sit idle 95% of the time; the 7.7k-token prefill takes ~2 minutes because 7.7k tokens of activations
+cross the relay at each hop. What it does establish: the 122B IR is correct end to end (coherent answers, GSM8K below), the four stages load and
+run inside their GPU segments, and the LAN hops between the NUCs cost nothing visible. A fourth *local* 32 GB node would make the chain
+LAN-bound; by the 35B chain's scaling (18 tok/s on 3 NUCs with 3B active parameters, 3.3x fewer than the 122B's 10B) a 4-NUC 122B would
+land at roughly 5–8 tok/s, an estimate, not a measurement.
 
 ## 8. Scope notes
 - Continuous-batching concurrency on the whole model (A5) could not be run: the runtime's `--cb` path refuses VLM-layout exports, which is what the
