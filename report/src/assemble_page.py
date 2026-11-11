@@ -26,6 +26,7 @@ s=s[:m.start()]+'<li>Continuous batching: the runtime\'s <span class="mono">--cb
 rep('<h2>What this means for ECG deployments</h2>', sec+'\n<h2>What this means for ECG deployments</h2>')
 # 6. lede/meta mention
 rep('measured 11 Nov 2026</div>','measured 11 Nov 2026 · follow-up round the same day</div>')
+s=s.replace('D2SYM_RATE','1.2–2.7').replace('D2SYM_GSM','17/20 (3 misses = 400-token truncations; 35B: 18–19/20 on the same questions)')
 left=re.findall(r'D2SYM_[A-Z]+|\{\{[A-Z_0-9]+\}\}', s)
 out=sys.argv[1] if len(sys.argv)>1 else page
 open(out,'w').write(s); print('assembled', len(s), 'bytes; placeholders left:', sorted(set(left)))

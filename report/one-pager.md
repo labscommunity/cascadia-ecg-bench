@@ -28,7 +28,7 @@
 - **GPU compile failure found and fixed**: the GPTQ-built IR's experts are symmetric (zero point 8 everywhere) and the OpenVINO 2026.4.1 GPU MoE fusion
   rejects that form; the builder now emits signed INT4 experts (`--expert-sym`), which compile. The rebuilt 35B validates the fix at model scale (A6). All-local on three 32 GB NUCs the 122B **runs but thrashes (0.57 tok/s)**: its 20–23 GB stages exceed the 18.4 GB the
   driver keeps resident per iGPU, so the 122B needs stages under ~18 GB: four or more 32 GB nodes, or a 64 GB node for the tail. With four stages that fit (3 NUCs + the 64 GB Tiber box as tail) it runs
-  cleanly but relay-bound at ~2 tok/s (two 110–350 ms hops per token), GSM8K-20 D2SYM_GSM; a fourth *local* 32 GB node would make it LAN-bound (est. 5–8 tok/s).
+  cleanly but relay-bound at ~2 tok/s (two 110–350 ms hops per token), GSM8K-20 17/20 (3 misses = 400-token truncations; 35B: 18–19/20 on the same questions); a fourth *local* 32 GB node would make it LAN-bound (est. 5–8 tok/s).
 - On the vendor's benchmarks the 122B-A10B is 1–3 points ahead of the 35B-A3B on knowledge/reasoning and behind on coding/agentic tasks, at 3.3x the
   weights and 3.3x the active parameters per token (~3x slower per stream on the same silicon).
 

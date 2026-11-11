@@ -1,0 +1,23 @@
+[2m2026-11-11T21:54:06.725501Z[0m [32m INFO[0m [2mcascadia_cli[0m[2m:[0m cascadia worker starting [3mengine[0m[2m=[0mQwen36Moe [3mrank[0m[2m=[0m3 [3mtotal[0m[2m=[0m4 [3mdevice[0m[2m=[0mGPU [3mmodel[0m[2m=[0mC:\ecgbench\shards\q122-sym-4
+[2m2026-11-11T21:54:06.725758Z[0m [32m INFO[0m [2mcascadia_cli[0m[2m:[0m qwen35 prefix-cache budget [3mprefix_cache_gib[0m[2m=[0m0
+[2m2026-11-11T21:54:06.725828Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner connect [3mupstream[0m[2m=[0mSome(PeerEndpoint { host: "0.0.0.0", port: 9300 }) [3mdownstream[0m[2m=[0mNone
+[2m2026-11-11T21:54:06.726822Z[0m [32m INFO[0m [2mcascadia_transport[0m[2m:[0m ActivationServer listening [3mhost[0m[2m=[0m0.0.0.0 [3mport[0m[2m=[0m9300
+[2m2026-11-11T21:54:55.372329Z[0m [32m INFO[0m [2mcascadia_transport[0m[2m:[0m ActivationServer accepted connection [3mpeer[0m[2m=[0m100.72.211.81:52979
+[2m2026-11-11T21:54:55.372369Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner load
+[2m2026-11-11T21:55:15.815175Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m load progress qwen35 (qwen3_5_moe, hidden 3072): 4 stages from C:\ecgbench\shards\q122-sym-4 (rank 3/4)
+[2m2026-11-11T21:55:15.815206Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m load progress compiling stage3 (layers 30..47) on GPU
+[2m2026-11-11T21:55:15.815210Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m load progress ready
+[2m2026-11-11T21:55:15.815214Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner build engine
+[2m2026-11-11T21:55:15.815232Z[0m [33m WARN[0m [2mcascadia_engine_openvino::qwen36[0m[2m:[0m qwen35: the prefix cache is single-process only; disabled for this pipeline (the kv_coord plane's CAPTURE/RESTORE covers multi-rank) [3mtotal[0m[2m=[0m4
+[2m2026-11-11T21:55:15.815243Z[0m [32m INFO[0m [2mcascadia_engine_openvino::qwen36[0m[2m:[0m qwen35 prefix cache [3mbudget_gib[0m[2m=[0m0 [3mim_start[0m[2m=[0mNone [3mmax_ctx[0m[2m=[0mNone
+[2m2026-11-11T21:55:15.815321Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner warmup
+[2m2026-11-11T21:55:15.815332Z[0m [32m INFO[0m [2mcascadia_engine_openvino::qwen36[0m[2m:[0m qwen35 rank 3: skipping warmup (relay)
+[2m2026-11-11T21:55:15.815342Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner ready
+[2m2026-11-11T21:55:15.930707Z[0m [32m INFO[0m [2mcascadia_discovery[0m[2m:[0m cascadia service registered [3mnode_id[0m[2m=[0mpdx88-pa0794-r3 [3mport[0m[2m=[0m9300
+[2m2026-11-11T21:55:15.930828Z[0m [32m INFO[0m [2mcascadia_cli[0m[2m:[0m entering relay loop
+[2m2026-11-11T21:56:05.521295Z[0m [32m INFO[0m [2mcascadia_engine_openvino::qwen36[0m[2m:[0m qwen36 pipeline handshake ok [3mcapture_v2[0m[2m=[0m0
+[2m2026-11-11T23:35:47.778686Z[0m [33m WARN[0m [2mcascadia_engine_openvino::qwen36[0m[2m:[0m qwen36 pipeline step failed [3merror[0m[2m=[0mbackend error: qwen36 pipeline wire: io error: An existing connection was forcibly closed by the remote host. (os error 10054)
+[2m2026-11-11T23:35:47.778756Z[0m [33m WARN[0m [2mcascadia_runner[0m[2m:[0m relay step failed [3merror[0m[2m=[0mbackend error: qwen36 pipeline wire: io error: An existing connection was forcibly closed by the remote host. (os error 10054)
+[2m2026-11-11T23:35:47.979249Z[0m [33m WARN[0m [2mcascadia_engine_openvino::qwen36[0m[2m:[0m qwen36 pipeline step failed [3merror[0m[2m=[0mbackend error: qwen36 pipeline wire: not connected; call connect()/accept() first
+[2m2026-11-11T23:35:47.979308Z[0m [33m WARN[0m [2mcascadia_runner[0m[2m:[0m relay step hit a dead peer link; exiting for supervisor rebuild [3merror[0m[2m=[0mbackend error: qwen36 pipeline wire: not connected; call connect()/accept() first
+Error: relay loop exited: peer link dead; rebuild needed

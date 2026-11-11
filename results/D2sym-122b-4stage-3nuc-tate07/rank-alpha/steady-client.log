@@ -1,0 +1,1 @@
+{"kind": "steady", "thread": 0, "prompt_id": "medium", "wall_s": 177.0006, "completion_tokens": 256, "prompt_tokens": 975, "status": 200, "error": null, "ttft_ref_s": 14.816, "e2e_tok_s": 1.446, "decode_tok_s": 1.572, "model": "q35-122b", "config": "D2sym-122b-4shard-3nuc+tate07", "stages": "4", "host": "alpha"}

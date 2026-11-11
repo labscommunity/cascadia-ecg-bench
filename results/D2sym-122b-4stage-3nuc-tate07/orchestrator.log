@@ -1,0 +1,66 @@
+[15:34:31] [d2sym] D3 stopped
+[15:35:32] [d2sym] stage2 complete on pro
+alpha free GB=24.8
+beta free GB=48.7
+charlie free GB=42.4
+[15:36:05] [d2sym] root files on NUCs
+[15:36:06] [d2sym] beta stage1 done
+[15:41:19] [d2sym] alpha stage0 complete
+[15:42:20] [d2sym] charlie stage2 complete
+[15:53:25] [d2sym] beta stage1 complete
+[15:53:25] [d2sym] tate-07 stage3 complete
+[15:53:26] [d2sym] alpha manifest=8CAABFD79F413639 stage0=12.1GB files=7
+[15:53:26] [d2sym] beta manifest=8CAABFD79F413639 stage1=15.7GB files=7
+[15:53:27] [d2sym] charlie manifest=8CAABFD79F413639 stage2=15.7GB files=7
+[15:53:29] [d2sym] tate07 manifest=8CAABFD79F413639 stage3=25.7GB files=7
+tate07 svc=Stopped procs=
+alpha: FREE_RAM_GB=28.3
+beta: FREE_RAM_GB=27.8
+[15:54:04] [d2sym] launch rank 3 on tate-07 (:9300)
+LAUNCH rc=0 cmdpid=36792 childpid=33984
+[15:54:55] [d2sym] launch rank 2 on charlie (:9100 -> tate-07 tailnet :9300)
+LAUNCH rc=0 cmdpid=8596 childpid=4672
+[15:55:18] [d2sym] launch rank 1 on beta (:9100 -> charlie)
+LAUNCH rc=0 cmdpid=7616 childpid=6640
+[15:55:42] [d2sym] launch rank 0 on alpha (API :8130 -> beta)
+LAUNCH rc=0 cmdpid=7964 childpid=8272
+[15:55:46] [alpha/D2sym-122b-4stage-3nuc-tate07] waiting for health
+[15:56:08] [alpha/D2sym-122b-4stage-3nuc-tate07] HEALTHY after 21s model=q122-sym-4
+[15:56:08] [alpha/D2sym-122b-4stage-3nuc-tate07] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 7.531, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the num
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 9.546, "status": 200, "error": null, "text": "**Español:**  \nEl carril 2 está cerrado más adelant
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 9.766, "status": 200, "error": null, "text": "At 03:00, the highway stretches into a void of silence",
+[16:00:11] [alpha/D2sym-122b-4stage-3nuc-tate07] idle baseline (30 s)
+{"seconds":30,"started":"2026-11-11T14:00:12.3602883-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.1762,"pkg_power_mw_avg":3137.47,"pkg_energy_mj":94375.12,"ddr_reads_mb_s":152.44,"ddr_writes_mb_s":75.009999999999991,"ddr_total_gb_s":0.22}
+[16:00:46] [alpha/D2sym-122b-4stage-3nuc-tate07] bench perf (warmup 1, repeats 2)
+warmup short ttft 1.6675 dec 1.905 tok 24 status 200 
+bench short ttft 1.9735 dec 2.693 tok 24 status 200 
+bench medium ttft 18.35 dec 2.393 tok 256 status 200 
+bench long ttft 137.111 dec 1.901 tok 256 status 200 
+bench short ttft 2.1031 dec 1.226 tok 24 status 200 
+bench medium ttft 18.6432 dec 1.572 tok 256 status 200 
+bench long ttft 108.0796 dec 1.986 tok 256 status 200 
+[16:23:10] [alpha/D2sym-122b-4stage-3nuc-tate07] parity set
+bench p_code ttft 2.0506 dec 1.899 tok 160 status 200
+bench p_reason ttft 2.3776 dec 1.94 tok 160 status 200
+bench p_explain ttft 1.964 dec 1.983 tok 154 status 200
+bench p_json ttft 2.3263 dec 2.727 tok 139 status 200
+bench p_list ttft 2.2095 dec 2.242 tok 151 status 200
+bench p_math ttft 2.1367 dec 1.566 tok 160 status 200
+bench p_translate ttft 2.2556 dec 2.083 tok 68 status 200
+bench p_story ttft 2.2257 dec 1.939 tok 160 status 200
+[16:33:22] [alpha/D2sym-122b-4stage-3nuc-tate07] steady-state power (90 s loop, 60 s SoC Watch)
+{"seconds":60,"started":"2026-11-11T14:33:38.8800108-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.1804,"pkg_power_mw_avg":6822.42,"pkg_energy_mj":409870.24,"ddr_reads_mb_s":2352.65,"ddr_writes_mb_s":236.07999999999998,"ddr_total_gb_s":2.53}
+[16:35:12] [alpha/D2sym-122b-4stage-3nuc-tate07] collect results
+[16:35:15] [alpha/D2sym-122b-4stage-3nuc-tate07] done
+[16:35:15] [d2sym] chain-wide steady window on all 4 ranks
+beta: {"seconds":60,"started":"2026-11-11T14:35:34.1661215-08:00","host":"BETA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.1798,"pkg_power_mw_avg":8328.86,"pkg_energy_mj":500500.43,"ddr
+charlie: {"seconds":60,"started":"2026-11-11T14:35:33.4998261-08:00","host":"CHARLIE","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.1938,"pkg_power_mw_avg":4531.64,"pkg_energy_mj":272290.1,"d
+tate07: {"seconds":60,"started":"2026-11-11T14:35:33.9999037-08:00","host":"PDX88-PA0794","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.319,"pkg_power_mw_avg":8286.5,"pkg_energy_mj":498117.1
+alpha: {"seconds":60,"started":"2026-11-11T14:35:32.2628050-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.1805,"pkg_power_mw_avg":7596.48,"pkg_energy_mj":456434.88,"dd
+[16:37:09] [d2sym] GSM8K-20 eval
+[17:35:45] [d2sym] stop ranks
+alpha: STOPPED n=1
+beta: STOPPED n=1
+charlie: STOPPED n=1
+tate07: STOPPED n=1

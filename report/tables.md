@@ -15,6 +15,8 @@
 | B3-alpha-whole-gpu-pin85 | 0.59 s | 1.18 s | 4.16 s | 1.9 |  |  |
 | B4-alpha-whole-gpu-pin85-seg26 | 0.52 s | 1.20 s | 4.06 s | 2.1 |  |  |
 | C3-mixed-alphaGPU-charlieCPU | 1.01 s | 18.00 s | 174.39 s | 11.4 |  |  |
+| D2sym-122b-4stage-3nuc-tate07 | 2.04 s | 18.50 s | 122.60 s | 2.0 |  |  |
+| D3-122b-3stage-3nuc | 3.84 s | 12.15 s | 79.36 s | 0.6 |  |  |
 | E-charlie-35b-hetero3 | 0.73 s | 1.34 s | 3.97 s | 1.4 |  |  |
 | E-delta-q3-0.6b-CPU | 0.07 s | 1.52 s | 35.52 s | 118.1 |  |  |
 | E-delta-q3-0.6b-GPU | 0.09 s | 0.06 s | 0.60 s | 149.2 |  |  |
@@ -38,6 +40,8 @@
 | B3-alpha-whole-gpu-pin85 | 3.7 | 25.4 |  | 7.39 | 21.15 | 107.25 | 1.5 | 0.0 | 17.9 | 19.6 | 23.2 |
 | B4-alpha-whole-gpu-pin85-seg26 | 8.6 | 3.2 |  | 0.24 | 0.8 | 0.0 | 0.0 | 0.0 | 0.0 | 5.5 | 9.0 |
 | C3-mixed-alphaGPU-charlieCPU |  |  |  |  |  |  |  |  |  |  |  |
+| D2sym-122b-4stage-3nuc-tate07 | 3.1 | 6.8 |  | 2.53 | 3.6 | 4.55 | 3.6 | 0.0 | 13.1 | 13.5 | 17.0 |
+| D3-122b-3stage-3nuc | 3.3 |  |  |  |  |  |  |  |  |  |  |
 | E-charlie-35b-hetero3 |  |  |  |  |  |  |  |  |  |  |  |
 | E-delta-q3-0.6b-CPU |  |  |  |  |  |  |  |  |  |  |  |
 | E-delta-q3-0.6b-GPU |  |  |  |  |  |  |  |  |  |  |  |
@@ -65,6 +69,8 @@
 | B3-alpha-whole-gpu-pin85 | 1 |  | 1.97x | 1.44x | 0.74x |  | 0.94x |
 | B4-alpha-whole-gpu-pin85-seg26 | 1 |  | 2.00x | 1.40x | 0.09x |  |  |
 | C3-mixed-alphaGPU-charlieCPU | 2 |  | 30.00x | 60.34x |  |  |  |
+| D2sym-122b-4stage-3nuc-tate07 | 4 |  | 30.83x | 42.42x | 0.20x |  | 0.69x |
+| D3-122b-3stage-3nuc | 3 |  | 20.25x | 27.46x |  |  |  |
 | E-charlie-35b-hetero3 | 1 |  | 2.23x | 1.37x |  |  |  |
 | E-delta-q3-0.6b-CPU | 1 |  | 2.53x | 12.29x |  |  |  |
 | E-delta-q3-0.6b-GPU | 1 |  | 0.10x | 0.21x |  |  |  |
@@ -86,6 +92,7 @@
 | A6-tate07-whole-gpu-gptq-sym | 6 | 0/6 | 0.028 |
 | B3-alpha-whole-gpu-pin85 | 6 | 6/6 | 1.0 |
 | B4-alpha-whole-gpu-pin85-seg26 | 0 | 0/0 | 0.0 |
+| D2sym-122b-4stage-3nuc-tate07 | 6 | 0/6 | 0.025 |
 
 ## GSM8K-40 (exact match, greedy, thinking off, max 512 tokens)
 
@@ -95,5 +102,6 @@
 | A3-tate07-2shard-colocated-eval | 36/40 | 90.0% | 12274 | 369.8 |
 | A6-tate07-whole-gpu-gptq-sym-eval | 19/20 | 95.0% | 5697 | 119.0 |
 | C2-3nuc-3shard-eval | 36/40 | 90.0% | 12274 | 1080.4 |
+| D2sym-122b-4stage-3nuc-tate07-eval | 17/20 | 85.0% | 5482 | 3463.3 |
 
 Notes: B1b-charlie-whole-gpu: power/utilization from the B1 window (same server state); steady decode there was measured end-to-end

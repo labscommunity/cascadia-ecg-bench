@@ -91,7 +91,7 @@ is the prerequisite for any 122B measurement on this hardware.
 
 **Update (follow-up round, same day):** the builder gap was found and fixed (`--expert-sym`, §6.4), and the 122B now compiles and runs on Panther
 Lake GPUs: all-local on three NUCs it thrashes at 0.57 tok/s because each stage exceeds the 18.4 GB resident segment (§7.5); with four stages that
-fit their GPUs (three NUCs + the 64 GB tail over the relay) it runs at 1.2–2.7 tok/s and scores D2SYM_GSM on GSM8K-20 (§7.6).
+fit their GPUs (three NUCs + the 64 GB tail over the relay) it runs at 1.2–2.7 tok/s and scores **17/20** (the three misses are all 400-token truncations; the 35B scored 18/20 and 19/20 on the same 20 questions) on GSM8K-20 (§7.6).
 
 ### 4.3 Sharded vs. whole: accuracy, performance multiplier, utilization multiplier
 - **Token-level parity.** The whole model is deterministic: re-running it after a server restart with the same client reproduces all six 160-token greedy outputs byte-for-byte (A1c vs A1b, 6/6). The sharded engine is *not* token-identical to it: 2 or 3 co-located shards agree on the first ~50 characters of every answer and then take a different (equally coherent) continuation (A3/A4 vs A1b: 0/6 exact, ~8% common prefix). This is the f16 fusion-order / near-tie behaviour the exporter documents (its own check still shows chain-vs-full top-1 match and 8/8 greedy tokens on a short probe), so token agreement over long generations is the wrong yardstick; task accuracy is the right one. A side finding: the request path matters too, since the first client (streaming requests, no 1-token warm call) got different continuations from the same whole model (A1 vs A1b: 0/6), which argues for pinning the client method when comparing deployments.
@@ -102,7 +102,7 @@ fit their GPUs (three NUCs + the 64 GB tail over the relay) it runs at 1.2–2.7
 ### 4.4 Capability from model size
 Vendor benchmarks (docs/published_benchmarks.md) put the 122B-A10B 1–3 points above the newer 35B-A3B on knowledge-heavy evals (MMLU-Pro 86.7 vs 85.2,
 SuperGPQA 67.1 vs 64.7, HLE 25.3 vs 21.4) and ahead on long video, while the 35B-A3B is ahead on several coding/agentic rows (LiveCodeBench 80.4 vs 78.9,
-Terminal-Bench 51.5 vs 49.4, SWE-bench Verified 73.4 vs 72.0) and on detection/grounding. Our own GSM8K-40: 35B = 92.5% (90% sharded); the 122B could not be run (§4.2).
+Terminal-Bench 51.5 vs 49.4, SWE-bench Verified 73.4 vs 72.0) and on detection/grounding. Our own measurement: 35B = 37/40 on GSM8K-40 (36/40 sharded, 19/20 for the GPTQ-sym build); the 122B, run in the follow-up round as a 4-stage pipeline (§7.6), scored **17/20** on the same first 20 questions, where the 35B scored 18/20 and 19/20. All three 122B misses are 400-token truncations (it writes longer solutions and the harness caps completions at 400 tokens), so at this sample size there is no measurable capability gain on grade-school math; the vendor's 1–3 point gaps on knowledge evals are below what a 20–40 question local check can resolve.
 The cost side is unambiguous: 3.3x the weights (64 vs 19 GB) and 3.3x the active parameters per token (10B vs 3B), so on the same silicon the 122B
 needs two 64 GB boxes instead of one and will decode roughly 3x slower per stream.
 
@@ -118,7 +118,7 @@ needs two 64 GB boxes instead of one and will decode roughly 3x slower per strea
 - **Model size:** the 122B-A10B does not fit any single Panther Lake node (64.3 GB INT4); it needs two 64 GB nodes and decodes ~3x slower per stream
   (10B vs 3B active parameters). The newer 35B-A3B is within 1–3 points of it on the vendor's knowledge/reasoning benchmarks and ahead on coding and
   agentic tasks, so for traffic-monitoring summarization, log triage and tool use the 35B-A3B is the right default and the 122B is a selective upgrade
-  (long-video and knowledge-heavy tasks) rather than a general one. After the builder fix the 122B was measured (§7.5–7.6): on 32 GB nodes it needs stages under ~18 GB (four or more NUCs, or a 64 GB tail); it scored D2SYM_GSM on GSM8K-20 against the 35B's 37/40.
+  (long-video and knowledge-heavy tasks) rather than a general one. After the builder fix the 122B was measured (§7.5–7.6): on 32 GB nodes it needs stages under ~18 GB (four or more NUCs, or a 64 GB tail); it scored **17/20** (the three misses are all 400-token truncations; the 35B scored 18/20 and 19/20 on the same 20 questions) on GSM8K-20 against the 35B's 37/40.
 - **Device mix (follow-up, §7.3–7.4):** CPU decode is a 2x loss on a dense 8B and worse on a 35B shard (half the layers on a CPU rank halves decode and
   makes long-prompt decode 5x slower); the NPU does not load these models with OpenVINO 2026.4.1 and no engine splits prefill/decode across devices; `HETERO`
   puts everything on the GPU anyway. Raising the iGPU window to 24.8 GiB does not fix whole-model decode on 32 GB boxes (the resident segment stays at 18.4 GB).
@@ -259,7 +259,7 @@ token back from tate-07 to alpha over the relay. Every stage fits its GPU with r
 
 | D2sym: 122B, 3 NUCs + 64 GB tail | TTFT short / medium / long | decode tok/s | head GPU busy | head W (idle → steady) | chain power | GSM8K-20 |
 |---|---|---|---|---|---|---|
-| 2 repeats | 2.0 / 18.5 / 108–137 s | 1.2–2.7 (medium 1.6–2.4, long 1.9–2.0) | 5% | 3.1 → 6.8 | 28.7 W (alpha 7.6 + beta 8.3 + charlie 4.5 + tate-07 8.3), i.e. 0.07 tok/J: four GPUs mostly idling on the relay | D2SYM_GSM |
+| 2 repeats | 2.0 / 18.5 / 108–137 s | 1.2–2.7 (medium 1.6–2.4, long 1.9–2.0) | 5% | 3.1 → 6.8 | 28.7 W (alpha 7.6 + beta 8.3 + charlie 4.5 + tate-07 8.3), i.e. 0.07 tok/J: four GPUs mostly idling on the relay | **17/20** (the three misses are all 400-token truncations; the 35B scored 18/20 and 19/20 on the same 20 questions) |
 
 This is the first configuration in which the 122B runs the way it should on Panther Lake GPUs, and its speed has nothing to do with the GPUs: each
 token crosses the NUC→Tiber relay twice (activations out to the tail, the sampled token back to the head), at 110–350 ms a crossing, so decode is

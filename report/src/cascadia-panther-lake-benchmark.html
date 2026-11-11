@@ -64,7 +64,7 @@ footer { margin-top: 3rem; border-top: 1px solid var(--rule); padding-top: 1rem;
 
 <div class="wrap">
 <header class="top">
-  <div class="eyebrow">Cascadia · ECG benchmarking · measured 11 Nov 2026</div>
+  <div class="eyebrow">Cascadia · ECG benchmarking · measured 11 Nov 2026 · follow-up round the same day</div>
   <h1>Sharded vs. whole-model MoE serving on Intel Panther Lake</h1>
   <p class="lede">Qwen3.6-35B-A3B and Qwen3.5-122B-A10B on three 32 GB Core Ultra X7 358H NUCs and one 64 GB X7 358H in Intel Tiber: time to first token, decode speed, package power, CPU/GPU/NPU and memory utilization, output parity and task accuracy, for the whole model and for 2–4 pipeline shards.</p>
   <p class="meta">Runtime labscommunity/cascadia v0.2.7 (OpenVINO GenAI 2026.4.1) · greedy decoding, thinking off · medians of 3 repeats · power from Intel SoC Watch · raw data and harness in the private repo <span class="mono">labscommunity/cascadia-ecg-bench</span>.</p>
@@ -77,7 +77,7 @@ footer { margin-top: 3rem; border-top: 1px solid var(--rule); padding-top: 1rem;
   <div class="finding"><b>One 64 GB box is the faster, leaner unit</b><p>Whole model: 42–48 tok/s, 0.6 s TTFT at 1k tokens, 34 W, 1.23 tok/J. Sharding on that box costs 35% of decode speed and 2.6x TTFT and only pays off if the memory is needed for something else.</p></div>
   <div class="finding"><b>Prefill is the sharding tax</b><p>TTFT on a 7.7k-token prompt: 2.9 s whole, 11 s with co-located shards, 22–31 s across NUCs. Decode loses 35–57%; prefill loses 4–11x. Keep per-request context short.</p></div>
   <div class="finding"><b>Accuracy survives sharding; token parity does not</b><p>Whole-model output is deterministic run to run (6/6 identical). Sharded output agrees for the first sentence then diverges (f16 near-tie flips), yet GSM8K-40 is 36/40 vs 37/40.</p></div>
-  <div class="finding warn"><b>The 122B cannot run here today</b><p>Its 64.3 GB INT4 IR fits no single box, and the only way to obtain it (a GPTQ-to-OpenVINO build) compiles on CPU but is rejected by the OpenVINO 2026.4.1 GPU plugin's MoE fusion on every stage.</p></div>
+  <div class="finding"><b>The 122B runs after a builder fix, and needs stages under 18 GB</b><p>Its 64.3 GB INT4 IR fits no single box. The GPTQ-to-OpenVINO build first failed in the GPU plugin's MoE fusion; the fix (signed INT4 experts) makes it compile. Three 32 GB NUCs run it at 0.57 tok/s (every stage pages through the 18.4 GB resident segment); with four stages that fit their GPUs it runs at 1.2–2.7 tok/s, relay-bound, and scores 17/20 (3 misses = 400-token truncations; 35B: 18–19/20 on the same questions) on GSM8K-20.</p></div>
 </div>
 
 <h2>Hardware and memory windows</h2>
@@ -207,24 +207,80 @@ footer { margin-top: 3rem; border-top: 1px solid var(--rule); padding-top: 1rem;
 </div>
 <p>The whole model is deterministic when driven the same way (byte-identical answers across a server restart). Sharded output matches it for the first sentence and then takes a different, equally coherent continuation; so does the whole model on CPU, and so does the whole model on GPU when requests arrive through a different code path. These are f16 near-tie flips in greedy decoding, not errors, which is why token-exact comparison is the wrong acceptance test for a sharded deployment and task-level accuracy is the right one: 36/40 vs 37/40 is within the noise of a 40-item set, and the two sharded runs produced byte-identical token counts, so the staged engine is itself deterministic across topologies.</p>
 
-<h2>Qwen3.5-122B-A10B: built, sized, not runnable on the GPU</h2>
+<h2>Qwen3.5-122B-A10B: built, sized, first blocked on the GPU, then fixed</h2>
 <div class="two">
 <div>
 <p><b>Built.</b> No public OpenVINO IR exists. From <span class="mono">Qwen/Qwen3.5-122B-A10B-GPTQ-Int4</span> (79 GB) the runtime's builder produced a 64.3 GB INT4 IR, cut into 2 stages (29 + 33 GB) and 4 stages (12 / 16 / 16 / 26 GB). The 2-stage cut passed the exporter's chain-vs-full check: logits rel 2.0e-2, top-1 match, 8 of 8 greedy tokens.</p>
 <p><b>Sized.</b> The smallest GPU layouts are two 64 GB boxes (the two Tiber boxes see each other at 15 ms) or three 32 GB NUCs plus a 64 GB tail (a 110–350 ms relay hop per token). The CPU plugin's 2x residency puts CPU stages at 24–51 GB, beyond the NUCs.</p>
 </div>
 <div>
-<p><b>Not runnable.</b> Every rank of the 4-stage layout failed at load in the OpenVINO 2026.4.1 GPU plugin, on its first MoE layer:</p>
+<p><b>Blocked, then fixed.</b> Every rank of the 4-stage layout first failed at load in the OpenVINO 2026.4.1 GPU plugin, on its first MoE layer:</p>
 <pre>[GPU] ProgramBuilder build failed!
 Node which is about to be added in between two other nodes
 should not have any existing dependencies.
 Node: constant:..._postponed_decompression_byfx_moecompressed:
   layers.0.mlp/aten::sum/ReduceSum_Reshape/MOECompressed</pre>
-<p>The official NNCF-exported 35B compiles on the same stack, so the GPU MoE-fusion pass rejects the way the GPTQ-repacked expert constants are wired. The 2 x 64 GB run was fully staged but the second box went into interactive use during the benchmark, and it would have hit the same error. Fixing the builder's expert-constant layout for the GPU plugin is the prerequisite for any 122B measurement on this hardware.</p>
+<p>The official NNCF-exported 35B compiles on the same stack. The cause (follow-up round below): GPTQ experts are symmetric, every zero point is 8, and the GPU MoE fusion rejects that form. Emitting signed INT4 experts without a zero point compiles, and the 122B measurements in the follow-up section were made with that build.</p>
 </div>
 </div>
 <h3>What the larger model would buy</h3>
 <p>On the vendor's own benchmarks the 122B-A10B is 1–3 points ahead of the newer 35B-A3B on knowledge and reasoning (MMLU-Pro 86.7 vs 85.2, SuperGPQA 67.1 vs 64.7, HLE 25.3 vs 21.4) and on long video (LVBench 74.4 vs 71.4), while the 35B-A3B is ahead on coding and agentic rows (LiveCodeBench 80.4 vs 78.9, Terminal-Bench 51.5 vs 49.4, SWE-bench Verified 73.4 vs 72.0) and on detection and grounding. The price is 3.3x the weights and 3.3x the active parameters per token: two 64 GB boxes instead of one, and roughly 3x slower per stream on the same silicon.</p>
+
+<h2>Follow-up round (same day): memory window, concurrency, device mix, 122B fix</h2>
+<div class="findings">
+  <div class="finding"><b>The iGPU window on 32 GB boxes can be raised to 24.8 GiB</b><p>One registry value (the Intel Graphics Software "Shared GPU Memory Override", <span class="mono">GpuSystemMemoryPinninglimit</span> = 85%) plus a reboot. It does not rescue the whole 35B: the driver still keeps an 18.4 GB resident segment, so decode stays at 1.8–2.0 tok/s. It does give sharded ranks more KV headroom.</p></div>
+  <div class="finding"><b>OVMS continuous batching scales linearly to 8 streams</b><p>On the 64 GB box: 32 tok/s for one stream, 132 tok/s combined at 8 streams (16.6 each), at 34–36 W throughout, so 3x the tokens per joule of single-stream serving.</p></div>
+  <div class="finding"><b>CPU decode is a loss, the NPU does not load</b><p>Dense Qwen3-8B on one 32 GB box: 22 tok/s on the GPU, 11 on the CPU, with 1k-token prefill at 0.3 s vs 22 s. Neither the 8B nor the 0.6B compiles on the NPU with OpenVINO 2026.4.1 (driver compiler error); the NUCs have no NPU driver. A phase split (NPU prefill, GPU decode) does not exist in these engines.</p></div>
+  <div class="finding"><b>The 122B GPU failure is fixed in the builder</b><p>GPTQ experts are symmetric (every zero point is 8) and the GPU MoE fusion rejects that form. Emitting signed INT4 experts without a zero point (<span class="mono">--expert-sym</span>, bit-identical values) compiles. The rebuilt 35B runs whole on the 64 GB GPU 9% faster than Intel's export at equal accuracy (A6).</p></div>
+  <div class="finding warn"><b>The 122B runs on the NUCs now, but three 32 GB boxes thrash</b><p>With the fixed IR the 3-stage 122B loads and answers on alpha + beta + charlie (health in 14 s), at 0.57 tok/s: each 20–23 GB stage exceeds the 18.4 GB the driver keeps resident per iGPU, so every rank pages weights on every token. Stages must stay under ~18 GB: four or more 32 GB nodes, or a 64 GB tail.</p></div>
+  <div class="finding"><b>With four stages that fit, the 122B runs cleanly, and the relay sets the speed</b><p>alpha + beta + charlie + the 64 GB Tiber box as tail: no paging (head copy engine 3%), 2.0 s TTFT on a short prompt, 1.2–2.7 tok/s decode at every prompt length because each token crosses the Tiber relay twice. GSM8K-20: 17/20 (3 misses = 400-token truncations; 35B: 18–19/20 on the same questions). A fourth local 32 GB node would make it LAN-bound (est. 5–8 tok/s).</p></div>
+</div>
+
+<h3>Memory window on 32 GB Panther Lake</h3>
+<p>The 17.7 GB window is the driver default of 57% of RAM. Setting the pinning limit to 85% raised OpenVINO's <span class="mono">GPU_DEVICE_TOTAL_MEM_SIZE</span> on alpha, beta and charlie from 16.46 to 24.77 GiB; the compute-runtime percentage knob and the adapter's <span class="mono">qwMemorySize</span> had no effect (the driver rewrites the latter at boot). With the larger window the whole 35B on alpha's GPU (B3) decodes at 1.8–2.0 tok/s with 18.4 GB resident, against 1.5–1.7 tok/s at the default window; forcing a 26 GB segment (B4) was undone by the driver and the run ended when the box ran out of RAM headroom. The window increase is left enabled on all four 32 GB boxes.</p>
+
+<h3>Concurrency: OVMS continuous batching on the 64 GB box</h3>
+<div class="tablewrap"><table>
+<tr><th class="num">Streams</th><th class="num">Per-stream tok/s</th><th class="num">Combined tok/s</th><th class="num">Package W</th><th class="num">tok/J</th></tr>
+<tr><td class="num">1</td><td class="num">32</td><td class="num">32</td><td class="num">34.0</td><td class="num">0.9</td></tr>
+<tr><td class="num">2</td><td class="num">17.2</td><td class="num">34</td><td class="num">26.6</td><td class="num">1.3</td></tr>
+<tr><td class="num">4</td><td class="num">16.8</td><td class="num">67</td><td class="num">31.6</td><td class="num">2.1</td></tr>
+<tr><td class="num">8</td><td class="num">16.6</td><td class="num">132</td><td class="num">35.9</td><td class="num">3.7</td></tr>
+</table></div>
+<p class="note">Enterprise OVMS backend, continuous batching, 8 GB KV cache, up to 8 sequences, official 35B IR, 975-token prompts and 256-token answers. Per-stream speed halves once batching starts and then stays flat, so combined throughput scales linearly at nearly constant power.</p>
+
+<h3>Device mix on one 32 GB box: GPU, CPU, NPU</h3>
+<div class="tablewrap"><table>
+<tr><th>Model · device</th><th class="num">TTFT 31 / 974 / 7.7k tok</th><th class="num">Decode tok/s (31 / 974 / 7.7k)</th><th class="num">CPU %</th><th class="num">GPU compute %</th><th class="num">GPU shared</th></tr>
+<tr><td class="cfg">Qwen3-8B · GPU</td><td class="num">0.1 / 0.3–0.4 / 3.4–4.5 s</td><td class="num">22 / 22–23 / 19–20</td><td class="num">20</td><td class="num">80</td><td class="num">6.4 GB</td></tr>
+<tr><td class="cfg">Qwen3-8B · CPU</td><td class="num">0.7 / 22 / 220 s</td><td class="num">11–12 / 11 / 6–7</td><td class="num">49</td><td class="num">0</td><td class="num">0.5 GB</td></tr>
+<tr><td class="cfg">Qwen3-0.6B · GPU</td><td class="num">0.04–0.13 / 0.06 / 0.5–0.7 s</td><td class="num">118–130 / 138–151 / 85–108</td><td class="num">20</td><td class="num">43</td><td class="num">1.6 GB</td></tr>
+<tr><td class="cfg">Qwen3-0.6B · CPU</td><td class="num">0.06–0.09 / 1.3–1.8 / 35 s</td><td class="num">80–90 / 66–67 / 24</td><td class="num">48</td><td class="num">0</td><td class="num">0.4 GB</td></tr>
+<tr><td class="cfg">Qwen3-8B or 0.6B · NPU</td><td colspan="5">does not load: <span class="mono">ZE_RESULT_ERROR_INVALID_NULL_POINTER [NPU_VCL]</span> from the NPU compiler, also with a 1,024-token static prompt length</td></tr>
+<tr><td class="cfg">Qwen3.6-35B · 2 shards: GPU head (alpha) + GPU tail (beta), C1</td><td class="num">0.32 / 3.5 / 22 s</td><td class="num">20 / 19–20 / 15–19</td><td class="num">8 (head)</td><td class="num">44 (head)</td><td class="num">9.1 GB per NUC</td></tr>
+<tr><td class="cfg">Qwen3.6-35B · 2 shards: GPU head (alpha) + <b>CPU tail</b> (charlie), C3</td><td class="num">0.8–1.2 / 18 / 174 s</td><td class="num">11–19 / 10–13 / 3.1–3.7</td><td class="num">2 (head)</td><td class="num">6 (head)</td><td class="num">9.3 GB head; tail 19.3 GB RAM</td></tr>
+<tr><td class="cfg">Qwen3.6-35B whole · <span class="mono">HETERO:GPU,CPU</span> (charlie, 24.8 GiB window)</td><td class="num">0.73 / 1.34 / 3.97 s</td><td class="num">1.3 / 1.4 / 1.4</td><td class="num">22</td><td class="num">98</td><td class="num">18.0 GB</td></tr>
+</table></div>
+<p class="note">Measured on delta (Panther Lake, 32 GB, the only box with an NPU driver) with dense INT4 exports that fit every device; quick protocol, two runs each; decode is the end-to-end rate of the second, prefix-cached request. The CPU has the same DRAM bandwidth as the iGPU but far less compute, so it loses 2x on decode and 55–75x on prefill; for the 35B the CPU plugin's 2x weight residency makes it worse still. The engines run prefill and decode on one device: the NPU pipeline as two static sub-models on the NPU, the GPU pipeline on the GPU; there is no cross-device KV hand-off. Cascadia's pipeline engine splits by layers, so the available "mixed" layouts are a GPU head rank feeding a CPU tail rank and OpenVINO's <span class="mono">HETERO:GPU,CPU</span>; both are in the last rows.</p>
+<p>The mixed pipeline answers "CPU for decode" directly: with half of the 35B's layers on a CPU rank, decode halves on a 1k-token prompt and falls 5x on a 7.7k-token prompt (the CPU stage's attention over a long KV cache dominates), prefill is 5–8x slower, the GPU head idles 94% of the time waiting for the tail, and the CPU rank needs twice its stage size in RAM. The CPU is a fallback for a box whose GPU window is full, not a decode device.</p>
+<p>OpenVINO's heterogeneous plugin does not help either: with GPU first and CPU as fallback it places every supported layer on the GPU (the utilization profile is identical to plain GPU) and decodes the whole 35B at 1.3–1.4 tok/s on a 32 GB box, 20% slower than the plain-GPU oversubscribed run. It does not spill weights to the CPU to relieve the GPU window.</p>
+
+<h3>GPTQ-sym 35B whole on the 64 GB GPU (A6) vs Intel's export (A1b)</h3>
+<div class="tablewrap"><table>
+<tr><th>IR</th><th class="num">TTFT 31 / 975 / 7.7k</th><th class="num">Decode tok/s (975 / steady / e2e)</th><th class="num">Decode W</th><th class="num">tok/J</th><th class="num">GPU busy %</th><th class="num">GPU shared</th><th class="num">GSM8K</th></tr>
+<tr><td class="cfg">Intel NNCF export (u4, asym)</td><td class="num">0.12 / 0.60 / 2.89 s</td><td class="num">47.5 / 41.9 / 38.3</td><td class="num">34.2</td><td class="num">1.23</td><td class="num">98</td><td class="num">19.1 GB</td><td class="num">37/40</td></tr>
+<tr><td class="cfg">GPTQ build, <span class="mono">--expert-sym</span> (i4, no zero point)</td><td class="num">0.12 / 0.60 / 3.23 s</td><td class="num">53.4 / 45.7 / 41.3</td><td class="num">34.7</td><td class="num">1.32</td><td class="num">99</td><td class="num">19.4 GB</td><td class="num">19/20</td></tr>
+</table></div>
+<p class="note">A layer-0 MoE block extracted from the GPTQ IR reproduced the GPU failure in isolation and compiled in 2 s once its expert stacks were rewritten as signed INT4 (packed bytes XOR 0x88, Convert→Multiply, no Subtract), with matching output on CPU. The builder patch is in <span class="mono">results/F-gptq-builder-gpu-fix/</span>.</p>
+
+<h3>Qwen3.5-122B-A10B all-local on three NUCs (D3)</h3>
+<div class="tablewrap"><table>
+<tr><th>Layout</th><th class="num">Stages</th><th class="num">TTFT 31 / 975 / 7.7k tok</th><th class="num">Decode tok/s</th><th class="num">Head GPU compute / copy %</th><th class="num">Head GPU shared</th><th class="num">GSM8K</th></tr>
+<tr><td class="cfg">alpha + beta + charlie, 85% windows (19.8 / 23 / 23 GB)</td><td class="num">3</td><td class="num">3.8 / 12 / 79 s</td><td class="num">0.57</td><td class="num">30 / 26</td><td class="num">18.0 GB</td><td class="num">not run (cut)</td></tr>
+<tr><td class="cfg">alpha + beta + charlie (13 / 16 / 16 GB) + tate-07 tail (26 GB) over the Tiber relay</td><td class="num">4</td><td class="num">2.0 / 18.5 / 108–137 s</td><td class="num">1.2–2.7</td><td class="num">5 / 3</td><td class="num">13.2 GB</td><td class="num">17/20 (3 misses = 400-token truncations; 35B: 18–19/20 on the same questions)</td></tr>
+</table></div>
+<p class="note">The GPU plugin compiles every 122B stage with the <span class="mono">--expert-sym</span> build (the fix at 122B scale), and the pipeline is healthy 14 s after launch. Decode is flat at 0.57 tok/s on every prompt length because all three ranks page weights through an 18.4 GB resident segment (the copy engine at 26% is the paging); the whole 35B on one NUC shows the same signature at 1.7–1.9 tok/s with a 1 GB overshoot, here it is 1.4–4.6 GB per rank. The run was cut after the first repeats; the task-accuracy pass moved to the 4-stage layout.</p>
+<p>In the 4-stage layout every stage fits its GPU and the speed is set by the network alone: each token crosses the NUC-to-Tiber relay twice (activations out to the tail, the sampled token back to the head) at 110–350 ms a crossing, so decode is about 2 tok/s at every prompt length and the GPUs idle 95% of the time; the 7.7k-token prefill takes two minutes because 7.7k tokens of activations cross the relay at each hop. Head package power 3.1 W idle, 6.8 W decoding; chain total 28.7 W (alpha 7.6 + beta 8.3 + charlie 4.5 + tate-07 8.3), i.e. 0.07 tok/J: four GPUs mostly idling on the relay. What the run establishes is that the 122B IR is correct end to end, that four stages load and run inside their GPU segments, and that the LAN hops between the NUCs cost nothing visible. By the 35B chain's scaling (18 tok/s on 3 NUCs with 3B active parameters, 3.3x fewer than the 122B's 10B), a 4-NUC all-local 122B would land at roughly 5–8 tok/s: an estimate, not a measurement.</p>
 
 <h2>What this means for ECG deployments</h2>
 <ul class="tight">
@@ -232,9 +288,9 @@ Node: constant:..._postponed_decompression_byfx_moecompressed:
   <li><b>If the budget allows one 64 GB node, run the model whole on it</b>: 2.3x the speed and 2x the energy efficiency of the NUC chain, 0.6 s to first token on a 1k-token prompt, and multi-stream serving through the OVMS backend.</li>
   <li><b>Design around prefill.</b> Shards cost 35–57% of decode but 4–11x of time to first token on long prompts. Feed per-minute telemetry windows or pre-summarized context rather than hour-long dumps.</li>
   <li><b>Keep shard links on a local 2.5 GbE segment.</b> A 15 ms relay hop is tolerable; the 110–350 ms NUC-to-cloud path is not.</li>
-  <li><b>The NPU plays no part</b> in LLM serving with these engines today; NPU-capable SKUs gain nothing here (they still help the vision models that run beside the LLM).</li>
+  <li><b>The NPU plays no part</b> in LLM serving with these engines today (the 8B and 0.6B do not even compile for it), NPU-capable SKUs gain nothing here, and there is no NPU-prefill / GPU-decode split to be had. CPU decode is a 2x loss on a dense 8B and worse on a 35B shard.</li>
   <li><b>Validate deployments with task-level checks</b>, not token-exact comparisons.</li>
-  <li><b>Default to Qwen3.6-35B-A3B.</b> The 122B is a selective upgrade that needs two 64 GB nodes and a builder fix before it can even be measured.</li>
+  <li><b>Default to Qwen3.6-35B-A3B.</b> The 122B now runs on Panther Lake (builder fixed) but needs stages under ~18 GB: four or more 32 GB nodes, or 64 GB nodes; three NUCs alone thrash at 0.57 tok/s. Through the relay to a 64 GB tail it reached 1.2–2.7 tok/s and 17/20 (3 misses = 400-token truncations; 35B: 18–19/20 on the same questions) on GSM8K-20.</li>
 </ul>
 
 <h2>Method and scope notes</h2>
@@ -242,7 +298,7 @@ Node: constant:..._postponed_decompression_byfx_moecompressed:
   <li>Whole model: <span class="mono">cascadia run --engine ov-genai --device GPU</span>. Shards: <span class="mono">cascadia shard</span> (IR surgery at layer boundaries, no re-quantization, byte-identical manifests verified on every rank) then <span class="mono">cascadia run &lt;tree&gt; --engine qwen35</span> for co-located shards or one <span class="mono">cascadia worker --rank i --total N</span> per box; prefix cache off.</li>
   <li>Client on the serving box over loopback; 1 warmup, 3 repeats, medians. The ov-genai engine returns each completion as a single stream chunk, hence the two-call TTFT/decode method; the staged engine streams per token.</li>
   <li>Power and DDR bandwidth: Intel SoC Watch (driver 2.20.5), 60 s window during a continuous decode loop and 30 s idle with the model loaded. Utilization: 1 s Windows performance-counter sampler with GPU engines attributed per adapter.</li>
-  <li>Continuous batching could not be measured: the runtime's <span class="mono">--cb</span> path refuses VLM-layout exports (which the official Qwen3.6 IR is), and the staged engine is single-flight by design.</li>
+  <li>Continuous batching: the runtime's <span class="mono">--cb</span> path refuses VLM-layout exports (which is what the official Qwen3.6 IR is) and the staged engine is single-flight by design; concurrency was measured through the enterprise OVMS backend instead (follow-up round).</li>
   <li>Decode on these boxes is memory-bandwidth-bound (77–81 GB/s DDR reads on the 64 GB box); the NUCs run their DDR5-6400 modules at the 4800 default, so enabling XMP would lift the 32 GB figures.</li>
   <li>Machines borrowed for the run (honyaku ranks on two NUCs, the Acrow node on the third, the enterprise node service on the 64 GB box) were paused and restored afterwards; the first whole-model attempt was discarded because that service auto-restarted and co-resided with the benchmark.</li>
 </ul>
