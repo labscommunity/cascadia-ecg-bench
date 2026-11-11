@@ -91,4 +91,19 @@ The cost side is unambiguous: 3.3x the weights (64 vs 19 GB) and 3.3x the active
 needs two 64 GB boxes instead of one and will decode roughly 3x slower per stream.
 
 ## 5. What this means for ECG use cases
-TBD after the pipeline and 122B rows land.
+- **A 32 GB Panther Lake node cannot serve Qwen3.6-35B-A3B on its own.** The INT4 model (19.4 GB) exceeds the 17.7 GB GPU window; it still loads,
+  but decodes at 1.7 tok/s (GPU) or ~12 tok/s with saturated RAM and minute-long first responses (CPU). Sharding it across 2–3 such nodes with Cascadia
+  gives 18–19 tok/s per stream with 3.5 s to first token on a 1k-token prompt, 6–9 GB of GPU memory and 9–15 W per node, and the same task accuracy
+  (GSM8K-40 36/40 vs 37/40). That is the deployable path for 32 GB edge boxes: an intersection or depot with three ordinary AI PCs runs a 35B-class
+  model that none of them could run alone.
+- **A single 64 GB node is the better unit if the budget allows it:** 42–48 tok/s, 0.6 s to first token at 1k tokens, 34 W, twice the tokens per joule
+  of the NUC chain, and continuous batching for multiple concurrent streams (A5). Sharding on a 64 GB box costs 35% of decode speed and 2.6–3.9x TTFT and
+  is only worth doing to free memory for a second model or a larger one.
+- **Model size:** the 122B-A10B does not fit any single Panther Lake node (64.3 GB INT4); it needs two 64 GB nodes and decodes ~3x slower per stream
+  (10B vs 3B active parameters). The newer 35B-A3B is within 1–3 points of it on the vendor's knowledge/reasoning benchmarks and ahead on coding and
+  agentic tasks, so for traffic-monitoring summarization, log triage and tool use the 35B-A3B is the right default and the 122B is a selective upgrade
+  (long-video and knowledge-heavy tasks) rather than a general one. Measured 122B numbers: see §4.2.
+- **Operational notes for ECG:** prefill, not decode, is where sharding hurts (long prompts cost 4–11x more TTFT when staged), so keep per-request
+  context short (per-minute telemetry windows, not hour-long dumps) or pre-summarize; keep shard links on a local 2.5 GbE segment (a relayed WAN hop
+  of 15 ms is tolerable, 100+ ms is not); the NPU is unused by these engines today, so NPU-capable boxes gain nothing for LLM serving; and use
+  task-level accuracy checks rather than token-exact comparisons when validating a sharded deployment.
