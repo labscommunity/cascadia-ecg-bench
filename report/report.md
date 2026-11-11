@@ -166,7 +166,7 @@ a zero point (bit-identical values) compiles on the GPU in 2 s with matching out
   OVMS backend was out of scope for this run.
 - Whole-model streaming from the ov-genai engine arrives as one chunk per completion, so TTFT/decode were measured with a two-call method (1-token
   request, then N-token request) rather than first-chunk latency; the staged engine streams per token.
-- The NUCs run DDR5-6400 modules at the JEDEC 4800 default (no XMP); their decode is memory-bound, so enabling XMP would lift the 32 GB numbers.
+- The NUCs run DDR5-6400 modules (Kingston KF564S38-16) at the JEDEC 4800 default; decode is memory-bound, so enabling the XMP 3.0 profile would lift the 32 GB numbers by up to ~30%. This was not done: the ASRock Industrial NUC BOX-358H BIOS (AMI Aptio P1.00) exposes no OS-side or remote path to change the memory profile (no AMI SCE tooling present, no vendor utility), and a remote memory-profile change with no console to recover a failed training is not a risk worth taking unattended. It needs a BIOS visit: Advanced > Memory Configuration > XMP/EXPO profile, then re-measure the 32 GB rows.
 - Machines borrowed and restored: honyaku ranks + watchdogs on alpha/beta, the Acrow node on charlie, the enterprise node service on tate-07 (which
   had to be set to Disabled during the runs because it auto-restarts and its gemma OVMS contaminated the first whole-model measurement). Leftovers kept
   for reproduction: `C:\ecgbench\` on every Windows box, `~/ecgbench` on tate-08, the 122B GPTQ/IR/stage trees in the Mac Pro export VM and

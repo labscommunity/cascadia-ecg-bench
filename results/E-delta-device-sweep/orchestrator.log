@@ -24,3 +24,8 @@ bench medium ttft 22.0452 dec 242.893 tok 256 status 200
 bench long ttft 218.3689 dec None tok 256 status 200 
 bench.jsonl
 bench.util.jsonl
+[11:51:44] [delta/E-delta-q3-8b-NPU] TIMEOUT after 1500 s
+[11:51:44] [delta/E-delta-q3-8b-NPU] server did not become healthy; tail of server.log:
+[11:51:51] [delta] capability checks on the 35B: NPU and HETERO:GPU,CPU (the 35B IR must be fetched; 12 GB free on delta -> skip if no room)
+[11:51:52] [delta] delta free GB: 7
+[11:51:52] [delta] restore booth node: re-enable watchdog (it relaunches the node within 3 min)

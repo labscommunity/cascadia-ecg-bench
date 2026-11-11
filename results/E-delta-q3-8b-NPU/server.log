@@ -1,0 +1,4 @@
+[2m2026-11-11T17:26:38.851652Z[0m [32m INFO[0m [2mcascadia_cli[0m[2m:[0m cascadia run (single machine) [3mmodel[0m[2m=[0mC:\ptlbench\models\Qwen3-8B-int4-ov [3mdevice[0m[2m=[0mNPU [3mengine[0m[2m=[0mOvGenai
+[2m2026-11-11T17:26:38.851798Z[0m [32m INFO[0m [2mcascadia_cli[0m[2m:[0m cascadia worker starting [3mengine[0m[2m=[0mOvGenai [3mrank[0m[2m=[0m0 [3mtotal[0m[2m=[0m1 [3mdevice[0m[2m=[0mNPU [3mmodel[0m[2m=[0mC:\ptlbench\models\Qwen3-8B-int4-ov
+[2m2026-11-11T17:26:38.854264Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner connect [3mupstream[0m[2m=[0mNone [3mdownstream[0m[2m=[0mNone
+[2m2026-11-11T17:26:38.854302Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner load
