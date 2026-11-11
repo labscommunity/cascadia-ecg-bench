@@ -14,7 +14,7 @@ ps "New-Item -ItemType Directory -Force -Path '$R' | Out-Null; 'ok'" >/dev/null
 if [ -z "${NOLAUNCH:-}" ]; then
   log "launch server: $MODEL engine=$ENGINE device=$DEVICE api=$API extra=${EXTRA:-}"
   EX=""; [ -n "${EXTRA:-}" ] && EX="-Extra '$EXTRA'"
-  ps "& '$HZ\\win\\server.ps1' -Mode run -Model '$MODEL' -Engine $ENGINE -Device $DEVICE -Api '$API' $EX -Log '$R\\server.log'" | tee -a "$OUT/orchestrator.log"
+  ps "& '$HZ\\win\\server.ps1' -Mode run -Model '$MODEL' -Engine $ENGINE -Device '$DEVICE' -Api '$API' $EX -Log '$R\\server.log'" | tee -a "$OUT/orchestrator.log"
 fi
 log "waiting for health"
 hres=$(ps "& '$HZ\\win\\health.ps1' -Base $BASE -TimeoutSec ${HEALTH_TIMEOUT:-1500}")

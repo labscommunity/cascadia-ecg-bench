@@ -30,7 +30,7 @@ sleep 12
 for ((r=0; r<N; r++)); do h=${H[$r]}
   ( ps "$h" "& '$HZ\\win\\socwatch_run.ps1' -Seconds 60 -Prefix '$R\\steady-rank$r.sw'" | tail -1 | cut -c1-300 | sed "s/^/rank$r($h): /" | tee -a "$OUT/orchestrator.log" ) &
 done; wait; sleep 25
-case "$label" in C2*|D*) log "GSM8K-40 eval on the chain head"; TAGS="config=$label stages=$N model=${MODEL_TAG:-q36-35b}" EVAL_TOKENS=${EVAL_TOKENS:-512} ./run_eval.sh "$HEAD" "$label-eval";; esac
+case "$label" in C2*|D*) log "GSM8K eval on the chain head (N=${EVAL_N:-40})"; N=${EVAL_N:-40} TAGS="config=$label stages=$N model=${MODEL_TAG:-q36-35b}" EVAL_TOKENS=${EVAL_TOKENS:-512} EVAL_WAIT_MIN=${EVAL_WAIT_MIN:-120} ./run_eval.sh "$HEAD" "$label-eval";; esac
 log "stop all ranks"
 for ((r=0; r<N; r++)); do h=${H[$r]}; ps "$h" "& '$HZ\\win\\stop.ps1' -Match 'cascadia.exe'" | tail -1 | sed "s/^/$h: /" | tee -a "$OUT/orchestrator.log"; done
 log "collect from every rank"
