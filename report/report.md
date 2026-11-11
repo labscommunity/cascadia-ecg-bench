@@ -67,10 +67,9 @@ stage. Power drops to 30–31 W (0.9x) but tokens-per-joule falls to 0.88–0.90
 runs at 86% (hidden-state hand-offs between stages). Going from 2 to 3 shards costs nothing extra on one box: the overhead is per-pipeline, not
 per-stage.
 
-**One shard per NUC (C1 = 2 NUCs, C2 = 3 NUCs).** TBD — see `report/tables.md` once `results/C1-2nuc-2shard` and `results/C2-3nuc-3shard` land
-(decode, TTFT, per-NUC power, aggregate power, GSM8K on the 3-NUC chain).
+**One shard per NUC (C1 = 2 NUCs, C2 = 3 NUCs, 2.5 GbE, <1 ms LAN round trip).** Decode 18.8 tok/s (2 NUCs) and 18.1 tok/s (3 NUCs) — **11x the whole model on one NUC** (1.7 tok/s) and 0.43–0.45x the 64 GB box. TTFT 3.5 s at 975 tokens on both (5.8x the 64 GB box) and 22 s / 31 s at 7.7k tokens (prefill is chunked and serialized across stages, and the long prompt moves 7.7k x 2048 x 4 B of hidden state per hop). Per-NUC resources shrink with shard count: 9.1 GB GPU memory and 15 W per NUC with 2 shards, 6.1 GB and 9 W with 3 shards. Whole-chain power is 30.7 W (2 NUCs) and 27.6 W (3 NUCs) versus 34.7 W for the 64 GB box, so efficiency is 0.61 and 0.66 tok/J against 1.23 (about half), because the chain spends most of each token waiting on the hand-off rather than streaming weights (GPU busy 44% and 29%, DDR 12.8 and 8.5 GB/s on the head). GSM8K-40 on the 3-NUC chain: 36/40 vs 37/40 for the whole model (within noise).
 
-**Whole model on CPU, 64 GB box (A2).** TBD.
+**Whole model on CPU, 64 GB box (A2).** 12.5 tok/s end-to-end at 40.7 W with a 40 GB working set (the CPU plugin holds ~2x the IR), CPU 60%, and very slow prefill (TTFT 40 s at 975 tokens, 347 s at 7.7k). On Panther Lake the iGPU is the only sensible whole-model device.
 
 ### 4.2 Qwen3.5-122B-A10B
 The INT4 IR is 64.3 GB, so it fits no single Panther Lake box in this fleet (52 GB GPU window / 61 GB RAM on the 64 GB box; 17.7 GB window on 32 GB).
@@ -80,10 +79,9 @@ Results: TBD (`results/D1-122b-2x64gb`).
 
 ### 4.3 Sharded vs. whole: accuracy, performance multiplier, utilization multiplier
 - **Token-level parity.** The whole model is deterministic: re-running it after a server restart with the same client reproduces all six 160-token greedy outputs byte-for-byte (A1c vs A1b, 6/6). The sharded engine is *not* token-identical to it: 2 or 3 co-located shards agree on the first ~50 characters of every answer and then take a different (equally coherent) continuation (A3/A4 vs A1b: 0/6 exact, ~8% common prefix). This is the f16 fusion-order / near-tie behaviour the exporter documents (its own check still shows chain-vs-full top-1 match and 8/8 greedy tokens on a short probe), so token agreement over long generations is the wrong yardstick; task accuracy is the right one. A side finding: the request path matters too, since the first client (streaming requests, no 1-token warm call) got different continuations from the same whole model (A1 vs A1b: 0/6), which argues for pinning the client method when comparing deployments.
-- **Task-level accuracy** is the right comparison: GSM8K-40 whole 35B = 37/40 (92.5%); sharded chain and 122B rows TBD.
-- **Performance multiplier** (vs. whole on 64 GB): 2 or 3 co-located shards = 0.65x decode, 2.6–3.9x TTFT; NUC pipelines TBD.
-- **Utilization multiplier:** sharding does not reduce total memory (same 18–19 GB resident; split across boxes in C1/C2), lowers single-box power 10%
-  and tokens-per-joule 28%; per-NUC numbers for the pipelines TBD.
+- **Task-level accuracy** is the right comparison: GSM8K-40 whole 35B = 37/40 (92.5%), 3-NUC sharded 35B = 36/40 (90.0%); 122B row TBD.
+- **Performance multiplier** (vs. whole on 64 GB): 2 or 3 co-located shards = 0.65x decode, 2.6–3.9x TTFT; 2- and 3-NUC pipelines = 0.45x / 0.43x decode, 5.8x TTFT at 975 tokens, 7.7x / 10.8x at 7.7k. Versus the only alternative on 32 GB hardware (whole model on one NUC), the pipelines are 11x faster.
+- **Utilization multiplier:** total resident memory is unchanged (18.4 GB co-located; 18.3 GB and 18.3 GB summed across 2 and 3 NUCs) but per-box memory falls to 9.1 GB and 6.1 GB; co-located shards cut single-box power 10% and tok/J 28%; the NUC pipelines run at 30.7 W / 27.6 W total (0.9x / 0.8x of the 64 GB box) at half the tok/J (0.61 / 0.66 vs 1.23). The NPU stays idle in every configuration (no engine supports it for these models) and CPU load is 5–17%.
 
 ### 4.4 Capability from model size
 Vendor benchmarks (docs/published_benchmarks.md) put the 122B-A10B 1–3 points above the newer 35B-A3B on knowledge-heavy evals (MMLU-Pro 86.7 vs 85.2,

@@ -62,6 +62,11 @@ for d in sorted(glob.glob(os.path.join(a.root, '*'))):
         if os.path.exists(p): row[f'{rn}_W'] = round(sw(p).get('pkg_power_mw_avg', 0) / 1000, 1)
         uu = jl(os.path.join(rk, f'steady-{rn}.util.jsonl'))
         if uu: row[f'{rn}_gpu_shared_GB'] = round((med([x.get('gpu_shared_mb') for x in uu]) or 0) / 1024, 1); row[f'{rn}_ws_GB'] = round((med([x.get('proc_ws_mb') for x in uu]) or 0) / 1024, 1)
+    rk = [row[k] for k in row if k.startswith('rank') and k.endswith('_W')]
+    if rk:
+        row['chain_total_W'] = round(sum(rk), 1); row['steady_W_single_box'] = row.get('steady_W'); row['steady_W'] = row['chain_total_W']
+        if row.get('steady_dec'): row['tok_per_J'] = round(row['steady_dec'] / row['chain_total_W'], 2)
+        row['gpu_shared_GB_total'] = round(sum(row[k] for k in row if k.startswith('rank') and k.endswith('_gpu_shared_GB')), 1)
     rows.append(row)
 cols = ['run', 'short_ptok', 'short_ttft_s', 'medium_ptok', 'medium_ttft_s', 'long_ptok', 'long_ttft_s', 'medium_dec', 'steady_dec', 'steady_e2e', 'idle_W', 'steady_W', 'tok_per_J', 'steady_ddr_GBs', 'cpu_pct', 'gpu_busy_pct', 'gpu_neural_pct', 'gpu_copy_pct', 'npu_busy_pct', 'gpu_shared_GB', 'proc_ws_GB', 'committed_GB']
 extra = sorted({k for r in rows for k in r} - set(cols) - {'status'})

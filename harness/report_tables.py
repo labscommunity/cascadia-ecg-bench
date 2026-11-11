@@ -20,7 +20,7 @@ print('## Performance (medians of 3 repeats; greedy, thinking off)\n')
 print('| config | TTFT short (31 tok) | TTFT medium (975 tok) | TTFT long (7.7k tok) | decode tok/s (medium) | decode tok/s (steady loop) | e2e tok/s (steady, incl. prefill) |')
 print('|---|---|---|---|---|---|---|')
 for r in order: print(f"| {r} | {g(r,'short_ttft_s','{:.2f} s')} | {g(r,'medium_ttft_s','{:.2f} s')} | {g(r,'long_ttft_s','{:.2f} s')} | {g(r,'medium_dec','{:.1f}')} | {g(r,'steady_dec','{:.1f}')} | {g(r,'steady_e2e','{:.1f}')} |")
-print('\n## Power and utilization (60 s SoC Watch window during sustained decode; 30 s idle with model loaded)\n')
+print('\n## Power and utilization (60 s SoC Watch window during sustained decode; 30 s idle with model loaded; for pipelines decode W = sum over ranks, memory = head rank)\n')
 print('| config | idle W | decode W | tok/J | DDR GB/s (decode) | CPU % | GPU busy % | GPU copy % | NPU % | GPU shared mem GB | process WS GB | committed GB |')
 print('|---|---|---|---|---|---|---|---|---|---|---|---|')
 for r in order: print(f"| {r} | {g(r,'idle_W')} | {g(r,'steady_W')} | {g(r,'tok_per_J')} | {g(r,'steady_ddr_GBs')} | {g(r,'cpu_pct')} | {g(r,'gpu_busy_pct')} | {g(r,'gpu_copy_pct')} | {g(r,'npu_busy_pct')} | {g(r,'gpu_shared_GB')} | {g(r,'proc_ws_GB')} | {g(r,'committed_GB')} |")
@@ -35,11 +35,14 @@ def mult(base, run, k, inv=False):
     if not a or not b: return ''
     return f"{(a/b if inv else b/a):.2f}x"
 print('\n## Sharding multipliers (relative to the whole model on the 64 GB box, A1b)\n')
-print('| config | shards | decode tok/s | TTFT medium | TTFT long | decode power | tok/J | GPU shared mem |')
+print('| config | shards | decode tok/s | TTFT medium | TTFT long | decode power (total) | tok/J | GPU memory (total across boxes) |')
 print('|---|---|---|---|---|---|---|---|')
 for r in order:
     if r == 'A1b-tate07-whole-gpu': continue
-    print(f"| {r} | {rows[r].get('stages','')} | {mult('A1b-tate07-whole-gpu', r, 'steady_dec')} | {mult('A1b-tate07-whole-gpu', r, 'medium_ttft_s')} | {mult('A1b-tate07-whole-gpu', r, 'long_ttft_s')} | {mult('A1b-tate07-whole-gpu', r, 'steady_W')} | {mult('A1b-tate07-whole-gpu', r, 'tok_per_J')} | {mult('A1b-tate07-whole-gpu', r, 'gpu_shared_GB')} |")
+    gk = 'gpu_shared_GB_total' if rows[r].get('gpu_shared_GB_total') else 'gpu_shared_GB'
+    a, b = rows['A1b-tate07-whole-gpu'].get('gpu_shared_GB'), rows[r].get(gk)
+    gm = f"{b/a:.2f}x" if (a and b) else ''
+    print(f"| {r} | {rows[r].get('stages','')} | {mult('A1b-tate07-whole-gpu', r, 'steady_dec')} | {mult('A1b-tate07-whole-gpu', r, 'medium_ttft_s')} | {mult('A1b-tate07-whole-gpu', r, 'long_ttft_s')} | {mult('A1b-tate07-whole-gpu', r, 'steady_W')} | {mult('A1b-tate07-whole-gpu', r, 'tok_per_J')} | {gm} |")
 # parity vs A1b
 print('\n## Output parity vs. the whole model (same greedy prompts, 160 tokens)\n')
 ref = os.path.join(root, 'A1b-tate07-whole-gpu', 'parity.jsonl')

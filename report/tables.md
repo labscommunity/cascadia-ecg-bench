@@ -12,7 +12,7 @@
 | C2-3nuc-3shard | 0.86 s | 3.48 s | 31.19 s | 17.8 | 18.1 | 13.8 |
 | A1c-tate07-whole-gpu-rerun | 0.12 s | 0.61 s | 3.27 s | 48.0 | 42.7 | 38.9 |
 
-## Power and utilization (60 s SoC Watch window during sustained decode; 30 s idle with model loaded)
+## Power and utilization (60 s SoC Watch window during sustained decode; 30 s idle with model loaded; for pipelines decode W = sum over ranks, memory = head rank)
 
 | config | idle W | decode W | tok/J | DDR GB/s (decode) | CPU % | GPU busy % | GPU copy % | NPU % | GPU shared mem GB | process WS GB | committed GB |
 |---|---|---|---|---|---|---|---|---|---|---|---|
@@ -22,8 +22,8 @@
 | A2-tate07-whole-cpu | 6.5 | 40.7 |  | 13.15 | 60.45 | 0.0 | 0.0 | 0.0 | 0.3 | 40.4 | 36.8 |
 | B1b-charlie-whole-gpu | 3.0 | 23.0 |  | 8.08 | 20.35 | 95.4 | 1.2 |  | 17.9 | 19.5 | 23.2 |
 | B2-charlie-whole-cpu |  |  |  |  |  |  |  |  |  |  |  |
-| C1-2nuc-2shard | 3.4 | 14.5 | 1.3 | 12.75 | 7.95 | 43.85 | 41.3 | 0.0 | 9.1 | 9.6 | 13.3 |
-| C2-3nuc-3shard | 3.5 | 10.6 | 1.7 | 8.5 | 5.25 | 28.9 | 27.65 | 0.0 | 6.1 | 6.6 | 10.3 |
+| C1-2nuc-2shard | 3.4 | 30.7 | 0.61 | 12.75 | 7.95 | 43.85 | 41.3 | 0.0 | 9.1 | 9.6 | 13.3 |
+| C2-3nuc-3shard | 3.5 | 27.6 | 0.65 | 8.5 | 5.25 | 28.9 | 27.65 | 0.0 | 6.1 | 6.6 | 10.3 |
 | A1c-tate07-whole-gpu-rerun |  | 34.7 | 1.23 | 81.13 | 17.35 | 97.3 | 8.6 | 0.0 | 19.1 | 19.5 | 32.9 |
 
 ## Per-rank package power during chain decode (W)
@@ -33,15 +33,15 @@
 
 ## Sharding multipliers (relative to the whole model on the 64 GB box, A1b)
 
-| config | shards | decode tok/s | TTFT medium | TTFT long | decode power | tok/J | GPU shared mem |
+| config | shards | decode tok/s | TTFT medium | TTFT long | decode power (total) | tok/J | GPU memory (total across boxes) |
 |---|---|---|---|---|---|---|---|
 | A3-tate07-2shard-colocated | 2 | 0.65x | 2.60x | 3.93x | 0.90x | 0.72x | 0.96x |
 | A4-tate07-3shard-colocated | 3 | 0.65x | 2.63x | 3.99x | 0.88x | 0.73x | 0.96x |
 | A2-tate07-whole-cpu | 1 |  | 67.08x | 120.14x | 1.19x |  | 0.02x |
 | B1b-charlie-whole-gpu | 1 |  | 2.15x | 1.46x | 0.67x |  | 0.94x |
 | B2-charlie-whole-cpu | 1 |  | 87.82x | 154.65x |  |  |  |
-| C1-2nuc-2shard | 2 | 0.45x | 5.90x | 7.70x | 0.42x | 1.06x | 0.48x |
-| C2-3nuc-3shard | 3 | 0.43x | 5.80x | 10.79x | 0.31x | 1.38x | 0.32x |
+| C1-2nuc-2shard | 2 | 0.45x | 5.90x | 7.70x | 0.90x | 0.50x | 0.96x |
+| C2-3nuc-3shard | 3 | 0.43x | 5.80x | 10.79x | 0.81x | 0.53x | 0.96x |
 | A1c-tate07-whole-gpu-rerun | 1 | 1.02x | 1.02x | 1.13x | 1.01x | 1.00x | 1.00x |
 
 ## Output parity vs. the whole model (same greedy prompts, 160 tokens)
