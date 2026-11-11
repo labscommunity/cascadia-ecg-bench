@@ -1,0 +1,9 @@
+[05:29:49] [D1] pause tate-08 SWE node (restore: systemd-run --unit=swe-node ... see memory note)
+Failed to stop swe-node.service: Unit swe-node.service not loaded.
+1
+Mem:              61          34           0           0          27          27
+[05:29:54] [D1] launch rank 1 on tate-08
+[05:30:17] [D1] launch rank 0 on tate-07 (API :8130, next = tate-08 tailnet :9100)
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" worker --rank 0 --total 2 --model "C:\ecgbench\shards\q122-2stage" --engine qwen35 --device GPU --ov-cache-dir ""  --next 100.79.46.111:9100 --api :8130 --prefix-cache-gb 0
+LAUNCH rc=0 cmdpid=33976 childpid=34888
+[05:30:22] [tate07/D1-122b-2x64gb] waiting for health

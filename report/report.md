@@ -72,10 +72,19 @@ per-stage.
 **Whole model on CPU, 64 GB box (A2).** 12.5 tok/s end-to-end at 40.7 W with a 40 GB working set (the CPU plugin holds ~2x the IR), CPU 60%, and very slow prefill (TTFT 40 s at 975 tokens, 347 s at 7.7k). On Panther Lake the iGPU is the only sensible whole-model device.
 
 ### 4.2 Qwen3.5-122B-A10B
-The INT4 IR is 64.3 GB, so it fits no single Panther Lake box in this fleet (52 GB GPU window / 61 GB RAM on the 64 GB box; 17.7 GB window on 32 GB).
-Measured layout: 2 shards across two 64 GB boxes in Tiber (tate-07 Windows rank 0: 29 GB; tate-08 Linux rank 1: 33 GB) linked over a 15 ms relay hop.
-A 4-shard layout over the three 32 GB NUCs plus one 64 GB tail was cut as well, but the NUC↔Tiber path measured 110–350 ms round trip, so it was not run.
-Results: TBD (`results/D1-122b-2x64gb`).
+**Build.** No OpenVINO IR of this model exists publicly; it was built here from `Qwen/Qwen3.5-122B-A10B-GPTQ-Int4` (79 GB) with the runtime's
+GPTQ-to-OpenVINO builder in 21.5 min on an 8-vCPU VM: 64.3 GB INT4 IR (62.6 GB language model). Cut into 2 stages (24+24 layers, 29 GB + 33 GB)
+with the exporter's chain-vs-full check passing (logits rel 2.0e-2, top-1 match, top-5 4/5, 8/8 greedy tokens) and into 4 stages (10/10/10/18 layers).
+
+**Where it can run.** 64.3 GB fits no single Panther Lake box here (52 GB GPU window and 61 GB RAM on the 64 GB box; 17.7 GB window on 32 GB).
+The clean layout is 2 shards on two 64 GB boxes; the two Tiber 64 GB boxes see each other at 15 ms (Seattle relay). The NUC-to-Tiber path measured
+110–350 ms round trip, so a layout mixing the NUCs with a Tiber tail pays ~2 relay round trips per token.
+
+**Measured.** The 2 x 64 GB run (tate-07 + tate-08) was staged (both shards copied, Linux runtime installed) but could not be executed: tate-08 was
+taken into interactive use for a Cascadia desktop/installer test session during this run, and the brief was to borrow only idle machines.
+The 4-shard layout (alpha, beta, charlie + tate-07 tail over the relay) is the fallback measured instead — results in `results/D2-122b-4stage-3nuc-tate07`
+and the tables (TBD until it completes). Everything needed to run the 2 x 64 GB case later is in place (`~/ecgbench/shards/q122-2stage` on tate-08,
+`C:\ecgbench\shards\q122-2stage` on tate-07, `run_d1.sh`).
 
 ### 4.3 Sharded vs. whole: accuracy, performance multiplier, utilization multiplier
 - **Token-level parity.** The whole model is deterministic: re-running it after a server restart with the same client reproduces all six 160-token greedy outputs byte-for-byte (A1c vs A1b, 6/6). The sharded engine is *not* token-identical to it: 2 or 3 co-located shards agree on the first ~50 characters of every answer and then take a different (equally coherent) continuation (A3/A4 vs A1b: 0/6 exact, ~8% common prefix). This is the f16 fusion-order / near-tie behaviour the exporter documents (its own check still shows chain-vs-full top-1 match and 8/8 greedy tokens on a short probe), so token agreement over long generations is the wrong yardstick; task accuracy is the right one. A side finding: the request path matters too, since the first client (streaming requests, no 1-token warm call) got different continuations from the same whole model (A1 vs A1b: 0/6), which argues for pinning the client method when comparing deployments.
