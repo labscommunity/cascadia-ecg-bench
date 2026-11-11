@@ -120,7 +120,47 @@ needs two 64 GB boxes instead of one and will decode roughly 3x slower per strea
   of 15 ms is tolerable, 100+ ms is not); the NPU is unused by these engines today, so NPU-capable boxes gain nothing for LLM serving; and use
   task-level accuracy checks rather than token-exact comparisons when validating a sharded deployment.
 
-## 6. Scope notes
+
+## 6. Follow-up round (same day): memory window, concurrency, device mix, 122B builder fix
+
+### 6.1 Raising the iGPU memory window on 32 GB Panther Lake (works)
+The 17.7 GB GPU window on the NUCs is the Intel driver's default "Shared GPU Memory Override" of 57% of RAM (the Intel Graphics Software
+slider added in driver 32.0.101.6987). The slider writes `HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0000\GMM\GpuSystemMemoryPinninglimit`
+(DWORD, percent); tate-07 carried 82, the NUCs had no value. Setting it to 85 and rebooting raised OpenVINO's `GPU_DEVICE_TOTAL_MEM_SIZE`
+on alpha, beta and charlie from 16.46 GiB to **24.77 GiB** (dxdiag's static "Shared Memory" line does not change). Neither the
+compute-runtime percentage knob (`ClDeviceGlobalMemSizeAvailablePercent`) nor the adapter's `HardwareInformation.qwMemorySize` had any effect.
+The whole 35B on a 32 GB NUC with the 85% window: see B3 below (TBD until it lands). The setting was left in place on the three NUCs; remove the
+value to return to the 57% default.
+
+### 6.2 Concurrency through OVMS continuous batching (64 GB box)
+With the enterprise OVMS backend (continuous batching, 8 GB KV cache, up to 8 sequences) serving the official 35B IR on tate-07's GPU:
+
+| streams | per-stream tok/s (975-tok prompt, 256-tok answers) | combined tok/s | package W | tok/J |
+|---|---|---|---|---|
+| 1 | 32 (decode 35–39) | 32 | 34 | 0.9 |
+| 2 | 17.2 | 34 | 26.6 | 1.3 |
+| 4 | 16.8 | 67 | 31.6 | 2.1 |
+| 8 | 16.6 | 132 | 35.9 | 3.7 |
+
+Per-stream speed halves once batching starts and then stays flat, so combined throughput scales linearly to 8 streams at nearly constant
+power: 3x the tokens per joule of single-stream serving. (The OSS runtime's `--cb` path refuses VLM-layout IRs; OVMS does not.)
+
+### 6.3 Device mix: CPU / GPU / NPU
+Measured on delta (the only 32 GB box with the NPU driver) with the dense Qwen3-8B INT4 export, which fits all three devices (TBD rows fill from
+`results/E-delta-q3-8b-*`). The 35B cannot target the NPU (static-shape NPU compilation of a 19 GB MoE VLM export is not supported by the
+engines) and `HETERO:GPU,CPU` on the 35B is a capability check (TBD). A mixed pipeline with a GPU head rank and a CPU tail rank (C3, TBD)
+quantifies "CPU for decode" on a shard. No documented way exists in OpenVINO GenAI 2026.4 to run prefill on the NPU and decode on the GPU for one
+model; the NPU pipeline runs both phases on the NPU as static sub-models.
+
+### 6.4 122B: root cause of the GPU compile failure, and the fix
+The GPTQ-built IR is op-for-op identical to Intel's export; the difference is that GPTQ is symmetric, so every expert zero point is exactly 8,
+while Intel's NNCF export has varying zero points. The OpenVINO 2026.4.1 GPU plugin's MoE fusion fails on the uniform-zero-point form. A layer-0
+MoE block extracted from the GPTQ 35B IR reproduces the failure on the GPU and compiles on CPU; rewriting its expert stacks as signed INT4 without
+a zero point (bit-identical values) compiles on the GPU in 2 s with matching output (`results/F-gptq-builder-gpu-fix/`). The builder gained
+`--expert-sym`; the 35B and 122B were rebuilt with it. Validation of the rebuilt 35B as a whole model on the 64 GB GPU (A6) and the 122B as a
+3-stage all-local pipeline on the NUCs with 85% windows (D3) are TBD below.
+
+## 8. Scope notes
 - Continuous-batching concurrency on the whole model (A5) could not be run: the runtime's `--cb` path refuses VLM-layout exports, which is what the
   official Qwen3.6 IR is (`results/A5-tate07-whole-gpu-cb/NOTE.md`); the sharded engine is single-flight by design. Concurrency through the enterprise
   OVMS backend was out of scope for this run.

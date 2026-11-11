@@ -1,0 +1,2 @@
+[11:28:54] beta back: GPU_DEVICE_TOTAL_MEM_SIZE GiB 24.77 max_alloc 24.77 PROC=cascadia-node-honyaku.exe PROC=cascadia-node-honyaku.exe TASK honyaku-r1 Running TASK honyaku-r2 Running 
+[11:29:20] charlie back: GPU_DEVICE_TOTAL_MEM_SIZE GiB 24.77 max_alloc 24.77 PROC=cascadia-node-acrow.exe PROC=ovms.exe PROC=ovms.exe 
