@@ -1,0 +1,158 @@
+### genai_q06_NPU_drv_mpl1024.json
+[
+ {
+  "meta": {
+   "box": "delta",
+   "device": "NPU",
+   "model": "Qwen3-0.6B-int4-ov",
+   "ov": "2026.4.1-22982-e213a147257-releases/2026/4",
+   "genai": "2026.4.1.0-3408-ab01d1771e4",
+   "new_tokens": 128,
+   "ts": 1793034859.3456182,
+   "npu_max_prompt_len": 1024,
+   "npu_compiler": "DRIVER",
+   "error": "load: RuntimeError('Exception from src\\\\inference\\\\src\\\\cpp\\\\core.cpp:120:\\nException from src\\\\inference\\\\src\\\\dev\\\\plugin.cpp:54:\\nException from src\\\\inference\\\\src\\\\dev\\\\plugin.cpp:54:\\nException from src\\\\plugins\\\\intel_npu\\\\src\\\\plugin\\\\src\\\\plugin.cpp:560:\\nException from src\\\\plugins\\\\intel_npu\\\\src\\\\compiler_adapter\\\\src\\\\ze_graph_ext_wrappers.cpp:433:\\nCompilation failed. Level0 pfnCreate2 result: ZE_RESULT_ERROR_INVALID_NULL_POINTER, code 0x78000007 - pointer argument may not be nullptr . [NPU_VCL] Compiler
+### genai_q06_NPU_drv.json
+[
+ {
+  "meta": {
+   "box": "delta",
+   "device": "NPU",
+   "model": "Qwen3-0.6B-int4-ov",
+   "ov": "2026.4.1-22982-e213a147257-releases/2026/4",
+   "genai": "2026.4.1.0-3408-ab01d1771e4",
+   "new_tokens": 128,
+   "ts": 1793034851.9047484,
+   "npu_max_prompt_len": 4160,
+   "npu_compiler": "DRIVER",
+   "error": "load: RuntimeError('Exception from src\\\\inference\\\\src\\\\cpp\\\\core.cpp:120:\\nException from src\\\\inference\\\\src\\\\dev\\\\plugin.cpp:54:\\nException from src\\\\inference\\\\src\\\\dev\\\\plugin.cpp:54:\\nException from src\\\\plugins\\\\intel_npu\\\\src\\\\plugin\\\\src\\\\plugin.cpp:560:\\nException from src\\\\plugins\\\\intel_npu\\\\src\\\\compiler_adapter\\\\src\\\\ze_graph_ext_wrappers.cpp:433:\\nCompilation failed. Level0 pfnCreate2 result: ZE_RESULT_ERROR_INVALID_NULL_POINTER, code 0x78000007 - pointer argument may not be nullptr . [NPU_VCL] Compiler
+### genai_q06_GPU_def.json
+[
+ {
+  "meta": {
+   "box": "delta",
+   "device": "GPU",
+   "model": "Qwen3-0.6B-int4-ov",
+   "ov": "2026.4.1-22982-e213a147257-releases/2026/4",
+   "genai": "2026.4.1.0-3408-ab01d1771e4",
+   "new_tokens": 128,
+   "ts": 1793034812.2315655,
+   "load_s": 8.626856900053099,
+   "rss_after_load_mb": 922.628096
+  }
+ },
+ {
+  "device": "GPU",
+  "target_prompt": 128,
+  "prompt_tokens": 128,
+  "gen_tokens": 128,
+  "ttft_ms": 943.2108764648438,
+  "tpot_ms": 18.387645721435547,
+  "ipot_ms": 25.6043758392334,
+  "throughput_tok_s": 54.384342193603516,
+  "generate_ms": 3279.680908203125,
+  "inference_ms": 3233.363037109375,
+  "wall_s": 3.2797924999613315,
+  "rep": 0,
+  "warmup": true,
+  "rss_mb": 972.529664,
+  "ts": 1793034824.1573448,
+  "text_head": " light rail line through the eastern districts and adding three bus rapid transit corridors. Residents raised questions abou
+### genai_q06_CPU_def.json
+[
+ {
+  "meta": {
+   "box": "delta",
+   "device": "CPU",
+   "model": "Qwen3-0.6B-int4-ov",
+   "ov": "2026.4.1-22982-e213a147257-releases/2026/4",
+   "genai": "2026.4.1.0-3408-ab01d1771e4",
+   "new_tokens": 128,
+   "ts": 1793034437.5046163,
+   "cpu_precision": "f32",
+   "load_s": 1.4169271000428125,
+   "rss_after_load_mb": 206.942208
+  }
+ },
+ {
+  "device": "CPU",
+  "target_prompt": 128,
+  "prompt_tokens": 128,
+  "gen_tokens": 128,
+  "ttft_ms": 544.1303100585938,
+  "tpot_ms": 11.595623016357422,
+  "ipot_ms": 15.752789497375488,
+  "throughput_tok_s": 86.23943328857422,
+  "generate_ms": 2017.3819580078125,
+  "inference_ms": 1979.08203125,
+  "wall_s": 2.0174470999045298,
+  "rep": 0,
+  "warmup": true,
+  "rss_mb": 1083.16672,
+  "ts": 1793034440.9440281,
+  "text_head": " light rail line through the eastern districts and adding three bus rapid transit corridors. Resi
+### genai_q8_GPU_def.json
+[
+ {
+  "meta": {
+   "box": "delta",
+   "device": "GPU",
+   "model": "Qwen3-8B-int4-ov",
+   "ov": "2026.4.1-22982-e213a147257-releases/2026/4",
+   "genai": "2026.4.1.0-3408-ab01d1771e4",
+   "new_tokens": 128,
+   "ts": 1793038153.155312,
+   "load_s": 13.374163800035603,
+   "rss_after_load_mb": 5525.397504
+  }
+ },
+ {
+  "device": "GPU",
+  "target_prompt": 128,
+  "prompt_tokens": 128,
+  "gen_tokens": 128,
+  "ttft_ms": 504.6950988769531,
+  "tpot_ms": 42.75389099121094,
+  "ipot_ms": 46.35538101196289,
+  "throughput_tok_s": 23.389684677124023,
+  "generate_ms": 5936.0341796875,
+  "inference_ms": 5888.8671875,
+  "wall_s": 5.936126800021157,
+  "rep": 0,
+  "warmup": true,
+  "rss_mb": 5582.864384,
+  "ts": 1793038172.477829,
+  "text_head": " light rail line through the eastern districts and adding three bus rapid transit corridors. Residents raised questions about funding
+### genai_q8_CPU_def.json
+[
+ {
+  "meta": {
+   "box": "delta",
+   "device": "CPU",
+   "model": "Qwen3-8B-int4-ov",
+   "ov": "2026.4.1-22982-e213a147257-releases/2026/4",
+   "genai": "2026.4.1.0-3408-ab01d1771e4",
+   "new_tokens": 128,
+   "ts": 1793036062.8327913,
+   "cpu_precision": "f32",
+   "load_s": 2.2419012000318617,
+   "rss_after_load_mb": 711.630848
+  }
+ },
+ {
+  "device": "CPU",
+  "target_prompt": 128,
+  "prompt_tokens": 128,
+  "gen_tokens": 128,
+  "ttft_ms": 20751.54296875,
+  "tpot_ms": 110.85252380371094,
+  "ipot_ms": 272.1031188964844,
+  "throughput_tok_s": 9.020994186401367,
+  "generate_ms": 34830.75390625,
+  "inference_ms": 34762.1640625,
+  "wall_s": 34.830813500098884,
+  "rep": 0,
+  "warmup": true,
+  "rss_mb": 8963.387392,
+  "ts": 1793036099.905742,
+  "text_head": " light rail line through the eastern districts and adding three bus rapid transit corridors. Residents rais

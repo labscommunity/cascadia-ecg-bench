@@ -1,0 +1,21 @@
+[12:13:59] [delta/E-delta-q3-0.6b-GPU] launch server: C:\ptlbench\models\Qwen3-0.6B-int4-ov engine=ov-genai device=GPU api=:8130 extra=
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" run "C:\ptlbench\models\Qwen3-0.6B-int4-ov" --engine ov-genai --device GPU --api :8130 
+LAUNCH rc=0 cmdpid=1540 childpid=2828
+[12:14:03] [delta/E-delta-q3-0.6b-GPU] waiting for health
+[12:14:03] [delta/E-delta-q3-0.6b-GPU] HEALTHY after 0s model=Qwen3-0.6B-int4-ov
+[12:14:03] [delta/E-delta-q3-0.6b-GPU] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 0.146, "status": 200, "error": null, "text": "To solve this problem, we need to calculate the **total p
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 0.168, "status": 200, "error": null, "text": "Lane 2 is closed ahead due to a stalled vehicle. Mer
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 0.163, "status": 200, "error": null, "text": "**Night Shift: A Quiet Moment**  \nAt 3 a.m., a", "confi
+[12:14:07] [delta/E-delta-q3-0.6b-GPU] bench perf (warmup 1, repeats 2)
+warmup short ttft 0.0563 dec 171.618 tok 19 status 200 
+bench short ttft 0.1345 dec 1517.425 tok 19 status 200 
+bench medium ttft 0.0614 dec 156.0 tok 256 status 200 
+bench long ttft 0.5024 dec 140.463 tok 233 status 200 
+bench short ttft 0.0375 dec 145.476 tok 19 status 200 
+bench medium ttft 0.0648 dec 142.308 tok 256 status 200 
+bench long ttft 0.7061 dec 113.827 tok 233 status 200 
+[12:14:23] [delta/E-delta-q3-0.6b-GPU] stop server
+STOPPED n=1
+[12:14:24] [delta/E-delta-q3-0.6b-GPU] collect results
+[12:14:24] [delta/E-delta-q3-0.6b-GPU] done

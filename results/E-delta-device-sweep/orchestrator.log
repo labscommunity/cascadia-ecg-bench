@@ -34,3 +34,24 @@ PROC=ovms.exe
 [11:52:53] [delta] delta sweep done
 [11:53:39] [delta2] existing ptlbench NPU/GPU/CPU results for Qwen3-0.6B / 8B on delta (reference)
 [11:53:40] [delta2] pause booth node again
+[12:13:56] [delta/E-delta-q3-0.6b-NPU] TIMEOUT after 1200 s
+[12:13:56] [delta/E-delta-q3-0.6b-NPU] server did not become healthy; tail of server.log:
+[12:14:03] [delta/E-delta-q3-0.6b-GPU] HEALTHY after 0s model=Qwen3-0.6B-int4-ov
+bench short ttft 0.1345 dec 1517.425 tok 19 status 200 
+bench medium ttft 0.0614 dec 156.0 tok 256 status 200 
+bench long ttft 0.5024 dec 140.463 tok 233 status 200 
+bench short ttft 0.0375 dec 145.476 tok 19 status 200 
+bench medium ttft 0.0648 dec 142.308 tok 256 status 200 
+bench long ttft 0.7061 dec 113.827 tok 233 status 200 
+bench.jsonl
+bench.util.jsonl
+[12:14:29] [delta/E-delta-q3-0.6b-CPU] HEALTHY after 0s model=Qwen3-0.6B-int4-ov
+bench short ttft 0.0611 dec 119.824 tok 19 status 200 
+bench medium ttft 1.2636 dec 103.44 tok 235 status 200 
+bench long ttft 35.5896 dec None tok 256 status 200 
+bench short ttft 0.0879 dec 118.983 tok 19 status 200 
+bench medium ttft 1.7745 dec 132.714 tok 235 status 200 
+bench long ttft 35.4597 dec None tok 256 status 200 
+bench.jsonl
+bench.util.jsonl
+[12:17:02] [delta2] restore booth node

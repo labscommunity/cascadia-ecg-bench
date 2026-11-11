@@ -2,3 +2,11 @@
 CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" run "C:\ptlbench\models\Qwen3-0.6B-int4-ov" --engine ov-genai --device NPU --api :8130 
 LAUNCH rc=0 cmdpid=7888 childpid=15200
 [11:53:51] [delta/E-delta-q3-0.6b-NPU] waiting for health
+[12:13:56] [delta/E-delta-q3-0.6b-NPU] TIMEOUT after 1200 s
+[12:13:56] [delta/E-delta-q3-0.6b-NPU] server did not become healthy; tail of server.log:
+[2m2026-11-11T17:53:47.056854Z[0m [32m INFO[0m [2mcascadia_cli[0m[2m:[0m cascadia run (single machine) [3mmodel[0m[2m=[0mC:\ptlbench\models\Qwen3-0.6B-int4-ov [3mdevice[0m[2m=[0mNPU [3mengine[0m[2m=[0mOvGenai
+[2m2026-11-11T17:53:47.057036Z[0m [32m INFO[0m [2mcascadia_cli[0m[2m:[0m cascadia worker starting [3mengine[0m[2m=[0mOvGenai [3mrank[0m[2m=[0m0 [3mtotal[0m[2m=[0m1 [3mdevice[0m[2m=[0mNPU [3mmodel[0m[2m=[0mC:\ptlbench\models\Qwen3-0.6B-int4-ov
+[2m2026-11-11T17:53:47.064945Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner connect [3mupstream[0m[2m=[0mNone [3mdownstream[0m[2m=[0mNone
+[2m2026-11-11T17:53:47.064980Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner load
+terminated cascadia.exe pid=15200 rc=0
+STOPPED n=1

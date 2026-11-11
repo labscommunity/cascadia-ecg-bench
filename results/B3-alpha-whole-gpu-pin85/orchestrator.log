@@ -10,3 +10,14 @@ LAUNCH rc=0 cmdpid=3896 childpid=7536
 [11:57:31] [alpha/B3-alpha-whole-gpu-pin85] idle baseline (30 s)
 {"seconds":30,"started":"2026-11-11T09:57:32.3014222-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.2271,"pkg_power_mw_avg":3680.73,"pkg_energy_mj":110829.41,"ddr_reads_mb_s":141.54,"ddr_writes_mb_s":83.62,"ddr_total_gb_s":0.22}
 [11:58:08] [alpha/B3-alpha-whole-gpu-pin85] bench perf (warmup 1, repeats 3)
+warmup short ttft 0.7403 dec 1.882 tok 15 status 200 
+bench short ttft 0.5867 dec 1.892 tok 15 status 200 
+bench medium ttft 1.1809 dec 1.951 tok 256 status 200 
+bench long ttft 4.1628 dec 1.936 tok 256 status 200 
+bench short ttft 0.604 dec 1.779 tok 15 status 200 
+bench medium ttft 1.3236 dec 1.893 tok 256 status 200 
+bench long ttft 4.0563 dec 1.954 tok 256 status 200 
+bench short ttft 0.5914 dec 1.763 tok 15 status 200 
+bench medium ttft 1.1427 dec 1.905 tok 256 status 200 
+bench long ttft 4.1597 dec 1.945 tok 256 status 200 
+[12:13:34] [alpha/B3-alpha-whole-gpu-pin85] parity set

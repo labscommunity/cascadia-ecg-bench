@@ -129,8 +129,7 @@ slider added in driver 32.0.101.6987). The slider writes `HKLM\SYSTEM\CurrentCon
 (DWORD, percent); tate-07 carried 82, the NUCs had no value. Setting it to 85 and rebooting raised OpenVINO's `GPU_DEVICE_TOTAL_MEM_SIZE`
 on alpha, beta and charlie from 16.46 GiB to **24.77 GiB** (dxdiag's static "Shared Memory" line does not change). Neither the
 compute-runtime percentage knob (`ClDeviceGlobalMemSizeAvailablePercent`) nor the adapter's `HardwareInformation.qwMemorySize` had any effect.
-The whole 35B on a 32 GB NUC with the 85% window: see B3 below (TBD until it lands). The setting was left in place on the three NUCs; remove the
-value to return to the 57% default.
+**But a bigger allocation window alone does not fix the 32 GB whole-model case (B3):** with the 24.77 GiB window the whole 35B on alpha still decodes at 1.9 tok/s, and the process's resident GPU shared memory sits at 18.4 GB, exactly the segment size dxdiag still reports (18,412 MB). The pinning limit raises what the GPU may allocate, not the WDDM shared segment it keeps resident, so the model still pages every token. tate-07 has both values high (82% and a 52 GiB `HardwareInformation.qwMemorySize`); raising the segment size on alpha as well is tested as B4 (TBD). The pinning setting was left in place on the three NUCs; remove the value to return to the 57% default.
 
 ### 6.2 Concurrency through OVMS continuous batching (64 GB box)
 With the enterprise OVMS backend (continuous batching, 8 GB KV cache, up to 8 sequences) serving the official 35B IR on tate-07's GPU:
