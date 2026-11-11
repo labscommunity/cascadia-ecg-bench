@@ -1,0 +1,1 @@
+﻿{"seconds":30,"started":"2026-11-11T01:05:12.3741824-08:00","host":"CHARLIE","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.4644,"pkg_power_mw_avg":3035.81,"pkg_energy_mj":92129.76,"ddr_reads_mb_s":187.91000000000003,"ddr_writes_mb_s":94.289999999999992,"ddr_total_gb_s":0.28}

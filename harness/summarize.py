@@ -39,8 +39,18 @@ for d in sorted(glob.glob(os.path.join(a.root, '*'))):
     if row['steady_dec'] and row['steady_W']: row['tok_per_J'] = round(row['steady_dec'] / row['steady_W'], 2)
     u = jl(os.path.join(base, 'steady.util.jsonl')); ui = jl(os.path.join(base, 'idle.util.jsonl'))
     if u:
+        def adapt(x):
+            m = x.get('shared_mb_by_adapter') or {}; e = x.get('eng_by_adapter') or {}
+            if not m or not e: return (None, None)
+            g = max(m, key=lambda k: m[k])
+            gpu = max((v for v in (e.get(g) or {}).values()), default=0.0)
+            npu = sum(v for l, d in e.items() if l != g for v in d.values())
+            return (gpu, npu)
+        ab = [adapt(x) for x in u]
+        if any(a[0] is not None for a in ab):
+            row['gpu_busy_pct'] = med([a[0] for a in ab]); row['npu_busy_pct'] = med([a[1] for a in ab])
         row['cpu_pct'] = med([x.get('cpu_util_pct') for x in u]); row['gpu_3d_pct'] = med([x.get('gpu_3d_pct') for x in u]); row['gpu_compute_pct'] = med([x.get('gpu_compute_pct') for x in u])
-        row['npu_pct'] = med([x.get('gpu_neural_pct') for x in u]); row['gpu_shared_GB'] = round((med([x.get('gpu_shared_mb') for x in u]) or 0) / 1024, 1)
+        row['gpu_neural_pct'] = med([x.get('gpu_neural_pct') for x in u]); row['gpu_copy_pct'] = med([x.get('gpu_copy_pct') for x in u]); row['gpu_shared_GB'] = round((med([x.get('gpu_shared_mb') for x in u]) or 0) / 1024, 1)
         row['proc_ws_GB'] = round((med([x.get('proc_ws_mb') for x in u]) or 0) / 1024, 1); row['committed_GB'] = round((med([x.get('mem_committed_mb') for x in u]) or 0) / 1024, 1)
     if ui: row['idle_committed_GB'] = round((med([x.get('mem_committed_mb') for x in ui]) or 0) / 1024, 1)
     for rk in sorted(glob.glob(os.path.join(d, 'rank*-*'))):
@@ -49,7 +59,7 @@ for d in sorted(glob.glob(os.path.join(a.root, '*'))):
         uu = jl(os.path.join(rk, f'steady-{rn}.util.jsonl'))
         if uu: row[f'{rn}_gpu_shared_GB'] = round((med([x.get('gpu_shared_mb') for x in uu]) or 0) / 1024, 1); row[f'{rn}_ws_GB'] = round((med([x.get('proc_ws_mb') for x in uu]) or 0) / 1024, 1)
     rows.append(row)
-cols = ['run', 'short_ptok', 'short_ttft_s', 'medium_ptok', 'medium_ttft_s', 'long_ptok', 'long_ttft_s', 'medium_dec', 'steady_dec', 'steady_e2e', 'idle_W', 'steady_W', 'tok_per_J', 'steady_ddr_GBs', 'cpu_pct', 'gpu_compute_pct', 'gpu_3d_pct', 'npu_pct', 'gpu_shared_GB', 'proc_ws_GB', 'committed_GB']
+cols = ['run', 'short_ptok', 'short_ttft_s', 'medium_ptok', 'medium_ttft_s', 'long_ptok', 'long_ttft_s', 'medium_dec', 'steady_dec', 'steady_e2e', 'idle_W', 'steady_W', 'tok_per_J', 'steady_ddr_GBs', 'cpu_pct', 'gpu_busy_pct', 'gpu_neural_pct', 'gpu_copy_pct', 'npu_busy_pct', 'gpu_shared_GB', 'proc_ws_GB', 'committed_GB']
 extra = sorted({k for r in rows for k in r} - set(cols) - {'status'})
 print('| ' + ' | '.join(cols) + ' |'); print('|' + '---|' * len(cols))
 for r in rows: print('| ' + ' | '.join('' if r.get(c) is None else str(r.get(c)) for c in cols) + ' |')

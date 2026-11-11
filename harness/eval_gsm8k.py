@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """GSM8K subset eval through an OpenAI-compatible endpoint (greedy). Scores numeric exact match on 'Answer: N'.
 usage: eval_gsm8k.py --base http://127.0.0.1:8130 --n 40 --out eval.jsonl --tag model=35b [--thinking off] [--max-tokens 512]"""
-import argparse, json, re, time, os, urllib.request
+import argparse, json, re, time, os, urllib.request, sys
+for _s in (sys.stdout, sys.stderr):
+    try: _s.reconfigure(encoding='utf-8', errors='replace')
+    except Exception: pass
 ap = argparse.ArgumentParser()
 ap.add_argument('--base', default='http://127.0.0.1:8130'); ap.add_argument('--token', default='dev-token')
 ap.add_argument('--data', default=os.path.join(os.path.dirname(__file__), 'gsm8k_test_60.json'))

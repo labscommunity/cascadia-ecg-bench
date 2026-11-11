@@ -23,7 +23,7 @@ INT4 weight footprints (from the configs; experts at 4.125 bits = u4 + f16 scale
 | Model | Params | INT4 IR | Per decoder layer | Fits one 32 GB GPU window? | Fits the 64 GB GPU window? |
 |---|---|---|---|---|---|
 | Qwen3.6-35B-A3B | 35B (3B active) | 19.4 GB (official OpenVINO IR, asym g64) | ~0.46 GB | **No** (19.4 > 17.7; loads oversubscribed, see B1) | Yes (19.4 of 52) |
-| Qwen3.5-122B-A10B | 122B (10B active) | ~64 GB (built here from the GPTQ-Int4 checkpoint) | ~1.30 GB | No | **No** (64 > 52, and > 61 GB RAM) |
+| Qwen3.5-122B-A10B | 122B (10B active) | 64.3 GB measured (62.6 GB language model + 0.8 GB embeddings + 0.9 GB vision/merger; built here from Qwen/Qwen3.5-122B-A10B-GPTQ-Int4 with the runtime's GPTQ builder, 21.5 min on 8 vCPUs) | ~1.30 GB | No | **No** (64 > 52, and > 61 GB RAM) |
 
 Consequences used for the shard plan:
 - 35B on a 32 GB NUC: 2 shards (8.1 + 9.9 GB) or 3 shards (5.3 / 6.5 / 7.4 GB) each fit the 17.7 GB window with room for KV/activations.

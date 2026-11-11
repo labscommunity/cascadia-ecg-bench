@@ -1,0 +1,16 @@
+[03:36:06] [charlie/B1b-charlie-whole-gpu] launch server: C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov engine=ov-genai device=GPU api=:8130 extra=
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" run "C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov" --engine ov-genai --device GPU --api :8130 
+LAUNCH rc=0 cmdpid=9140 childpid=7476
+[03:36:10] [charlie/B1b-charlie-whole-gpu] waiting for health
+[03:37:43] [charlie/B1b-charlie-whole-gpu] HEALTHY after 92s model=Qwen3.6-35B-A3B-int4-ov
+[03:37:43] [charlie/B1b-charlie-whole-gpu] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 9.471, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the num
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 9.667, "status": 200, "error": null, "text": "**Spanish:**  \nLa carril 2 est[03:39:20] [charlie/B1b-charlie-whole-gpu] bench perf (warmup 1, repeats 1)
+warmup short ttft 0.7381 dec 1.526 tok 15 status 200 
+bench short ttft 0.6671 dec 1.61 tok 15 status 200 
+bench medium ttft 1.2906 dec 1.688 tok 256 status 200 
+bench long ttft 4.2316 dec 1.714 tok 256 status 200 
+[03:46:08] [charlie/B1b-charlie-whole-gpu] stop server
+STOPPED n=1
+[03:46:09] [charlie/B1b-charlie-whole-gpu] collect results
+[03:46:09] [charlie/B1b-charlie-whole-gpu] done

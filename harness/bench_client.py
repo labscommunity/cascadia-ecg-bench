@@ -11,6 +11,9 @@ Greedy (temperature 0), thinking off by default (chat_template_kwargs.enable_thi
 Modes: bench (default) | steady (continuous N-token requests for --seconds; for power sampling) | calib (usage only)
 """
 import argparse, json, sys, time, threading, urllib.request, urllib.error, os, platform
+for _s in (sys.stdout, sys.stderr):
+    try: _s.reconfigure(encoding='utf-8', errors='replace')
+    except Exception: pass
 
 ap = argparse.ArgumentParser()
 ap.add_argument('--base', default='http://127.0.0.1:8130'); ap.add_argument('--token', default='dev-token'); ap.add_argument('--model', default='')

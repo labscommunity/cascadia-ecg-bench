@@ -4,3 +4,41 @@ LAUNCH rc=0 cmdpid=6136 childpid=33268
 [03:35:04] [tate07/A3-tate07-2shard-colocated] waiting for health
 [03:35:34] [tate07/A3-tate07-2shard-colocated] HEALTHY after 29s model=q36-2stage
 [03:35:34] [tate07/A3-tate07-2shard-colocated] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 0.791, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the num
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 0.82, "status": 200, "error": null, "text": "**Spanish:**  \nLa carril 2 est[03:36:00] [tate07/A3-tate07-2shard-colocated] idle baseline (30 s)
+{"seconds":30,"started":"2026-11-11T01:36:05.2858488-08:00","host":"PDX88-PA0794","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.3067,"pkg_power_mw_avg":6789.11,"pkg_energy_mj":204520.2,"ddr_reads_mb_s":1536.77,"ddr_writes_mb_s":1227.19,"ddr_total_gb_s":2.7}
+[03:36:40] [tate07/A3-tate07-2shard-colocated] bench perf (warmup 1, repeats 3)
+warmup short ttft 0.2401 dec 28.284 tok 15 status 200 
+bench short ttft 0.2734 dec 29.817 tok 15 status 200 
+bench medium ttft 1.6436 dec 29.07 tok 256 status 200 
+bench long ttft 11.6753 dec 27.553 tok 256 status 200 
+bench short ttft 0.2604 dec 32.952 tok 15 status 200 
+bench medium ttft 1.5593 dec 34.042 tok 256 status 200 
+bench long ttft 11.3708 dec 31.632 tok 256 status 200 
+bench short ttft 0.2374 dec 33.847 tok 15 status 200 
+bench medium ttft 1.5303 dec 34.22 tok 256 status 200 
+bench long ttft 11.332 dec 31.706 tok 256 status 200 
+[03:39:13] [tate07/A3-tate07-2shard-colocated] parity set
+bench p_code ttft 0.3636 dec 34.303 tok 160 status 200
+bench p_reason ttft 0.3579 dec 34.813 tok 160 status 200
+bench p_explain ttft 0.3174 dec 34.741 tok 160 status 200
+bench p_json ttft 0.3714 dec 34.662 tok 146 status 200
+bench p_list ttft 0.2848 dec 34.816 tok 136 status 200
+bench p_math ttft 0.3509 dec 34.943 tok 160 status 200
+Traceback (most recent call last):
+File "C:\ecgbench\harness\bench_client.py", line 121, in <module>
+r = measure(p['id'], p['text'], p.get('max_tokens', args.max_tokens), diag=(args.stream_diag and rep == 0)); r.update({'kind': 'bench', 'rep': rep}); emit(r)
+^^^^^^^
+File "C:\ecgbench\harness\bench_client.py", line 89, in emit
+line = json.dumps(rec, ensure_ascii=False); print(line, flush=True)
+^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\devcloud\AppData\Local\Programs\Python\Python311\Lib\encodings\cp1252.py", line 19, in encode
+return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 377-380: character maps to <undefined>
+[03:39:49] [tate07/A3-tate07-2shard-colocated] steady-state power (90 s loop, 60 s SoC Watch)
+{"seconds":60,"started":"2026-11-11T01:40:09.6592572-08:00","host":"PDX88-PA0794","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.2997,"pkg_power_mw_avg":30855.08,"pkg_energy_mj":1855059.63,"ddr_reads_mb_s":54223.320000000007,"ddr_writes_mb_s":4654.66,"ddr_total_gb_s":57.5}
+[03:41:45] [tate07/A3-tate07-2shard-colocated] stop server
+STOPPED n=1
+[03:41:46] [tate07/A3-tate07-2shard-colocated] collect results
+[03:45:10] [tate07/A3-tate07-2shard-colocated] done
