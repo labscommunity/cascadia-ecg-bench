@@ -9,3 +9,4 @@ LAUNCH rc=0 cmdpid=17916 childpid=37152
 {"seconds":30,"started":"2026-11-11T01:11:56.8621459-08:00","host":"PDX88-PA0794","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.3023,"pkg_power_mw_avg":7439.54,"pkg_energy_mj":224031.68,"ddr_reads_mb_s":1560.49,"ddr_writes_mb_s":1006.5799999999999,"ddr_total_gb_s":2.51}
 [03:12:31] [tate07/A1-tate07-whole-gpu] bench perf (warmup 1, repeats 3)
 [03:13:24] [tate07/A1-tate07-whole-gpu] parity set
+[03:13:51] [tate07/A1-tate07-whole-gpu] steady-state power (90 s loop, 60 s SoC Watch)
