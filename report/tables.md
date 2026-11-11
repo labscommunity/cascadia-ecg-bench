@@ -29,6 +29,7 @@
 ## Per-rank package power during chain decode (W)
 
 - C1-2nuc-2shard: rank0 15.0 W, rank1 15.7 W -> total 30.7 W
+- C2-3nuc-3shard: rank0 9.0 W, rank1 9.1 W, rank2 9.5 W -> total 27.6 W
 
 ## Sharding multipliers (relative to the whole model on the 64 GB box, A1b)
 
@@ -61,5 +62,6 @@
 | run | correct | accuracy | completion tokens | wall s |
 |---|---|---|---|---|
 | A1-tate07-whole-gpu-eval | 37/40 | 92.5% | 11923 | 279.5 |
+| C2-3nuc-3shard-eval | 36/40 | 90.0% | 12274 | 1080.4 |
 
 Notes: B1b-charlie-whole-gpu: power/utilization from the B1 window (same server state); steady decode there was measured end-to-end

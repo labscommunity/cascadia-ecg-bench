@@ -1,0 +1,25 @@
+[2m2026-11-11T10:23:00.937896Z[0m [32m INFO[0m [2mcascadia_cli[0m[2m:[0m cascadia worker starting [3mengine[0m[2m=[0mQwen36Moe [3mrank[0m[2m=[0m1 [3mtotal[0m[2m=[0m3 [3mdevice[0m[2m=[0mGPU [3mmodel[0m[2m=[0mC:\ecgbench\shards\q36-3stage
+[2m2026-11-11T10:23:00.938130Z[0m [32m INFO[0m [2mcascadia_cli[0m[2m:[0m qwen35 prefix-cache budget [3mprefix_cache_gib[0m[2m=[0m0
+[2m2026-11-11T10:23:00.938156Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner connect [3mupstream[0m[2m=[0mSome(PeerEndpoint { host: "0.0.0.0", port: 9100 }) [3mdownstream[0m[2m=[0mSome(PeerEndpoint { host: "192.168.0.188", port: 9100 })
+[2m2026-11-11T10:23:00.939151Z[0m [32m INFO[0m [2mcascadia_transport[0m[2m:[0m ActivationServer listening [3mhost[0m[2m=[0m0.0.0.0 [3mport[0m[2m=[0m9100
+[2m2026-11-11T10:23:00.939650Z[0m [32m INFO[0m [2mcascadia_transport[0m[2m:[0m waiting for downstream peer to accept (start the downstream worker first) [3mtarget[0m[2m=[0m192.168.0.188:9100 [3mtimeout_s[0m[2m=[0m60
+[2m2026-11-11T10:23:00.957869Z[0m [32m INFO[0m [2mcascadia_transport[0m[2m:[0m ActivationClient connected [3mtarget[0m[2m=[0m192.168.0.188:9100
+[2m2026-11-11T10:23:27.207596Z[0m [32m INFO[0m [2mcascadia_transport[0m[2m:[0m ActivationServer accepted connection [3mpeer[0m[2m=[0m192.168.0.101:56630
+[2m2026-11-11T10:23:27.207656Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner load
+[2m2026-11-11T10:23:50.992420Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m load progress qwen35 (qwen3_5_moe, hidden 2048): 3 stages from C:\ecgbench\shards\q36-3stage (rank 1/3)
+[2m2026-11-11T10:23:50.992451Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m load progress compiling stage1 (layers 13..25) on GPU
+[2m2026-11-11T10:23:50.992455Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m load progress ready
+[2m2026-11-11T10:23:50.992458Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner build engine
+[2m2026-11-11T10:23:50.992467Z[0m [33m WARN[0m [2mcascadia_engine_openvino::qwen36[0m[2m:[0m qwen35: the prefix cache is single-process only; disabled for this pipeline (the kv_coord plane's CAPTURE/RESTORE covers multi-rank) [3mtotal[0m[2m=[0m3
+[2m2026-11-11T10:23:50.992471Z[0m [32m INFO[0m [2mcascadia_engine_openvino::qwen36[0m[2m:[0m qwen35 prefix cache [3mbudget_gib[0m[2m=[0m0 [3mim_start[0m[2m=[0mNone [3mmax_ctx[0m[2m=[0mNone
+[2m2026-11-11T10:23:50.992491Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner warmup
+[2m2026-11-11T10:23:50.992495Z[0m [32m INFO[0m [2mcascadia_engine_openvino::qwen36[0m[2m:[0m qwen35 rank 1: skipping warmup (relay)
+[2m2026-11-11T10:23:50.992500Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner ready
+[2m2026-11-11T10:23:51.079955Z[0m [32m INFO[0m [2mcascadia_discovery[0m[2m:[0m cascadia service registered [3mnode_id[0m[2m=[0mbeta-r1 [3mport[0m[2m=[0m9100
+[2m2026-11-11T10:23:51.080298Z[0m [32m INFO[0m [2mcascadia_cli[0m[2m:[0m entering relay loop
+[2m2026-11-11T10:23:51.587241Z[0m [32m INFO[0m [2mcascadia_engine_openvino::qwen36[0m[2m:[0m qwen36 pipeline handshake ok [3mcapture_v2[0m[2m=[0m0
+[2m2026-11-11T10:58:09.941506Z[0m [33m WARN[0m [2mcascadia_engine_openvino::qwen36[0m[2m:[0m qwen36 pipeline step failed [3merror[0m[2m=[0mbackend error: qwen36 pipeline wire: io error: An existing connection was forcibly closed by the remote host. (os error 10054)
+[2m2026-11-11T10:58:09.941572Z[0m [33m WARN[0m [2mcascadia_runner[0m[2m:[0m relay step failed [3merror[0m[2m=[0mbackend error: qwen36 pipeline wire: io error: An existing connection was forcibly closed by the remote host. (os error 10054)
+[2m2026-11-11T10:58:10.142138Z[0m [33m WARN[0m [2mcascadia_engine_openvino::qwen36[0m[2m:[0m qwen36 pipeline step failed [3merror[0m[2m=[0mbackend error: qwen36 pipeline wire: not connected; call connect()/accept() first
+[2m2026-11-11T10:58:10.142180Z[0m [33m WARN[0m [2mcascadia_runner[0m[2m:[0m relay step hit a dead peer link; exiting for supervisor rebuild [3merror[0m[2m=[0mbackend error: qwen36 pipeline wire: not connected; call connect()/accept() first
+Error: relay loop exited: peer link dead; rebuild needed
