@@ -259,7 +259,7 @@ token back from tate-07 to alpha over the relay. Every stage fits its GPU with r
 
 | D2sym: 122B, 3 NUCs + 64 GB tail | TTFT short / medium / long | decode tok/s | head GPU busy | head W (idle → steady) | chain power | GSM8K-20 |
 |---|---|---|---|---|---|---|
-| 2 repeats | 2.0 / 18.5 / 108–137 s | 1.2–2.7 (medium 1.6–2.4, long 1.9–2.0) | 5% | 3.1 → 6.8 | D2SYM_POWER | D2SYM_GSM |
+| 2 repeats | 2.0 / 18.5 / 108–137 s | 1.2–2.7 (medium 1.6–2.4, long 1.9–2.0) | 5% | 3.1 → 6.8 | 28.7 W (alpha 7.6 + beta 8.3 + charlie 4.5 + tate-07 8.3), i.e. 0.07 tok/J: four GPUs mostly idling on the relay | D2SYM_GSM |
 
 This is the first configuration in which the 122B runs the way it should on Panther Lake GPUs, and its speed has nothing to do with the GPUs: each
 token crosses the NUC→Tiber relay twice (activations out to the tail, the sampled token back to the head), at 110–350 ms a crossing, so decode is
