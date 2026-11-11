@@ -62,6 +62,7 @@
 | run | correct | accuracy | completion tokens | wall s |
 |---|---|---|---|---|
 | A1-tate07-whole-gpu-eval | 37/40 | 92.5% | 11923 | 279.5 |
+| A3-tate07-2shard-colocated-eval | 36/40 | 90.0% | 12274 | 369.8 |
 | C2-3nuc-3shard-eval | 36/40 | 90.0% | 12274 | 1080.4 |
 
 Notes: B1b-charlie-whole-gpu: power/utilization from the B1 window (same server state); steady decode there was measured end-to-end

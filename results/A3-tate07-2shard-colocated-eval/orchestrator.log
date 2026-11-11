@@ -1,1 +1,3 @@
 [05:45:31] eval start on tate07 (A3-tate07-2shard-colocated-eval, n=40)
+{"kind": "summary", "n": 40, "correct": 36, "accuracy": 0.9, "total_completion_tokens": 12274, "wall_s": 369.8, "config": "A3-2shard-colocated-64gb", "stages": "2", "model": "q36-35b"}
+[05:52:45] eval done
