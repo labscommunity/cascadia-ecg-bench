@@ -229,8 +229,24 @@ weights to the CPU to relieve the GPU window; it is not a remedy for the 32 GB w
 because the device string lost its comma in the launch path: an unquoted `HETERO:GPU,CPU` is a two-element array in PowerShell; `results/E-alpha-35b-hetero`,
 `results/E-charlie-35b-hetero2`.)
 
-### 7.5 122B as a 3-stage all-local pipeline on the NUCs (D3)
-(pending: D3 result)
+### 7.5 122B all-local on three 32 GB NUCs (D3): runs, but every stage exceeds the resident GPU segment
+The GPTQ-sym 122B IR cut into 3 even stages (19.8 / 23 / 23 GB) loads on alpha, beta and charlie with the 85% windows (20–21 GB resident per rank,
+pipeline healthy 14 s after launch; the GPU plugin compiles every stage, which is the builder fix working at 122B scale). But each stage is larger than
+the 18.4 GB segment the driver keeps resident (7.2), so all three ranks page weights on every token:
+
+| D3: 122B, 3 NUCs (19.8 / 23 / 23 GB stages) | TTFT short / medium / long | decode tok/s | head GPU compute / copy % | head GPU shared |
+|---|---|---|---|---|
+| measured (2 repeats short+medium, 1 long) | 3.8 / 12 / 79 s | **0.57** on every prompt | 30% / 26% | 18.0 GB (the resident cap) |
+
+The copy engine at 26% is the weight paging; the whole 35B on one NUC (B1b/B3) shows the same signature at 1.7–1.9 tok/s with a 1 GB
+overshoot, and here the overshoot is 1.4–4.6 GB per rank.
+
+This is the same failure mode as the whole 35B on one NUC, three times over. The 122B needs stages of at most ~18 GB on 32 GB Panther Lake boxes,
+i.e. **four or more 32 GB nodes** (16 GB per stage) or a 64 GB node for the tail. The run was cut after the first 1k-token measurement; the GSM8K
+pass was moved to the 4-stage layout below.
+
+### 7.6 122B with every stage inside its GPU segment (D2sym): three NUCs + a 64 GB tail over the relay
+D2SYM_SECTION
 
 ## 8. Scope notes
 - Continuous-batching concurrency on the whole model (A5) could not be run: the runtime's `--cb` path refuses VLM-layout exports, which is what the

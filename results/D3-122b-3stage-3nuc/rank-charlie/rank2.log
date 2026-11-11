@@ -1,0 +1,18 @@
+[2m2026-11-11T20:49:33.766296Z[0m [32m INFO[0m [2mcascadia_cli[0m[2m:[0m cascadia worker starting [3mengine[0m[2m=[0mQwen36Moe [3mrank[0m[2m=[0m2 [3mtotal[0m[2m=[0m3 [3mdevice[0m[2m=[0mGPU [3mmodel[0m[2m=[0mC:\ecgbench\shards\q122-sym-3
+[2m2026-11-11T20:49:33.766471Z[0m [32m INFO[0m [2mcascadia_cli[0m[2m:[0m qwen35 prefix-cache budget [3mprefix_cache_gib[0m[2m=[0m0
+[2m2026-11-11T20:49:33.766497Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner connect [3mupstream[0m[2m=[0mSome(PeerEndpoint { host: "0.0.0.0", port: 9100 }) [3mdownstream[0m[2m=[0mNone
+[2m2026-11-11T20:49:33.767395Z[0m [32m INFO[0m [2mcascadia_transport[0m[2m:[0m ActivationServer listening [3mhost[0m[2m=[0m0.0.0.0 [3mport[0m[2m=[0m9100
+[2m2026-11-11T20:49:58.169981Z[0m [32m INFO[0m [2mcascadia_transport[0m[2m:[0m ActivationServer accepted connection [3mpeer[0m[2m=[0m192.168.0.103:50045
+[2m2026-11-11T20:49:58.170049Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner load
+[2m2026-11-11T20:50:35.995897Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m load progress qwen35 (qwen3_5_moe, hidden 3072): 3 stages from C:\ecgbench\shards\q122-sym-3 (rank 2/3)
+[2m2026-11-11T20:50:35.995941Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m load progress compiling stage2 (layers 32..47) on GPU
+[2m2026-11-11T20:50:35.995945Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m load progress ready
+[2m2026-11-11T20:50:35.995948Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner build engine
+[2m2026-11-11T20:50:35.996711Z[0m [33m WARN[0m [2mcascadia_engine_openvino::qwen36[0m[2m:[0m qwen35: the prefix cache is single-process only; disabled for this pipeline (the kv_coord plane's CAPTURE/RESTORE covers multi-rank) [3mtotal[0m[2m=[0m3
+[2m2026-11-11T20:50:35.996966Z[0m [32m INFO[0m [2mcascadia_engine_openvino::qwen36[0m[2m:[0m qwen35 prefix cache [3mbudget_gib[0m[2m=[0m0 [3mim_start[0m[2m=[0mNone [3mmax_ctx[0m[2m=[0mNone
+[2m2026-11-11T20:50:36.000888Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner warmup
+[2m2026-11-11T20:50:36.001143Z[0m [32m INFO[0m [2mcascadia_engine_openvino::qwen36[0m[2m:[0m qwen35 rank 2: skipping warmup (relay)
+[2m2026-11-11T20:50:36.001167Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner ready
+[2m2026-11-11T20:50:36.153146Z[0m [32m INFO[0m [2mcascadia_discovery[0m[2m:[0m cascadia service registered [3mnode_id[0m[2m=[0mcharlie-r2 [3mport[0m[2m=[0m9100
+[2m2026-11-11T20:50:36.153757Z[0m [32m INFO[0m [2mcascadia_cli[0m[2m:[0m entering relay loop
+[2m2026-11-11T20:50:59.985915Z[0m [32m INFO[0m [2mcascadia_engine_openvino::qwen36[0m[2m:[0m qwen36 pipeline handshake ok [3mcapture_v2[0m[2m=[0m0

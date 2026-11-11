@@ -1,0 +1,43 @@
+[14:36:19] [d3] tree on pro and alpha free; sizes: 8.0K	/Users/tatef/q122-sym-stages-3/chat_template.jinja 4.0K	/Users/tatef/q122-sym-stages-3/config.json 4.0K	/Users/tatef/q122-sym-stages-3/generation_config.json  12K	/Users/tatef/q122-sym-stages-3/manifest.json 737M	/Users/tatef/q122-sym-stages-3/openvino_text_embeddings_model.bin 8.0K	/Users/tatef/q122-sym-stages-3/openvino_text_embeddings_model.xml  19G	/Users/tatef/q122-sym-stages-3/stage0  23G	/Users/tatef/q122-sym-stages-3/stage1  23G	/Users/tatef/q122-sym-stages-3/stage2  12M	/Users/tatef/q122-sym-stages-3/tokenizer.json 
+alpha free GB=24.9
+beta: removed C:\Cascadia-backup-20260911-120738 (Sept backup copy of C:\Cascadia) to make room
+beta free GB=48.7
+charlie free GB=42.4
+[14:36:22] [d3] alpha free 25 GB
+[14:36:22] [d3] WARNING: alpha has < 27 GB free for a 20-24 GB stage
+[14:36:23] [d3] beta free 49 GB
+[14:36:23] [d3] charlie free 42 GB
+[14:47:45] [d3] alpha stage0 done
+[14:49:14] [d3] beta stage1 done
+[14:49:19] [d3] charlie stage2 done
+[14:49:19] [d3] distribution done in 776s
+alpha manifest=3CC2DDD74FBF15E4 stage0=19.3GB free=4.9
+beta manifest=3CC2DDD74FBF15E4 stage1=23GB free=25.1
+charlie manifest=3CC2DDD74FBF15E4 stage2=23.3GB free=18.3
+[14:49:33] [chain/D3-122b-3stage-3nuc] launch rank 2 on charlie -Listen :9100  
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" worker --rank 2 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=2588 childpid=2600
+[14:49:57] [chain/D3-122b-3stage-3nuc] launch rank 1 on beta -Listen :9100 -Next 192.168.0.188:9100 
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" worker --rank 1 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --next 192.168.0.188:9100 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=2584 childpid=1684
+[14:50:22] [chain/D3-122b-3stage-3nuc] launch rank 0 on alpha  -Next 192.168.0.103:9100 -Api ':8130'
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" worker --rank 0 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --next 192.168.0.103:9100 --api :8130 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=2340 childpid=8524
+[14:50:46] [alpha/D3-122b-3stage-3nuc] waiting for health
+[14:51:01] [alpha/D3-122b-3stage-3nuc] HEALTHY after 14s model=q122-sym-3
+[14:51:01] [alpha/D3-122b-3stage-3nuc] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 30.165, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the nu
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 29.995, "status": 200, "error": null, "text": "**Español:**  \nEl carril 2 está cerrado más adelan
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 30.073, "status": 200, "error": null, "text": "At 03:00, the highway stretches into a void of silence"
+[14:58:12] [alpha/D3-122b-3stage-3nuc] idle baseline (30 s)
+{"seconds":30,"started":"2026-11-11T12:58:13.7989795-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.199,"pkg_power_mw_avg":3291.83,"pkg_energy_mj":99057.98,"ddr_reads_mb_s":153.98999999999998,"ddr_writes_mb_s":76.31,"ddr_total_gb_s":0.22}
+[14:58:48] [alpha/D3-122b-3stage-3nuc] bench perf (warmup 1, repeats 3)
+[15:34:12] [d3cut] cutting D3 (thrash case: enough data)
+warmup short ttft 3.7937 dec 0.581 tok 24 status 200 
+bench short ttft 3.7726 dec 0.58 tok 24 status 200 
+bench medium ttft 11.9911 dec 0.576 tok 256 status 200 
+bench long ttft 79.3581 dec 0.558 tok 256 status 200 
+bench short ttft 3.8987 dec 0.572 tok 24 status 200 
+bench medium ttft 12.3035 dec 0.57 tok 256 status 200 
+[15:34:18] [d3cut] collected: bench.jsonl bench.util.jsonl calib.jsonl idle.sw_extraSession.etl idle.sw_hwSession.etl idle.sw_infoSession.etl idle.sw_osSession.etl idle.sw.csv idle.sw.json idle.util.jsonl orchestrator.log rank-beta rank-charlie rank0.log sampler-bench.log sampler-idle.log STATUS 
+[15:34:18] [d3cut] D3 cut done
