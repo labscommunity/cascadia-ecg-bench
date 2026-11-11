@@ -23,12 +23,16 @@ ap.add_argument('--repeats', type=int, default=3); ap.add_argument('--warmup', t
 ap.add_argument('--thinking', default='off', choices=['off', 'on']); ap.add_argument('--mode', default='bench', choices=['bench', 'steady', 'calib'])
 ap.add_argument('--seconds', type=float, default=90); ap.add_argument('--steady-prompt', default='medium'); ap.add_argument('--stream-diag', action='store_true')
 ap.add_argument('--timeout', type=float, default=3600); ap.add_argument('--out', default=''); ap.add_argument('--tag', action='append', default=[])
+ap.add_argument('--path', default='/v1/chat/completions', help='chat completions path (OVMS: /v3/chat/completions)')
+ap.add_argument('--api-style', default='cascadia', choices=['cascadia', 'ovms'], help='ovms: no legacy enable_thinking field, no bearer token')
 args = ap.parse_args()
 TAGS = dict(t.split('=', 1) for t in args.tag); TAGS.setdefault('host', platform.node())
 
 def _req(path, body=None):
     data = json.dumps(body).encode() if body is not None else None
-    req = urllib.request.Request(args.base + path, data=data, headers={'Content-Type': 'application/json', 'Authorization': 'Bearer ' + args.token})
+    hdr = {'Content-Type': 'application/json'}
+    if args.api_style != 'ovms': hdr['Authorization'] = 'Bearer ' + args.token
+    req = urllib.request.Request(args.base + path, data=data, headers=hdr)
     return urllib.request.urlopen(req, timeout=args.timeout)
 
 def model_id():
@@ -38,14 +42,16 @@ def model_id():
 MODEL = model_id()
 
 def body(messages, max_tokens, stream=False):
-    return {'model': MODEL, 'messages': messages, 'max_tokens': max_tokens, 'temperature': 0, 'stream': stream,
-            'enable_thinking': args.thinking == 'on', 'chat_template_kwargs': {'enable_thinking': args.thinking == 'on'}}
+    b = {'model': MODEL, 'messages': messages, 'max_tokens': max_tokens, 'temperature': 0, 'stream': stream,
+         'chat_template_kwargs': {'enable_thinking': args.thinking == 'on'}}
+    if args.api_style != 'ovms': b['enable_thinking'] = args.thinking == 'on'
+    return b
 
 def call(messages, max_tokens):
     """Non-stream request -> (wall_s, usage, text, finish, status, error)."""
     t0 = time.perf_counter()
     try:
-        d = json.loads(_req('/v1/chat/completions', body(messages, max_tokens)).read()); wall = time.perf_counter() - t0
+        d = json.loads(_req(args.path, body(messages, max_tokens)).read()); wall = time.perf_counter() - t0
         ch = d['choices'][0]; u = d.get('usage') or {}
         text = (ch.get('message') or {}).get('content') or ''
         rc = (ch.get('message') or {}).get('reasoning_content')
@@ -59,7 +65,7 @@ def call(messages, max_tokens):
 def stream_diag(messages, max_tokens):
     t0 = time.perf_counter(); first = None; n = 0; last = None
     try:
-        r = _req('/v1/chat/completions', body(messages, max_tokens, True))
+        r = _req(args.path, body(messages, max_tokens, True))
         while True:
             line = r.readline()
             if not line: break

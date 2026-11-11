@@ -1,0 +1,26 @@
+[11:09:00] [delta] pause the booth staging node on delta (restore after): watchdog task + cascadia-node + ovms
+kill cascadia-ca.exe
+kill cascadia-node.exe
+kill ovms.exe
+GPU_SHARED_MB=544
+FREE_GB=21.1
+[11:09:30] [delta/E-delta-q3-8b-GPU] HEALTHY after 14s model=Qwen3-8B-int4-ov
+warmup short ttft 0.0844 dec 22.819 tok 18 status 200 
+bench short ttft 0.1289 dec 24.671 tok 16 status 200 
+bench medium ttft 0.3049 dec 23.447 tok 256 status 200 
+bench long ttft 3.4405 dec 27.556 tok 256 status 200 
+bench short ttft 0.0846 dec 22.073 tok 18 status 200 
+bench medium ttft 0.4049 dec 22.346 tok 256 status 200 
+bench long ttft 4.5352 dec 29.422 tok 256 status 200 
+bench.jsonl
+bench.util.jsonl
+[11:11:20] [delta/E-delta-q3-8b-CPU] HEALTHY after 14s model=Qwen3-8B-int4-ov
+warmup short ttft 0.4998 dec 24.047 tok 16 status 200 
+bench short ttft 0.6819 dec 20.781 tok 16 status 200 
+bench medium ttft 22.2545 dec 273.934 tok 256 status 200 
+bench long ttft 227.0375 dec None tok 256 status 200 
+bench short ttft 0.7743 dec 26.289 tok 16 status 200 
+bench medium ttft 22.0452 dec 242.893 tok 256 status 200 
+bench long ttft 218.3689 dec None tok 256 status 200 
+bench.jsonl
+bench.util.jsonl

@@ -1,0 +1,4 @@
+[11:26:38] [delta/E-delta-q3-8b-NPU] launch server: C:\ptlbench\models\Qwen3-8B-int4-ov engine=ov-genai device=NPU api=:8130 extra=
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" run "C:\ptlbench\models\Qwen3-8B-int4-ov" --engine ov-genai --device NPU --api :8130 
+LAUNCH rc=0 cmdpid=18280 childpid=1812
+[11:26:42] [delta/E-delta-q3-8b-NPU] waiting for health

@@ -1,0 +1,8 @@
+F moe_l0_gptq.bin 426913102
+F moe_l0_gptq.xml 90395
+F moe_l0_sym.bin 425864526
+F moe_l0_sym.xml 85515
+moe_l0_gptq on CPU: COMPILED in 1.0s; max_abs_vs_ref=0 mean_abs=0.004224
+moe_l0_gptq on GPU: FAILED after 0.5s: Exception from src\inference\src\cpp\core.cpp:120: | Exception from src\inference\src\dev\plugin.cpp:54: | Check 'false' failed at src\plugins\intel_gpu\src\plugin\program_builder.cpp:168: | [GPU] ProgramBuilder build failed! | Exception from src\plugins\intel_gpu\src\graph\program.cpp:929: | Node which is about to be added in between two other nodes should not have any existing dependencies. Node: constant:Constant_10966_postponed_decompression_byfx_moecompressed:__module.model.model.language_m
+moe_l0_sym on CPU: COMPILED in 1.1s; max_abs_vs_ref=0 mean_abs=0.004224
+moe_l0_sym on GPU: COMPILED in 2.0s; max_abs_vs_ref=0.0006319 mean_abs=0.004228

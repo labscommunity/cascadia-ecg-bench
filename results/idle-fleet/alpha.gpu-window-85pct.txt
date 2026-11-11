@@ -1,0 +1,4 @@
+UPTIME_MIN=0.7
+GPU_DEVICE_TOTAL_MEM_SIZE GiB 24.77 max_alloc 24.77
+Display Memory: 18540 MB
+Shared Memory: 18412 MB

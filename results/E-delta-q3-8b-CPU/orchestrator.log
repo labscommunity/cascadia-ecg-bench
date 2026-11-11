@@ -1,0 +1,21 @@
+[11:11:01] [delta/E-delta-q3-8b-CPU] launch server: C:\ptlbench\models\Qwen3-8B-int4-ov engine=ov-genai device=CPU api=:8130 extra=
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" run "C:\ptlbench\models\Qwen3-8B-int4-ov" --engine ov-genai --device CPU --api :8130 
+LAUNCH rc=0 cmdpid=16024 childpid=3768
+[11:11:05] [delta/E-delta-q3-8b-CPU] waiting for health
+[11:11:20] [delta/E-delta-q3-8b-CPU] HEALTHY after 14s model=Qwen3-8B-int4-ov
+[11:11:20] [delta/E-delta-q3-8b-CPU] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 3.34, "status": 200, "error": null, "text": "Let's break this down step by step to estimate:\n\n### **1
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 2.009, "status": 200, "error": null, "text": "**Spanish:**\nLa vía 2 está cerrada por delante debi
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 2.42, "status": 200, "error": null, "text": "At 3:12 a.m., the highway stretched endlessly under a pal
+[11:15:53] [delta/E-delta-q3-8b-CPU] bench perf (warmup 1, repeats 2)
+warmup short ttft 0.4998 dec 24.047 tok 16 status 200 
+bench short ttft 0.6819 dec 20.781 tok 16 status 200 
+bench medium ttft 22.2545 dec 273.934 tok 256 status 200 
+bench long ttft 227.0375 dec None tok 256 status 200 
+bench short ttft 0.7743 dec 26.289 tok 16 status 200 
+bench medium ttft 22.0452 dec 242.893 tok 256 status 200 
+bench long ttft 218.3689 dec None tok 256 status 200 
+[11:26:31] [delta/E-delta-q3-8b-CPU] stop server
+STOPPED n=1
+[11:26:32] [delta/E-delta-q3-8b-CPU] collect results
+[11:26:33] [delta/E-delta-q3-8b-CPU] done

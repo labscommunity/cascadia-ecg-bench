@@ -1,0 +1,31 @@
+[11:08:39] [A5-tate07-ovms-cb] disable the enterprise node service for the window (restore after)
+GPU_SHARED_MB=342
+[11:09:23] [A5-tate07-ovms-cb] launch OVMS CB: "C:\Program Files\Cascadia\cascadia.ovms.2026.4.1.1bc2372d\ovms.exe" --model_repository_path C:/ecgbench/models --source_model Qwen3.6-35B-A3B-int4-ov --model_name q36 --task text_generation --target_device GPU --rest_port 19300 --port 19301 --rest_bind_address 127.0.0.1 --log_level INFO --cache_size 8 --max_num_seqs 8 --max_num_batched_tokens 2048 --cache_dir C:/ecgbench/ovcache-ovms
+LAUNCH rc=0 cmdpid=37344 childpid=37620
+[11:10:12] [A5-tate07-ovms-cb] ovms models: q36
+warmup short ttft 4.6932 dec None ct 16 st 200 
+bench short ttft 0.193 dec 36.345 ct 16 st 200 
+bench medium ttft 1.2615 dec 37.442 ct 256 st 200 
+bench long ttft 7.7064 dec 292.843 ct 256 st 200 
+bench short ttft 0.1669 dec 37.576 ct 16 st 200 
+bench medium ttft 0.6073 dec 34.871 ct 256 st 200 
+bench long ttft 2.1726 dec 38.765 ct 256 st 200 
+[11:11:08] [A5-tate07-ovms-cb] concurrency 2 (+60 s SoC Watch window at c=2)
+c=2 power: {"seconds":60,"started":"2026-11-11T09:11:29.4386022-08:00","host":"PDX88-PA0794","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.3367,"pkg_power_mw_avg":26638.53,"pkg_energy_mj":16015
+AGG conc 2 req 6 tokens 1056 wall 37.131 agg tok/s 28.44 errors 0
+AGG conc 2 req 6 tokens 1056 wall 34.947 agg tok/s 30.217 errors 0
+AGG conc 2 req 6 tokens 1056 wall 34.554 agg tok/s 30.561 errors 0
+[11:12:56] [A5-tate07-ovms-cb] concurrency 4 (+60 s SoC Watch window at c=4)
+c=4 power: {"seconds":60,"started":"2026-11-11T09:13:17.2881926-08:00","host":"PDX88-PA0794","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.3383,"pkg_power_mw_avg":31596.43,"pkg_energy_mj":19000
+AGG conc 4 req 12 tokens 2112 wall 43.075 agg tok/s 49.031 errors 0
+AGG conc 4 req 12 tokens 2112 wall 41.131 agg tok/s 51.348 errors 0
+AGG conc 4 req 12 tokens 2112 wall 39.954 agg tok/s 52.861 errors 0
+[11:15:02] [A5-tate07-ovms-cb] concurrency 8 (+60 s SoC Watch window at c=8)
+c=8 power: {"seconds":60,"started":"2026-11-11T09:15:22.7842899-08:00","host":"PDX88-PA0794","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.3501,"pkg_power_mw_avg":35911.61,"pkg_energy_mj":21593
+AGG conc 8 req 24 tokens 4224 wall 56.465 agg tok/s 74.807 errors 0
+AGG conc 8 req 24 tokens 4224 wall 54.876 agg tok/s 76.974 errors 0
+AGG conc 8 req 24 tokens 4224 wall 54.039 agg tok/s 78.166 errors 0
+ovms stopped
+[11:17:51] [A5-tate07-ovms-cb] restore enterprise node service
+Running
+[11:28:34] [A5-tate07-ovms-cb] done
