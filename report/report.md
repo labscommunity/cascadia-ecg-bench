@@ -1,6 +1,6 @@
 # Cascadia on Panther Lake: whole-model vs. sharded Qwen MoE serving
 
-*Status: DRAFT, measurements being collected 2026-11-11. Numbers marked TBD are filled from `results/`.*
+*Measured 2026-11-11. All numbers come from `results/` via `harness/summarize.py` and `harness/report_tables.py`; the full tables are in `report/tables.md`.*
 
 ## 1. What was asked
 Measure, on Intel Panther Lake AI PCs, the KPIs in the "Cascadia ECG Benchmarking" doc for Qwen3.6-35B-A3B and Qwen3.5-122B-A10B:
@@ -80,22 +80,25 @@ with the exporter's chain-vs-full check passing (logits rel 2.0e-2, top-1 match,
 The clean layout is 2 shards on two 64 GB boxes; the two Tiber 64 GB boxes see each other at 15 ms (Seattle relay). The NUC-to-Tiber path measured
 110–350 ms round trip, so a layout mixing the NUCs with a Tiber tail pays ~2 relay round trips per token.
 
-**Measured.** The 2 x 64 GB run (tate-07 + tate-08) was staged (both shards copied, Linux runtime installed) but could not be executed: tate-08 was
-taken into interactive use for a Cascadia desktop/installer test session during this run, and the brief was to borrow only idle machines.
-The 4-shard layout (alpha, beta, charlie + tate-07 tail over the relay) is the fallback measured instead — results in `results/D2-122b-4stage-3nuc-tate07`
-and the tables (TBD until it completes). Everything needed to run the 2 x 64 GB case later is in place (`~/ecgbench/shards/q122-2stage` on tate-08,
-`C:\ecgbench\shards\q122-2stage` on tate-07, `run_d1.sh`).
+**Measured: it does not run on the Panther Lake GPU today.** Every rank of the 4-shard layout (three NUCs + tate-07 tail) failed at model
+load inside the OpenVINO 2026.4.1 GPU plugin with `[GPU] ProgramBuilder build failed ... MOECompressed` on its first MoE layer
+(`results/D2-122b-4stage-3nuc-tate07/NOTE.md`, rank logs attached). The official NNCF-exported 35B IR compiles on the same stack, so the
+GPTQ-repacked expert constants are what the GPU MoE-fusion pass rejects; the IR itself is numerically sound (CPU validation). The 2 x 64 GB
+layout was fully staged (tate-07 + tate-08) but not executed: tate-08 went into interactive use during the run, and it would have hit the same
+GPU compile error. A CPU fallback is ruled out by memory (the CPU plugin holds ~2x the IR: 24–51 GB per stage). Net: the 122B is currently
+blocked by a software gap in the GPTQ-to-OpenVINO builder, not only by memory; fixing the builder's expert-constant layout for the GPU plugin
+is the prerequisite for any 122B measurement on this hardware.
 
 ### 4.3 Sharded vs. whole: accuracy, performance multiplier, utilization multiplier
 - **Token-level parity.** The whole model is deterministic: re-running it after a server restart with the same client reproduces all six 160-token greedy outputs byte-for-byte (A1c vs A1b, 6/6). The sharded engine is *not* token-identical to it: 2 or 3 co-located shards agree on the first ~50 characters of every answer and then take a different (equally coherent) continuation (A3/A4 vs A1b: 0/6 exact, ~8% common prefix). This is the f16 fusion-order / near-tie behaviour the exporter documents (its own check still shows chain-vs-full top-1 match and 8/8 greedy tokens on a short probe), so token agreement over long generations is the wrong yardstick; task accuracy is the right one. A side finding: the request path matters too, since the first client (streaming requests, no 1-token warm call) got different continuations from the same whole model (A1 vs A1b: 0/6), which argues for pinning the client method when comparing deployments.
-- **Task-level accuracy** is the right comparison: GSM8K-40 whole 35B = 37/40 (92.5%); sharded 35B = 36/40 (90.0%) both as 2 co-located shards and as a 3-NUC chain, with byte-identical token counts (12,274) in the two sharded runs, i.e. the staged engine is deterministic across topologies and the one-problem gap to the whole model is within noise for a 40-item set. 122B row TBD.
+- **Task-level accuracy** is the right comparison: GSM8K-40 whole 35B = 37/40 (92.5%); sharded 35B = 36/40 (90.0%) both as 2 co-located shards and as a 3-NUC chain, with byte-identical token counts (12,274) in the two sharded runs, i.e. the staged engine is deterministic across topologies and the one-problem gap to the whole model is within noise for a 40-item set. No 122B row (not runnable, §4.2).
 - **Performance multiplier** (vs. whole on 64 GB): 2 or 3 co-located shards = 0.65x decode, 2.6–3.9x TTFT; 2- and 3-NUC pipelines = 0.45x / 0.43x decode, 5.8x TTFT at 975 tokens, 7.7x / 10.8x at 7.7k. Versus the only alternative on 32 GB hardware (whole model on one NUC), the pipelines are 11x faster.
 - **Utilization multiplier:** total resident memory is unchanged (18.4 GB co-located; 18.3 GB and 18.3 GB summed across 2 and 3 NUCs) but per-box memory falls to 9.1 GB and 6.1 GB; co-located shards cut single-box power 10% and tok/J 28%; the NUC pipelines run at 30.7 W / 27.6 W total (0.9x / 0.8x of the 64 GB box) at half the tok/J (0.61 / 0.66 vs 1.23). The NPU stays idle in every configuration (no engine supports it for these models) and CPU load is 5–17%.
 
 ### 4.4 Capability from model size
 Vendor benchmarks (docs/published_benchmarks.md) put the 122B-A10B 1–3 points above the newer 35B-A3B on knowledge-heavy evals (MMLU-Pro 86.7 vs 85.2,
 SuperGPQA 67.1 vs 64.7, HLE 25.3 vs 21.4) and ahead on long video, while the 35B-A3B is ahead on several coding/agentic rows (LiveCodeBench 80.4 vs 78.9,
-Terminal-Bench 51.5 vs 49.4, SWE-bench Verified 73.4 vs 72.0) and on detection/grounding. Our own GSM8K-40: 35B = 92.5%; 122B = TBD.
+Terminal-Bench 51.5 vs 49.4, SWE-bench Verified 73.4 vs 72.0) and on detection/grounding. Our own GSM8K-40: 35B = 92.5% (90% sharded); the 122B could not be run (§4.2).
 The cost side is unambiguous: 3.3x the weights (64 vs 19 GB) and 3.3x the active parameters per token (10B vs 3B), so on the same silicon the 122B
 needs two 64 GB boxes instead of one and will decode roughly 3x slower per stream.
 
@@ -111,8 +114,20 @@ needs two 64 GB boxes instead of one and will decode roughly 3x slower per strea
 - **Model size:** the 122B-A10B does not fit any single Panther Lake node (64.3 GB INT4); it needs two 64 GB nodes and decodes ~3x slower per stream
   (10B vs 3B active parameters). The newer 35B-A3B is within 1–3 points of it on the vendor's knowledge/reasoning benchmarks and ahead on coding and
   agentic tasks, so for traffic-monitoring summarization, log triage and tool use the 35B-A3B is the right default and the 122B is a selective upgrade
-  (long-video and knowledge-heavy tasks) rather than a general one. Measured 122B numbers: see §4.2.
+  (long-video and knowledge-heavy tasks) rather than a general one. The 122B could not be measured here (GPU compile failure of the only available IR, §4.2).
 - **Operational notes for ECG:** prefill, not decode, is where sharding hurts (long prompts cost 4–11x more TTFT when staged), so keep per-request
   context short (per-minute telemetry windows, not hour-long dumps) or pre-summarize; keep shard links on a local 2.5 GbE segment (a relayed WAN hop
   of 15 ms is tolerable, 100+ ms is not); the NPU is unused by these engines today, so NPU-capable boxes gain nothing for LLM serving; and use
   task-level accuracy checks rather than token-exact comparisons when validating a sharded deployment.
+
+## 6. Scope notes
+- Continuous-batching concurrency on the whole model (A5) could not be run: the runtime's `--cb` path refuses VLM-layout exports, which is what the
+  official Qwen3.6 IR is (`results/A5-tate07-whole-gpu-cb/NOTE.md`); the sharded engine is single-flight by design. Concurrency through the enterprise
+  OVMS backend was out of scope for this run.
+- Whole-model streaming from the ov-genai engine arrives as one chunk per completion, so TTFT/decode were measured with a two-call method (1-token
+  request, then N-token request) rather than first-chunk latency; the staged engine streams per token.
+- The NUCs run DDR5-6400 modules at the JEDEC 4800 default (no XMP); their decode is memory-bound, so enabling XMP would lift the 32 GB numbers.
+- Machines borrowed and restored: honyaku ranks + watchdogs on alpha/beta, the Acrow node on charlie, the enterprise node service on tate-07 (which
+  had to be set to Disabled during the runs because it auto-restarts and its gemma OVMS contaminated the first whole-model measurement). Leftovers kept
+  for reproduction: `C:\ecgbench\` on every Windows box, `~/ecgbench` on tate-08, the 122B GPTQ/IR/stage trees in the Mac Pro export VM and
+  `~/q122-stages-{2,4}` on the Mac Pro host.

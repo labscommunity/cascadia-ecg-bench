@@ -1,0 +1,48 @@
+[06:41:45] [d2] pro has the 4-stage tree: 8.0K	/Users/tatef/q122-stages-4/chat_template.jinja 4.0K	/Users/tatef/q122-stages-4/config.json 4.0K	/Users/tatef/q122-stages-4/generation_config.json  12K	/Users/tatef/q122-stages-4/manifest.json 737M	/Users/tatef/q122-stages-4/openvino_text_embeddings_model.bin 8.0K	/Users/tatef/q122-stages-4/openvino_text_embeddings_model.xml  12G	/Users/tatef/q122-stages-4/stage0  16G	/Users/tatef/q122-stages-4/stage1  16G	/Users/tatef/q122-stages-4/stage2  26G	/Users/tatef/q122-stages-4/stage3  12M	/Users/tatef/q122-stages-4/tokenizer.json 
+alpha free GB=26.8
+beta free GB=16.7
+charlie free GB=6.8
+tate07 free GB=248.2
+[06:43:03] [d2] pro has the 4-stage tree: 8.0K	/Users/tatef/q122-stages-4/chat_template.jinja 4.0K	/Users/tatef/q122-stages-4/config.json 4.0K	/Users/tatef/q122-stages-4/generation_config.json  12K	/Users/tatef/q122-stages-4/manifest.json 737M	/Users/tatef/q122-stages-4/openvino_text_embeddings_model.bin 8.0K	/Users/tatef/q122-stages-4/openvino_text_embeddings_model.xml  12G	/Users/tatef/q122-stages-4/stage0  16G	/Users/tatef/q122-stages-4/stage1  16G	/Users/tatef/q122-stages-4/stage2  26G	/Users/tatef/q122-stages-4/stage3  12M	/Users/tatef/q122-stages-4/tokenizer.json 
+alpha free GB=26.1
+beta free GB=16.3
+charlie free GB=24.9
+tate07 free GB=248.1
+[06:45:05] [d2] root files out in 116s
+[06:50:12] [d2] pro has the 4-stage tree: 8.0K	/Users/tatef/q122-stages-4/chat_template.jinja 4.0K	/Users/tatef/q122-stages-4/config.json 4.0K	/Users/tatef/q122-stages-4/generation_config.json  12K	/Users/tatef/q122-stages-4/manifest.json 737M	/Users/tatef/q122-stages-4/openvino_text_embeddings_model.bin 8.0K	/Users/tatef/q122-stages-4/openvino_text_embeddings_model.xml  12G	/Users/tatef/q122-stages-4/stage0  16G	/Users/tatef/q122-stages-4/stage1  16G	/Users/tatef/q122-stages-4/stage2  26G	/Users/tatef/q122-stages-4/stage3  12M	/Users/tatef/q122-stages-4/tokenizer.json 
+alpha free GB=26.1
+beta free GB=16
+charlie free GB=21.6
+tate07 free GB=249.7
+[06:51:22] [d2] root files out in 65s
+[06:53:13] [d2] pro has the 4-stage tree: 8.0K	/Users/tatef/q122-stages-4/chat_template.jinja 4.0K	/Users/tatef/q122-stages-4/config.json 4.0K	/Users/tatef/q122-stages-4/generation_config.json  12K	/Users/tatef/q122-stages-4/manifest.json 737M	/Users/tatef/q122-stages-4/openvino_text_embeddings_model.bin 8.0K	/Users/tatef/q122-stages-4/openvino_text_embeddings_model.xml  12G	/Users/tatef/q122-stages-4/stage0  16G	/Users/tatef/q122-stages-4/stage1  16G	/Users/tatef/q122-stages-4/stage2  26G	/Users/tatef/q122-stages-4/stage3  12M	/Users/tatef/q122-stages-4/tokenizer.json 
+alpha free GB=26.1
+beta free GB=16
+charlie free GB=24.1
+tate07 free GB=249.7
+[06:54:24] [d2] root files out in 67s
+[07:03:37] [d2] alpha stage0 done
+[07:05:46] [d2] charlie stage2 done
+[07:05:50] [d2] beta stage1 done
+[07:10:38] [d2] tate07 stage3 done
+[07:10:38] [d2] distribution done in 1041s
+alpha manifest=00FA4C11C4B4B3C3 stage0=12.1GB
+beta manifest=00FA4C11C4B4B3C3 stage1=15.7GB
+charlie manifest=00FA4C11C4B4B3C3 stage2=15.7GB
+tate07 manifest=00FA4C11C4B4B3C3 stage3=25.7GB
+alpha: r0 task=Ready procs=0
+alpha: FREE_RAM_GB=26.7
+beta: r2 task=Ready procs=0
+beta: r1 task=Ready procs=0
+beta: FREE_RAM_GB=27.7
+[07:11:00] [d2] launch rank 3 on tate-07 (:9300)
+LAUNCH rc=0 cmdpid=28208 childpid=3788
+[07:11:37] [d2] launch rank 2 on charlie (:9100 -> tate-07 tailnet :9300)
+LAUNCH rc=0 cmdpid=7516 childpid=9068
+[07:12:01] [d2] launch rank 1 on beta (:9100 -> charlie)
+LAUNCH rc=0 cmdpid=3676 childpid=1808
+[07:12:25] [d2] launch rank 0 on alpha (API :8130 -> beta)
+LAUNCH rc=0 cmdpid=5744 childpid=7956
+[07:12:29] [alpha/D2-122b-4stage-3nuc-tate07] waiting for health
+[07:19:38] [d2] stop ranks
+alpha: STOPPED n=0
