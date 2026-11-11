@@ -27,6 +27,8 @@ for d in sorted(glob.glob(os.path.join(a.root, '*'))):
     steady = [r for r in jl(os.path.join(base, 'steady.jsonl')) if r.get('status') == 200]
     if not bench and not steady: continue
     row = {'run': run, 'status': open(os.path.join(d, 'STATUS')).read().strip() if os.path.exists(os.path.join(d, 'STATUS')) else ''}
+    tag_src = (bench or steady)
+    if tag_src: row['stages'] = tag_src[0].get('stages') or ('1')
     for pid in ('short', 'medium', 'long'):
         b = [r for r in bench if r['prompt_id'] == pid]
         row[f'{pid}_ptok'] = b[0].get('prompt_tokens') if b else None
@@ -49,6 +51,8 @@ for d in sorted(glob.glob(os.path.join(a.root, '*'))):
         ab = [adapt(x) for x in u]
         if any(a[0] is not None for a in ab):
             row['gpu_busy_pct'] = med([a[0] for a in ab]); row['npu_busy_pct'] = med([a[1] for a in ab])
+        else:  # pre-patch sampler: GPU compute shows up as the 'neural' engine class on this driver; NPU unknown
+            row['gpu_busy_pct'] = med([max(x.get('gpu_neural_pct') or 0, x.get('gpu_compute_pct') or 0, x.get('gpu_3d_pct') or 0) for x in u])
         row['cpu_pct'] = med([x.get('cpu_util_pct') for x in u]); row['gpu_3d_pct'] = med([x.get('gpu_3d_pct') for x in u]); row['gpu_compute_pct'] = med([x.get('gpu_compute_pct') for x in u])
         row['gpu_neural_pct'] = med([x.get('gpu_neural_pct') for x in u]); row['gpu_copy_pct'] = med([x.get('gpu_copy_pct') for x in u]); row['gpu_shared_GB'] = round((med([x.get('gpu_shared_mb') for x in u]) or 0) / 1024, 1)
         row['proc_ws_GB'] = round((med([x.get('proc_ws_mb') for x in u]) or 0) / 1024, 1); row['committed_GB'] = round((med([x.get('mem_committed_mb') for x in u]) or 0) / 1024, 1)

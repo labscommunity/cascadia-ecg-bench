@@ -1,0 +1,15 @@
+[04:09:22] [chain/C1-2nuc-2shard] launch rank 1 on charlie -Listen :9100  
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" worker --rank 1 --total 2 --model "C:\ecgbench\shards\q36-2stage" --engine qwen35 --device GPU --ov-cache-dir ""  --listen :9100 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=6228 childpid=6784
+[04:09:47] [chain/C1-2nuc-2shard] launch rank 0 on alpha  -Next 192.168.0.188:9100 -Api ':8130'
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" worker --rank 0 --total 2 --model "C:\ecgbench\shards\q36-2stage" --engine qwen35 --device GPU --ov-cache-dir ""  --next 192.168.0.188:9100 --api :8130 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=5136 childpid=7060
+[04:10:14] [alpha/C1-2nuc-2shard] waiting for health
+[04:10:36] [alpha/C1-2nuc-2shard] HEALTHY after 21s model=q36-2stage
+[04:10:36] [alpha/C1-2nuc-2shard] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 1.69, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the numb
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 1.631, "status": 200, "error": null, "text": "**Spanish:**  \nLa carril 2 está cerrada más adelant
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 1.64, "status": 200, "error": null, "text": "The control room hums with the low, steady vibration of s
+[04:11:29] [alpha/C1-2nuc-2shard] idle baseline (30 s)
+{"seconds":30,"started":"2026-11-11T02:11:32.7479717-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.1925,"pkg_power_mw_avg":3423.01,"pkg_energy_mj":102961.85,"ddr_reads_mb_s":196.25,"ddr_writes_mb_s":132.10999999999999,"ddr_total_gb_s":0.32}
+[04:12:07] [alpha/C1-2nuc-2shard] bench perf (warmup 1, repeats 3)

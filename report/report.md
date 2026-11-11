@@ -44,12 +44,57 @@ Consequences used for the shard plan:
 - Accuracy: identical greedy prompts whole vs. sharded (exact match / common prefix) and GSM8K-40 exact match.
 
 ## 4. Results
-TBD — filled from `results/` by `harness/summarize.py`.
+All tables are generated from `results/` by `harness/report_tables.py` into `report/tables.md`; the highlights below quote them.
+Configs: **A** = 64 GB Tiber box (tate-07), **B** = one 32 GB NUC (charlie), **C** = NUC pipelines (alpha→beta→charlie, 2.5 GbE), **D** = 122B.
 
 ### 4.1 Qwen3.6-35B-A3B
+
+**Whole model on the 64 GB box (A1b, GPU).** TTFT 0.12 s / 0.60 s / 2.9 s for 31 / 975 / 7,690-token prompts; decode 42–48 tok/s
+(41.9 tok/s median over a 90 s continuous loop, 38 tok/s end-to-end including prefill). Package power 34.2 W while decoding vs 7.2 W idle with
+the model resident; DDR traffic 79.5 GB/s (77 GB/s reads), i.e. the decode is memory-bandwidth-bound exactly as a 3B-active MoE should be.
+GPU 98% busy, CPU 16%, GPU shared memory 19.1 GB, process working set 19.8 GB, system commit 33 GB. 1.23 tokens per joule.
+
+**Whole model on a 32 GB NUC (B1b/B1, GPU).** It loads (OpenVINO over-commits the 17.7 GB GPU window) and prefill is almost normal
+(TTFT 0.67 / 1.29 / 4.2 s) but decode collapses to **1.7 tok/s**: 256-token answers take 164 s instead of 6 s. Package power 23 W, GPU 95% busy,
+DDR only 8 GB/s — the GPU is stalled on residency churn (weights paged in and out of the window every token), not on bandwidth.
+**Whole model on a 32 GB NUC (B2, CPU).** Also loads; once warm it produces ~11.6 tok/s end-to-end for 256 tokens at 47% CPU, but RAM is saturated
+(27 GB working set, 410 MB available) and first-call costs are enormous (447 s before the first token on the 7.7k prompt, 53 s at 975 tokens).
+Neither 32 GB whole-model path is deployable; this is the quantitative case for sharding on 32 GB Panther Lake.
+
+**Shards co-located on one XPU (A3 = 2 shards, A4 = 3 shards, 64 GB box).** Both give the same result: decode 27 tok/s steady (0.65x the whole
+model), TTFT 2.6x longer at 975 tokens (1.56 s) and 3.9x longer at 7.7k tokens (11.4 s) because the staged engine prefills in 256-token chunks per
+stage. Power drops to 30–31 W (0.9x) but tokens-per-joule falls to 0.88–0.90 (0.72x). Memory is unchanged (18.4 GB GPU shared). The copy engine
+runs at 86% (hidden-state hand-offs between stages). Going from 2 to 3 shards costs nothing extra on one box: the overhead is per-pipeline, not
+per-stage.
+
+**One shard per NUC (C1 = 2 NUCs, C2 = 3 NUCs).** TBD — see `report/tables.md` once `results/C1-2nuc-2shard` and `results/C2-3nuc-3shard` land
+(decode, TTFT, per-NUC power, aggregate power, GSM8K on the 3-NUC chain).
+
+**Whole model on CPU, 64 GB box (A2).** TBD.
+
 ### 4.2 Qwen3.5-122B-A10B
+The INT4 IR is 64.3 GB, so it fits no single Panther Lake box in this fleet (52 GB GPU window / 61 GB RAM on the 64 GB box; 17.7 GB window on 32 GB).
+Measured layout: 2 shards across two 64 GB boxes in Tiber (tate-07 Windows rank 0: 29 GB; tate-08 Linux rank 1: 33 GB) linked over a 15 ms relay hop.
+A 4-shard layout over the three 32 GB NUCs plus one 64 GB tail was cut as well, but the NUC↔Tiber path measured 110–350 ms round trip, so it was not run.
+Results: TBD (`results/D1-122b-2x64gb`).
+
 ### 4.3 Sharded vs. whole: accuracy, performance multiplier, utilization multiplier
+- **Token-level parity is not a usable accuracy metric here.** Two runs of the *same whole model on the same box* agree on the first sentence and then
+  diverge (0/6 exact 160-token matches, common prefix 7%): greedy decoding flips at f16 near-ties, and the flip point depends on run state
+  (e.g. whether a 1-token warm call preceded the request). The sharded runs land at the same floor (A3/A4: 0/6, prefix 8–9%), i.e. indistinguishable
+  from run-to-run noise. The exporter's own check confirms the shards are numerically faithful (chain-vs-full logits rel 2–3e-2, top-1 match,
+  8/8 greedy tokens for both models).
+- **Task-level accuracy** is the right comparison: GSM8K-40 whole 35B = 37/40 (92.5%); sharded chain and 122B rows TBD.
+- **Performance multiplier** (vs. whole on 64 GB): 2 or 3 co-located shards = 0.65x decode, 2.6–3.9x TTFT; NUC pipelines TBD.
+- **Utilization multiplier:** sharding does not reduce total memory (same 18–19 GB resident; split across boxes in C1/C2), lowers single-box power 10%
+  and tokens-per-joule 28%; per-NUC numbers for the pipelines TBD.
+
 ### 4.4 Capability from model size
+Vendor benchmarks (docs/published_benchmarks.md) put the 122B-A10B 1–3 points above the newer 35B-A3B on knowledge-heavy evals (MMLU-Pro 86.7 vs 85.2,
+SuperGPQA 67.1 vs 64.7, HLE 25.3 vs 21.4) and ahead on long video, while the 35B-A3B is ahead on several coding/agentic rows (LiveCodeBench 80.4 vs 78.9,
+Terminal-Bench 51.5 vs 49.4, SWE-bench Verified 73.4 vs 72.0) and on detection/grounding. Our own GSM8K-40: 35B = 92.5%; 122B = TBD.
+The cost side is unambiguous: 3.3x the weights (64 vs 19 GB) and 3.3x the active parameters per token (10B vs 3B), so on the same silicon the 122B
+needs two 64 GB boxes instead of one and will decode roughly 3x slower per stream.
 
 ## 5. What this means for ECG use cases
-TBD.
+TBD after the pipeline and 122B rows land.

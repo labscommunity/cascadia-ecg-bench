@@ -3,7 +3,13 @@
 (run `summarize.py results/ --json summary.json` first)"""
 import json, os, glob, sys, subprocess
 root, sj = sys.argv[1], sys.argv[2]
-rows = {r['run']: r for r in json.load(open(sj)) if r['run'] not in ('A1-tate07-whole-gpu','B1-charlie-whole-gpu')}  # one-chunk-client runs superseded by A1b/B1b
+allrows = {r['run']: r for r in json.load(open(sj))}
+rows = {k: v for k, v in allrows.items() if k not in ('A1-tate07-whole-gpu','B1-charlie-whole-gpu')}  # one-chunk-client runs superseded by A1b/B1b
+# B1b was a quick re-measure (no power window); its power/utilization come from the full B1 run of the same server state (marked with a dagger)
+if 'B1b-charlie-whole-gpu' in rows and 'B1-charlie-whole-gpu' in allrows:
+    for k in ('idle_W','steady_W','steady_ddr_GBs','idle_ddr_GBs','cpu_pct','gpu_busy_pct','gpu_neural_pct','gpu_copy_pct','npu_busy_pct','gpu_shared_GB','proc_ws_GB','committed_GB','steady_dec','steady_e2e'):
+        if rows['B1b-charlie-whole-gpu'].get(k) is None and allrows['B1-charlie-whole-gpu'].get(k) is not None: rows['B1b-charlie-whole-gpu'][k] = allrows['B1-charlie-whole-gpu'][k]
+    rows['B1b-charlie-whole-gpu']['note'] = 'power/utilization from the B1 window (same server state); steady decode there was measured end-to-end'
 def g(run, k, fmt='{}'):
     v = rows.get(run, {}).get(k); return '' if v is None else fmt.format(v)
 def jl(p):
@@ -39,7 +45,13 @@ print('\n## Output parity vs. the whole model (same greedy prompts, 160 tokens)\
 ref = os.path.join(root, 'A1b-tate07-whole-gpu', 'parity.jsonl')
 if os.path.exists(ref):
     print('| config | prompts | exact match | mean common-prefix fraction |'); print('|---|---|---|---|')
-    for r in order:
+    for r in ['A1-tate07-whole-gpu (same model, same box, earlier run = noise floor)', 'A1c-tate07-whole-gpu-rerun (same model, same box, later run = noise floor)'] + order:
+        rr = r.split(' ')[0]
+        if rr in ('A1-tate07-whole-gpu','A1c-tate07-whole-gpu-rerun'):
+            p = os.path.join(root, rr, 'parity.jsonl')
+            if not os.path.exists(p): continue
+            out = subprocess.check_output([sys.executable, os.path.join(os.path.dirname(__file__), 'compare_outputs.py'), ref, p]).decode()
+            s_ = json.loads(out[:out.index('}')+1]); print(f"| {r} | {s_.get('prompts','')} | {s_.get('exact_match','')}/{s_.get('prompts','')} | {s_.get('mean_prefix_frac','')} |"); continue
         d = os.path.join(root, r); p = os.path.join(d, 'parity.jsonl')
         r0 = glob.glob(os.path.join(d, 'rank0-*'))
         if r0: p = os.path.join(r0[0], 'parity.jsonl')
@@ -55,6 +67,9 @@ if os.path.exists(ref):
 # evals
 print('\n## GSM8K-40 (exact match, greedy, thinking off, max 512 tokens)\n')
 print('| run | correct | accuracy | completion tokens | wall s |'); print('|---|---|---|---|---|')
-for p in sorted(glob.glob(os.path.join(root, '*eval*', 'gsm8k.jsonl'))):
-    s = [json.loads(l) for l in open(p, encoding='utf-8-sig') if '"summary"' in l]
-    if s: s = s[-1]; print(f"| {os.path.basename(os.path.dirname(p))} | {s['correct']}/{s['n']} | {s['accuracy']*100:.1f}% | {s['total_completion_tokens']} | {s['wall_s']} |")
+for p in sorted(glob.glob(os.path.join(root, '*eval*', '**', 'gsm8k.jsonl'), recursive=True)):
+    ss = [json.loads(l) for l in open(p, encoding='utf-8-sig') if l.strip() and 'summary' in l]
+    ss = [x for x in ss if x.get('kind') == 'summary']
+    if ss: x = ss[-1]; print(f"| {os.path.relpath(os.path.dirname(p), root)} | {x['correct']}/{x['n']} | {x['accuracy']*100:.1f}% | {x['total_completion_tokens']} | {x['wall_s']} |")
+notes = [(r, rows[r]['note']) for r in order if rows[r].get('note')]
+if notes: print('\nNotes: ' + '; '.join(f'{r}: {n}' for r, n in notes))

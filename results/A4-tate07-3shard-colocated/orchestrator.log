@@ -10,3 +10,28 @@ LAUNCH rc=0 cmdpid=3256 childpid=36132
 [03:46:21] [tate07/A4-tate07-3shard-colocated] idle baseline (30 s)
 {"seconds":30,"started":"2026-11-11T01:46:26.5233248-08:00","host":"PDX88-PA0794","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.2868,"pkg_power_mw_avg":7353.89,"pkg_energy_mj":221429.81,"ddr_reads_mb_s":1770.27,"ddr_writes_mb_s":1323.76,"ddr_total_gb_s":3.02}
 [03:47:01] [tate07/A4-tate07-3shard-colocated] bench perf (warmup 1, repeats 3)
+warmup short ttft 0.2819 dec 28.606 tok 15 status 200 
+bench short ttft 0.2782 dec 28.304 tok 15 status 200 
+bench medium ttft 1.6616 dec 27.906 tok 256 status 200 
+bench long ttft 11.8792 dec 27.141 tok 256 status 200 
+bench short ttft 0.2751 dec 28.12 tok 15 status 200 
+bench medium ttft 1.5687 dec 32.807 tok 256 status 200 
+bench long ttft 11.5361 dec 30.305 tok 256 status 200 
+bench short ttft 0.235 dec 31.429 tok 15 status 200 
+bench medium ttft 1.5756 dec 32.678 tok 256 status 200 
+bench long ttft 11.4893 dec 30.294 tok 256 status 200 
+[03:49:38] [tate07/A4-tate07-3shard-colocated] parity set
+bench p_code ttft 0.4169 dec 33.301 tok 160 status 200
+bench p_reason ttft 0.3755 dec 32.485 tok 160 status 200
+bench p_explain ttft 0.3207 dec 33.297 tok 160 status 200
+bench p_json ttft 0.3831 dec 32.717 tok 146 status 200
+bench p_list ttft 0.2895 dec 33.37 tok 136 status 200
+bench p_math ttft 0.3684 dec 33.293 tok 160 status 200
+bench p_translate ttft 0.2942 dec 33.492 tok 64 status 200
+bench p_story ttft 0.3109 dec 28.901 tok 160 status 200
+[03:50:22] [tate07/A4-tate07-3shard-colocated] steady-state power (90 s loop, 60 s SoC Watch)
+{"seconds":60,"started":"2026-11-11T01:50:42.6238624-08:00","host":"PDX88-PA0794","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.3062,"pkg_power_mw_avg":30017.15,"pkg_energy_mj":1804906.07,"ddr_reads_mb_s":53080.36,"ddr_writes_mb_s":4243.2300000000005,"ddr_total_gb_s":55.98}
+[03:52:18] [tate07/A4-tate07-3shard-colocated] stop server
+STOPPED n=1
+[03:52:20] [tate07/A4-tate07-3shard-colocated] collect results
+[03:55:24] [tate07/A4-tate07-3shard-colocated] done
