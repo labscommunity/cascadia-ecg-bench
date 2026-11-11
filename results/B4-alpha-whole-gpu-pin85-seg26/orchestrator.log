@@ -1,0 +1,37 @@
+[12:28:13] [alpha/B4-alpha-whole-gpu-pin85-seg26] launch server: C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov engine=ov-genai device=GPU api=:8130 extra=
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" run "C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov" --engine ov-genai --device GPU --api :8130 
+LAUNCH rc=0 cmdpid=7784 childpid=7396
+[12:28:17] [alpha/B4-alpha-whole-gpu-pin85-seg26] waiting for health
+[12:28:41] [alpha/B4-alpha-whole-gpu-pin85-seg26] HEALTHY after 23s model=Qwen3.6-35B-A3B-int4-ov
+[12:28:41] [alpha/B4-alpha-whole-gpu-pin85-seg26] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 8.143, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the num
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 7.775, "status": 200, "error": null, "text": "**Spanish:**  \nLa carril 2 está cerrada más adelant
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 7.724, "status": 200, "error": null, "text": "The control room hums with the low, steady vibration of 
+[12:30:04] [alpha/B4-alpha-whole-gpu-pin85-seg26] idle baseline (30 s)
+{"seconds":30,"started":"2026-11-11T10:30:06.2406687-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.2121,"pkg_power_mw_avg":8598.44,"pkg_energy_mj":258546.2,"ddr_reads_mb_s":198.82,"ddr_writes_mb_s":104.55,"ddr_total_gb_s":0.3}
+[12:30:41] [alpha/B4-alpha-whole-gpu-pin85-seg26] bench perf (warmup 1, repeats 3)
+warmup short ttft 0.5309 dec 1.998 tok 15 status 200 
+bench short ttft 0.5196 dec 1.883 tok 15 status 200 
+bench medium ttft 1.1993 dec 2.086 tok 256 status 200 
+bench long ttft 4.0602 dec 2.141 tok 256 status 200 
+bench short ttft 0.5261 dec 2.038 tok 15 status 200 
+bench medium ttft 1.1635 dec None tok None status -1 ConnectionResetError(10054, 'An existing connection was forcibly closed by the r
+bench long ttft 2.0304 dec None tok None status -1 URLError(ConnectionRefusedError(10061, 'No connection could be made because the 
+bench short ttft 2.0339 dec None tok None status -1 URLError(ConnectionRefusedError(10061, 'No connection could be made because the 
+bench medium ttft 2.026 dec None tok None status -1 URLError(ConnectionRefusedError(10061, 'No connection could be made because the 
+bench long ttft 2.0342 dec None tok None status -1 URLError(ConnectionRefusedError(10061, 'No connection could be made because the 
+[12:37:56] [alpha/B4-alpha-whole-gpu-pin85-seg26] parity set
+bench p_code ttft 2.036 dec None tok None status -1
+bench p_reason ttft 2.0371 dec None tok None status -1
+bench p_explain ttft 2.0331 dec None tok None status -1
+bench p_json ttft 2.0211 dec None tok None status -1
+bench p_list ttft 2.011 dec None tok None status -1
+bench p_math ttft 2.0515 dec None tok None status -1
+bench p_translate ttft 2.0226 dec None tok None status -1
+bench p_story ttft 2.0177 dec None tok None status -1
+[12:38:32] [alpha/B4-alpha-whole-gpu-pin85-seg26] steady-state power (90 s loop, 60 s SoC Watch)
+{"seconds":60,"started":"2026-11-11T10:38:48.0526937-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.172,"pkg_power_mw_avg":3247.49,"pkg_energy_mj":195086.73,"ddr_reads_mb_s":163.29,"ddr_writes_mb_s":78.550000000000011,"ddr_total_gb_s":0.24}
+[12:40:18] [alpha/B4-alpha-whole-gpu-pin85-seg26] stop server
+STOPPED n=0
+[12:40:18] [alpha/B4-alpha-whole-gpu-pin85-seg26] collect results
+[12:40:21] [alpha/B4-alpha-whole-gpu-pin85-seg26] done

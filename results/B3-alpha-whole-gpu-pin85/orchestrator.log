@@ -21,3 +21,17 @@ bench short ttft 0.5914 dec 1.763 tok 15 status 200
 bench medium ttft 1.1427 dec 1.905 tok 256 status 200 
 bench long ttft 4.1597 dec 1.945 tok 256 status 200 
 [12:13:34] [alpha/B3-alpha-whole-gpu-pin85] parity set
+bench p_code ttft 0.8593 dec 1.923 tok 160 status 200
+bench p_reason ttft 0.8332 dec 1.881 tok 160 status 200
+bench p_explain ttft 0.7973 dec 1.912 tok 160 status 200
+bench p_json ttft 0.8355 dec 1.895 tok 142 status 200
+bench p_list ttft 0.7309 dec 1.889 tok 160 status 200
+bench p_math ttft 0.8585 dec 1.902 tok 160 status 200
+bench p_translate ttft 0.7432 dec 1.875 tok 65 status 200
+bench p_story ttft 0.728 dec 1.905 tok 160 status 200
+[12:23:59] [alpha/B3-alpha-whole-gpu-pin85] steady-state power (90 s loop, 60 s SoC Watch)
+{"seconds":60,"started":"2026-11-11T10:24:14.6145737-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.7312,"pkg_power_mw_avg":25354.78,"pkg_energy_mj":1524676.88,"ddr_reads_mb_s":6266.01,"ddr_writes_mb_s":1303.5500000000002,"ddr_total_gb_s":7.39}
+[12:25:50] [alpha/B3-alpha-whole-gpu-pin85] stop server
+STOPPED n=1
+[12:25:51] [alpha/B3-alpha-whole-gpu-pin85] collect results
+[12:26:02] [alpha/B3-alpha-whole-gpu-pin85] done

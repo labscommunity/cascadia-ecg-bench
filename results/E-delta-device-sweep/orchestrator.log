@@ -55,3 +55,6 @@ bench long ttft 35.4597 dec None tok 256 status 200
 bench.jsonl
 bench.util.jsonl
 [12:17:02] [delta2] restore booth node
+PROC=cascadia-node.exe
+PROC=ovms.exe
+[12:18:03] [delta2] delta sweep2 done

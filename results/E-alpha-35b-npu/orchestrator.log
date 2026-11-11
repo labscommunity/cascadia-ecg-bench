@@ -1,0 +1,4 @@
+[12:40:21] [alpha/E-alpha-35b-npu] launch server: C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov engine=ov-genai device=NPU api=:8130 extra=
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" run "C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov" --engine ov-genai --device NPU --api :8130 
+LAUNCH rc=0 cmdpid=7176 childpid=3192
+[12:40:25] [alpha/E-alpha-35b-npu] waiting for health
