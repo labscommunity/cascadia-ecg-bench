@@ -222,7 +222,12 @@ Putting half the layers on a CPU halves decode on a 1k prompt, cuts it 5x on a 7
 and makes prefill 5–8x slower; the GPU head sits idle 94% of the time waiting on the tail, and the CPU rank needs twice its stage size in RAM.
 The CPU is not a useful decode device for these models even as a tail; it is a fallback for a box whose GPU window is already full.
 
-HETERO_PLACEHOLDER
+**HETERO:GPU,CPU** (OpenVINO's heterogeneous plugin, GPU first, CPU fallback) on the whole 35B on charlie, 85% window: it loads in 114 s and
+runs, but it places every supported layer on the GPU (GPU compute 98%, CPU 22%, 18.0 GB GPU shared, the same profile as plain `GPU`) and decodes at
+**1.3–1.4 tok/s** on all three prompts (TTFT 0.7 / 1.3 / 4.0 s), 20% slower than the plain-GPU oversubscribed run (1.7 tok/s, B1b). HETERO does not spill
+weights to the CPU to relieve the GPU window; it is not a remedy for the 32 GB whole-model case. (Two earlier attempts failed before the model loaded
+because the device string lost its comma in the launch path: an unquoted `HETERO:GPU,CPU` is a two-element array in PowerShell; `results/E-alpha-35b-hetero`,
+`results/E-charlie-35b-hetero2`.)
 
 ### 7.5 122B as a 3-stage all-local pipeline on the NUCs (D3)
 (pending: D3 result)

@@ -1,0 +1,4 @@
+[14:18:57] [charlie/E-charlie-35b-hetero2] launch server: C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov engine=ov-genai device=HETERO:GPU,CPU api=:8130 extra=
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" run "C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov" --engine ov-genai --device "HETERO:GPU CPU" --api :8130 
+LAUNCH rc=0 cmdpid=8620 childpid=0
+[14:19:01] [charlie/E-charlie-35b-hetero2] waiting for health

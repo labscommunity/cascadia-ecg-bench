@@ -1,0 +1,18 @@
+[14:23:18] [charlie/E-charlie-35b-hetero3] launch server: C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov engine=ov-genai device=HETERO:GPU,CPU api=:8130 extra=
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" run "C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov" --engine ov-genai --device "HETERO:GPU,CPU" --api :8130 
+LAUNCH rc=0 cmdpid=3672 childpid=6052
+[14:23:22] [charlie/E-charlie-35b-hetero3] waiting for health
+[14:25:16] [charlie/E-charlie-35b-hetero3] HEALTHY after 114s model=Qwen3.6-35B-A3B-int4-ov
+[14:25:16] [charlie/E-charlie-35b-hetero3] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 11.809, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the nu
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 11.852, "status": 200, "error": null, "text": "**Spanish:**  \nLa carril 2 está cerrada más adelan
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 11.315, "status": 200, "error": null, "text": "The control room hums with the low, steady vibration of
+[14:27:31] [charlie/E-charlie-35b-hetero3] bench perf (warmup 1, repeats 1)
+warmup short ttft 0.8825 dec 1.285 tok 15 status 200 
+bench short ttft 0.7318 dec 1.288 tok 15 status 200 
+bench medium ttft 1.3401 dec 1.368 tok 256 status 200 
+bench long ttft 3.9735 dec 1.378 tok 256 status 200 
+[14:35:46] [charlie/E-charlie-35b-hetero3] stop server
+STOPPED n=1
+[14:35:46] [charlie/E-charlie-35b-hetero3] collect results
+[14:35:47] [charlie/E-charlie-35b-hetero3] done

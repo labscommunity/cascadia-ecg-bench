@@ -38,6 +38,7 @@
   CPU prefill a 55–75x loss. The NPU does not load either the 8B or the 0.6B (OpenVINO 2026.4.1 NPU compiler error); no engine offers NPU-prefill /
   GPU-decode for one model. A 35B shard pair with the tail rank on a CPU (C3) halves decode (10–13 vs 19 tok/s), cuts it 5x on long prompts and
   makes TTFT 5–8x slower than the all-GPU pair, while needing 2x the stage size in RAM.
+  OpenVINO `HETERO:GPU,CPU` on the whole 35B puts everything on the GPU anyway (1.3–1.4 tok/s, 20% slower than plain GPU).
 - **122B GPU failure fixed in the builder** (`--expert-sym`: signed INT4 experts, no zero point). The rebuilt 35B runs whole on the 64 GB GPU **9% faster**
   than Intel's export (53 vs 48 tok/s) at equal accuracy (19/20 GSM8K). {{D3_LINE}}
 
