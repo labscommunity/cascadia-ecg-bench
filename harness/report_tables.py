@@ -45,7 +45,7 @@ print('\n## Output parity vs. the whole model (same greedy prompts, 160 tokens)\
 ref = os.path.join(root, 'A1b-tate07-whole-gpu', 'parity.jsonl')
 if os.path.exists(ref):
     print('| config | prompts | exact match | mean common-prefix fraction |'); print('|---|---|---|---|')
-    for r in ['A1-tate07-whole-gpu (same model, same box, earlier run = noise floor)', 'A1c-tate07-whole-gpu-rerun (same model, same box, later run = noise floor)'] + order:
+    for r in ['A1c-tate07-whole-gpu-rerun (whole model again after a server restart, same client method = determinism check)', 'A1-tate07-whole-gpu (whole model, first client: streaming request path = request-path sensitivity)'] + order:
         rr = r.split(' ')[0]
         if rr in ('A1-tate07-whole-gpu','A1c-tate07-whole-gpu-rerun'):
             p = os.path.join(root, rr, 'parity.jsonl')

@@ -79,11 +79,7 @@ A 4-shard layout over the three 32 GB NUCs plus one 64 GB tail was cut as well, 
 Results: TBD (`results/D1-122b-2x64gb`).
 
 ### 4.3 Sharded vs. whole: accuracy, performance multiplier, utilization multiplier
-- **Token-level parity is not a usable accuracy metric here.** Two runs of the *same whole model on the same box* agree on the first sentence and then
-  diverge (0/6 exact 160-token matches, common prefix 7%): greedy decoding flips at f16 near-ties, and the flip point depends on run state
-  (e.g. whether a 1-token warm call preceded the request). The sharded runs land at the same floor (A3/A4: 0/6, prefix 8–9%), i.e. indistinguishable
-  from run-to-run noise. The exporter's own check confirms the shards are numerically faithful (chain-vs-full logits rel 2–3e-2, top-1 match,
-  8/8 greedy tokens for both models).
+- **Token-level parity.** The whole model is deterministic: re-running it after a server restart with the same client reproduces all six 160-token greedy outputs byte-for-byte (A1c vs A1b, 6/6). The sharded engine is *not* token-identical to it: 2 or 3 co-located shards agree on the first ~50 characters of every answer and then take a different (equally coherent) continuation (A3/A4 vs A1b: 0/6 exact, ~8% common prefix). This is the f16 fusion-order / near-tie behaviour the exporter documents (its own check still shows chain-vs-full top-1 match and 8/8 greedy tokens on a short probe), so token agreement over long generations is the wrong yardstick; task accuracy is the right one. A side finding: the request path matters too, since the first client (streaming requests, no 1-token warm call) got different continuations from the same whole model (A1 vs A1b: 0/6), which argues for pinning the client method when comparing deployments.
 - **Task-level accuracy** is the right comparison: GSM8K-40 whole 35B = 37/40 (92.5%); sharded chain and 122B rows TBD.
 - **Performance multiplier** (vs. whole on 64 GB): 2 or 3 co-located shards = 0.65x decode, 2.6–3.9x TTFT; NUC pipelines TBD.
 - **Utilization multiplier:** sharding does not reduce total memory (same 18–19 GB resident; split across boxes in C1/C2), lowers single-box power 10%

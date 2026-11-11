@@ -13,3 +13,34 @@ LAUNCH rc=0 cmdpid=5136 childpid=7060
 [04:11:29] [alpha/C1-2nuc-2shard] idle baseline (30 s)
 {"seconds":30,"started":"2026-11-11T02:11:32.7479717-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.1925,"pkg_power_mw_avg":3423.01,"pkg_energy_mj":102961.85,"ddr_reads_mb_s":196.25,"ddr_writes_mb_s":132.10999999999999,"ddr_total_gb_s":0.32}
 [04:12:07] [alpha/C1-2nuc-2shard] bench perf (warmup 1, repeats 3)
+warmup short ttft 0.4101 dec 12.547 tok 15 status 200 
+bench short ttft 0.2691 dec 9.2 tok 15 status 200 
+bench medium ttft 3.538 dec 18.944 tok 256 status 200 
+bench long ttft 30.5483 dec 55.613 tok 256 status 200 
+bench short ttft 0.3227 dec 10.973 tok 15 status 200 
+bench medium ttft 3.4658 dec 20.084 tok 256 status 200 
+bench long ttft 18.4713 dec 11.124 tok 256 status 200 
+bench short ttft 1.7463 dec 9.084 tok 15 status 200 
+bench medium ttft 4.6811 dec 21.054 tok 256 status 200 
+bench long ttft 22.242 dec 26.611 tok 256 status 200 
+[04:16:59] [alpha/C1-2nuc-2shard] parity set
+bench p_code ttft 0.7142 dec 22.872 tok 160 status 200
+bench p_reason ttft 1.0007 dec 24.58 tok 160 status 200
+bench p_explain ttft 0.9172 dec 24.119 tok 160 status 200
+bench p_json ttft 1.9356 dec 23.34 tok 146 status 200
+bench p_list ttft 0.4893 dec 20.794 tok 136 status 200
+bench p_math ttft 1.0278 dec 24.307 tok 160 status 200
+bench p_translate ttft 0.9892 dec 30.544 tok 64 status 200
+bench p_story ttft 1.1391 dec 25.32 tok 160 status 200
+[04:18:06] [alpha/C1-2nuc-2shard] steady-state power (90 s loop, 60 s SoC Watch)
+{"seconds":60,"started":"2026-11-11T02:18:25.7293717-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.1828,"pkg_power_mw_avg":14495.21,"pkg_energy_mj":871020.75,"ddr_reads_mb_s":12038.86,"ddr_writes_mb_s":1019.0100000000001,"ddr_total_gb_s":12.75}
+[04:20:06] [alpha/C1-2nuc-2shard] collect results
+[04:20:09] [alpha/C1-2nuc-2shard] done
+[04:20:09] [chain/C1-2nuc-2shard] chain-wide steady window: samplers + SoC Watch on every rank
+rank0(alpha): {"seconds":60,"started":"2026-11-11T02:20:28.5617930-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.1781,"pkg_power_mw_avg":15019.46,"pkg_energy_mj":902400.82,"ddr_reads_mb_s":13433.25,"ddr_writes_mb_s":1162.4299999999998,"ddr_total_gb_s":14.25}
+rank1(charlie): {"seconds":60,"started":"2026-11-11T02:20:28.8129490-08:00","host":"CHARLIE","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.3103,"pkg_power_mw_avg":15715.81,"pkg_energy_mj":946159,"ddr_reads_mb_s":21341.370000000003,"ddr_writes_mb_s":1186.8,"ddr_total_gb_s":22}
+[04:22:13] [chain/C1-2nuc-2shard] stop all ranks
+alpha: STOPPED n=1
+charlie: STOPPED n=1
+[04:22:16] [chain/C1-2nuc-2shard] collect from every rank
+[04:22:22] [chain/C1-2nuc-2shard] done

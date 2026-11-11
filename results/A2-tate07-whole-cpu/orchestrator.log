@@ -10,3 +10,28 @@ LAUNCH rc=0 cmdpid=932 childpid=29392
 [04:03:41] [tate07/A2-tate07-whole-cpu] idle baseline (30 s)
 {"seconds":30,"started":"2026-11-11T02:03:46.6664071-08:00","host":"PDX88-PA0794","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.2793,"pkg_power_mw_avg":6516.24,"pkg_energy_mj":196179.32,"ddr_reads_mb_s":1369.4199999999998,"ddr_writes_mb_s":945.77,"ddr_total_gb_s":2.26}
 [04:04:21] [tate07/A2-tate07-whole-cpu] bench perf (warmup 1, repeats 3)
+warmup short ttft 1.3598 dec None tok 15 status 200 
+bench short ttft 1.3218 dec None tok 15 status 200 
+bench medium ttft 40.3917 dec None tok 256 status 200 
+bench long ttft 347.1997 dec None tok 256 status 200 
+bench short ttft 1.3261 dec None tok 15 status 200 
+bench medium ttft 40.2542 dec None tok 256 status 200 
+bench long ttft 348.7449 dec None tok 256 status 200 
+bench short ttft 1.3066 dec None tok 15 status 200 
+bench medium ttft 40.203 dec None tok 256 status 200 
+bench long ttft 347.0461 dec None tok 256 status 200 
+[04:28:13] [tate07/A2-tate07-whole-cpu] parity set
+bench p_code ttft 3.4001 dec 21.231 tok 160 status 200
+bench p_reason ttft 3.0484 dec 20.368 tok 160 status 200
+bench p_explain ttft 2.2029 dec 18.258 tok 160 status 200
+bench p_json ttft 3.1939 dec 21.594 tok 139 status 200
+bench p_list ttft 1.4881 dec 16.919 tok 160 status 200
+bench p_math ttft 3.1889 dec 20.784 tok 160 status 200
+bench p_translate ttft 1.5639 dec None tok 18 status 200
+bench p_story ttft 2.319 dec 18.587 tok 160 status 200
+[04:29:52] [tate07/A2-tate07-whole-cpu] steady-state power (90 s loop, 60 s SoC Watch)
+{"seconds":60,"started":"2026-11-11T02:30:13.3778583-08:00","host":"PDX88-PA0794","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.5413,"pkg_power_mw_avg":40670.22,"pkg_energy_mj":2453045.96,"ddr_reads_mb_s":11566.779999999999,"ddr_writes_mb_s":1898.4900000000002,"ddr_total_gb_s":13.1
+[04:31:45] [tate07/A2-tate07-whole-cpu] stop server
+STOPPED n=1
+[04:31:47] [tate07/A2-tate07-whole-cpu] collect results
+[04:34:16] [tate07/A2-tate07-whole-cpu] done

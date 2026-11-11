@@ -1,0 +1,46 @@
+[04:22:33] [chain/C2-3nuc-3shard] launch rank 2 on charlie -Listen :9100  
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" worker --rank 2 --total 3 --model "C:\ecgbench\shards\q36-3stage" --engine qwen35 --device GPU --ov-cache-dir ""  --listen :9100 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=3028 childpid=2564
+[04:22:58] [chain/C2-3nuc-3shard] launch rank 1 on beta -Listen :9100 -Next 192.168.0.188:9100 
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" worker --rank 1 --total 3 --model "C:\ecgbench\shards\q36-3stage" --engine qwen35 --device GPU --ov-cache-dir ""  --listen :9100 --next 192.168.0.188:9100 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=3056 childpid=1420
+[04:23:24] [chain/C2-3nuc-3shard] launch rank 0 on alpha  -Next 192.168.0.103:9100 -Api ':8130'
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" worker --rank 0 --total 3 --model "C:\ecgbench\shards\q36-3stage" --engine qwen35 --device GPU --ov-cache-dir ""  --next 192.168.0.103:9100 --api :8130 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=3372 childpid=2000
+[04:23:50] [alpha/C2-3nuc-3shard] waiting for health
+[04:23:52] [alpha/C2-3nuc-3shard] HEALTHY after 0s model=q36-3stage
+[04:23:52] [alpha/C2-3nuc-3shard] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 1.818, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the num
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 12.574, "status": 200, "error": null, "text": "**Spanish:**  \nLa carril 2 está cerrada más adelan
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 1.848, "status": 200, "error": null, "text": "The control room hums with the low, steady vibration of 
+[04:26:15] [alpha/C2-3nuc-3shard] idle baseline (30 s)
+{"seconds":30,"started":"2026-11-11T02:26:18.5859698-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.1986,"pkg_power_mw_avg":3542.87,"pkg_energy_mj":106615.17,"ddr_reads_mb_s":161.73,"ddr_writes_mb_s":82.17,"ddr_total_gb_s":0.24}
+[04:26:52] [alpha/C2-3nuc-3shard] bench perf (warmup 1, repeats 3)
+warmup short ttft 0.473 dec 11.486 tok 15 status 200 
+bench short ttft 0.8542 dec 11.314 tok 15 status 200 
+bench medium ttft 3.3763 dec 17.163 tok 256 status 200 
+bench long ttft 34.3729 dec 6.615 tok 256 status 200 
+bench short ttft 0.857 dec 138.598 tok 15 status 200 
+bench medium ttft 3.4831 dec 17.749 tok 256 status 200 
+bench long ttft 29.3757 dec 13.107 tok 256 status 200 
+bench short ttft 0.9666 dec 18.396 tok 15 status 200 
+bench medium ttft 4.3071 dec 19.15 tok 256 status 200 
+bench long ttft 31.1878 dec 9.489 tok 256 status 200 
+[04:33:30] [alpha/C2-3nuc-3shard] parity set
+bench p_code ttft 1.9315 dec 17.682 tok 160 status 200
+bench p_reason ttft 1.9606 dec 18.2 tok 160 status 200
+bench p_explain ttft 1.3113 dec 19.922 tok 160 status 200
+bench p_json ttft 1.1224 dec 2.963 tok 146 status 200
+bench p_list ttft 1.0006 dec 21.53 tok 136 status 200
+bench p_math ttft 1.0788 dec 19.379 tok 160 status 200
+bench p_translate ttft 1.0918 dec 18.919 tok 64 status 200
+bench p_story ttft 1.0653 dec 19.19 tok 160 status 200
+[04:35:35] [alpha/C2-3nuc-3shard] steady-state power (90 s loop, 60 s SoC Watch)
+{"seconds":60,"started":"2026-11-11T02:35:54.4050824-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.2041,"pkg_power_mw_avg":10599.41,"pkg_energy_mj":636919.37,"ddr_reads_mb_s":8039.75,"ddr_writes_mb_s":663.48,"ddr_total_gb_s":8.5}
+[04:37:29] [alpha/C2-3nuc-3shard] collect results
+[04:37:32] [alpha/C2-3nuc-3shard] done
+[04:37:32] [chain/C2-3nuc-3shard] chain-wide steady window: samplers + SoC Watch on every rank
+rank0(alpha): {"seconds":60,"started":"2026-11-11T02:37:51.5869524-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.2021,"pkg_power_mw_avg":8964.57,"pkg_energy_mj":538673.89,"ddr_reads_mb_s":4434.85,"ddr_writes_mb_s":431.84000000000003,"ddr_total_gb_s":4.75}
+rank1(beta): {"seconds":60,"started":"2026-11-11T02:37:53.8637201-08:00","host":"BETA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.207,"pkg_power_mw_avg":9124.91,"pkg_energy_mj":548376.53,"ddr_reads_mb_s":4553.21,"ddr_writes_mb_s":552.29,"ddr_total_gb_s":4.99}
+rank2(charlie): {"seconds":60,"started":"2026-11-11T02:37:51.8458785-08:00","host":"CHARLIE","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.2036,"pkg_power_mw_avg":9538.16,"pkg_energy_mj":573236.82,"ddr_reads_mb_s":8634.03,"ddr_writes_mb_s":491.43,"ddr_total_gb_s":8.91}
+[04:39:32] [chain/C2-3nuc-3shard] GSM8K-40 eval on the chain head

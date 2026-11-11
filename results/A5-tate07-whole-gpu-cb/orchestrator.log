@@ -1,0 +1,3 @@
+[04:41:00] [tate07/A5-tate07-whole-gpu-cb] launch --cb server
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" run "C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov" --engine ov-genai --device GPU --api :8130 --cb 
+LAUNCH rc=0 cmdpid=37352 childpid=0

@@ -1,0 +1,29 @@
+[04:34:30] [tate07/A1c-tate07-whole-gpu-rerun] launch server: C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov engine=ov-genai device=GPU api=:8130 extra=
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" run "C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov" --engine ov-genai --device GPU --api :8130 
+LAUNCH rc=0 cmdpid=11832 childpid=36200
+[04:34:35] [tate07/A1c-tate07-whole-gpu-rerun] waiting for health
+[04:34:44] [tate07/A1c-tate07-whole-gpu-rerun] HEALTHY after 7s model=Qwen3.6-35B-A3B-int4-ov
+[04:34:44] [tate07/A1c-tate07-whole-gpu-rerun] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 0.601, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the num
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 0.596, "status": 200, "error": null, "text": "**Spanish:**  \nLa carril 2 está cerrada más adelant
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 0.62, "status": 200, "error": null, "text": "The control room hums with the low, steady vibration of s
+[04:34:58] [tate07/A1c-tate07-whole-gpu-rerun] bench perf (warmup 1, repeats 1)
+warmup short ttft 0.1356 dec 52.033 tok 15 status 200 
+bench short ttft 0.118 dec 49.31 tok 15 status 200 
+bench medium ttft 0.6149 dec 48.015 tok 256 status 200 
+bench long ttft 3.2745 dec 83.971 tok 256 status 200 
+[04:35:26] [tate07/A1c-tate07-whole-gpu-rerun] parity set
+bench p_code ttft 0.2559 dec 48.239 tok 160 status 200
+bench p_reason ttft 0.2401 dec 46.241 tok 160 status 200
+bench p_explain ttft 0.1953 dec 45.488 tok 160 status 200
+bench p_json ttft 0.2636 dec 46.129 tok 142 status 200
+bench p_list ttft 0.171 dec 45.981 tok 160 status 200
+bench p_math ttft 0.2477 dec 46.861 tok 160 status 200
+bench p_translate ttft 0.1681 dec 48.687 tok 65 status 200
+bench p_story ttft 0.18 dec 47.186 tok 160 status 200
+[04:35:57] [tate07/A1c-tate07-whole-gpu-rerun] steady-state power (90 s loop, 60 s SoC Watch)
+{"seconds":60,"started":"2026-11-11T02:36:17.8007692-08:00","host":"PDX88-PA0794","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.3347,"pkg_power_mw_avg":34706.73,"pkg_energy_mj":2087466.67,"ddr_reads_mb_s":78890.219999999987,"ddr_writes_mb_s":4183.1799999999994,"ddr_total_gb_s":81.1
+[04:37:54] [tate07/A1c-tate07-whole-gpu-rerun] stop server
+STOPPED n=1
+[04:37:56] [tate07/A1c-tate07-whole-gpu-rerun] collect results
+[04:40:49] [tate07/A1c-tate07-whole-gpu-rerun] done
