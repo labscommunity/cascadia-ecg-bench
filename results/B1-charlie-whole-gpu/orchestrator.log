@@ -1,0 +1,10 @@
+[03:01:33] [charlie/B1-charlie-whole-gpu] launch server: C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov engine=ov-genai device=GPU api=:8130 extra=
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" run "C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov" --engine ov-genai --device GPU --api :8130 
+LAUNCH rc=0 cmdpid=5820 childpid=4460
+[03:01:38] [charlie/B1-charlie-whole-gpu] waiting for health
+[03:03:17] [charlie/B1-charlie-whole-gpu] HEALTHY after 99s model=Qwen3.6-35B-A3B-int4-ov
+[03:03:17] [charlie/B1-charlie-whole-gpu] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 10.318, "text": "Here is the step-by-step calculation to determine the number of people delayed and the
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 11.333, "text": "**Spanish:**  \nLa carril 2 est[03:05:08] [charlie/B1-charlie-whole-gpu] idle baseline (30 s)
+{"seconds":30,"started":"2026-11-11T01:05:12.3741824-08:00","host":"CHARLIE","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.4644,"pkg_power_mw_avg":3035.81,"pkg_energy_mj":92129.76,"ddr_reads_mb_s":187.91000000000003,"ddr_writes_mb_s":94.289999999999992,"ddr_total_gb_s":0.28}
+[03:05:47] [charlie/B1-charlie-whole-gpu] bench perf (warmup 1, repeats 3)

@@ -1,0 +1,1 @@
+{"seconds":30,"started":"2026-11-11T00:42:29.2020554-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.1787,"pkg_power_mw_avg":3003.07,"pkg_energy_mj":90333.19,"ddr_reads_mb_s":37.730000000000004,"ddr_writes_mb_s":6.9700000000000006,"ddr_total_gb_s":0.04}

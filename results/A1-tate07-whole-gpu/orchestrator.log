@@ -1,0 +1,11 @@
+[03:11:31] [tate07/A1-tate07-whole-gpu] launch server: C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov engine=ov-genai device=GPU api=:8130 extra=
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" run "C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov" --engine ov-genai --device GPU --api :8130 
+LAUNCH rc=0 cmdpid=17916 childpid=37152
+[03:11:36] [tate07/A1-tate07-whole-gpu] waiting for health
+[03:11:38] [tate07/A1-tate07-whole-gpu] HEALTHY after 1s model=Qwen3.6-35B-A3B-int4-ov
+[03:11:38] [tate07/A1-tate07-whole-gpu] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 0.596, "text": "Here is the step-by-step calculation to determine the number of people delayed and the"
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 0.589, "text": "**Spanish:**  \nLa carril 2 est[03:11:52] [tate07/A1-tate07-whole-gpu] idle baseline (30 s)
+{"seconds":30,"started":"2026-11-11T01:11:56.8621459-08:00","host":"PDX88-PA0794","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.3023,"pkg_power_mw_avg":7439.54,"pkg_energy_mj":224031.68,"ddr_reads_mb_s":1560.49,"ddr_writes_mb_s":1006.5799999999999,"ddr_total_gb_s":2.51}
+[03:12:31] [tate07/A1-tate07-whole-gpu] bench perf (warmup 1, repeats 3)
+[03:13:24] [tate07/A1-tate07-whole-gpu] parity set

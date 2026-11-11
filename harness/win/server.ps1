@@ -5,11 +5,13 @@ param([string]$Mode = "run", [string]$Model, [string]$Engine = "ov-genai", [stri
       [int]$Rank = -1, [int]$Total = 0, [string]$Listen = "", [string]$Next = "", [string]$Extra = "", [string]$Log,
       [string]$CacheDir = "C:\ecgbench\ovcache", [string]$Priority = "High")
 $exe = (Get-ChildItem C:\ecgbench\rt -Recurse -Filter cascadia.exe | Select-Object -First 1).FullName
-New-Item -ItemType Directory -Force -Path $CacheDir, (Split-Path $Log) | Out-Null
+New-Item -ItemType Directory -Force -Path (Split-Path $Log) | Out-Null
+if ($CacheDir -and $CacheDir -ne 'none') { New-Item -ItemType Directory -Force -Path $CacheDir | Out-Null }
 if ($Mode -eq "run") {
-  $cmd = '"' + $exe + '" run "' + $Model + '" --engine ' + $Engine + ' --device ' + $Device + ' --api ' + $Api + ' --ov-cache-dir "' + $CacheDir + '" ' + $Extra
+  $cmd = '"' + $exe + '" run "' + $Model + '" --engine ' + $Engine + ' --device ' + $Device + ' --api ' + $Api + ' ' + $Extra
 } else {
-  $cmd = '"' + $exe + '" worker --rank ' + $Rank + ' --total ' + $Total + ' --model "' + $Model + '" --engine ' + $Engine + ' --device ' + $Device + ' --ov-cache-dir "' + $CacheDir + '" '
+  $cmd = '"' + $exe + '" worker --rank ' + $Rank + ' --total ' + $Total + ' --model "' + $Model + '" --engine ' + $Engine + ' --device ' + $Device
+  if ($CacheDir -and $CacheDir -ne 'none') { $cmd += ' --ov-cache-dir "' + $CacheDir + '" ' } else { $cmd += ' --ov-cache-dir "" ' }
   if ($Listen) { $cmd += ' --listen ' + $Listen }
   if ($Next) { $cmd += ' --next ' + $Next }
   if ($Api) { $cmd += ' --api ' + $Api }
