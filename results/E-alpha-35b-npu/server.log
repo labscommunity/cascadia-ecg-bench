@@ -1,0 +1,19 @@
+[2m2026-11-11T18:40:20.205441Z[0m [32m INFO[0m [2mcascadia_cli[0m[2m:[0m cascadia run (single machine) [3mmodel[0m[2m=[0mC:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov [3mdevice[0m[2m=[0mNPU [3mengine[0m[2m=[0mOvGenai
+[2m2026-11-11T18:40:20.205613Z[0m [32m INFO[0m [2mcascadia_cli[0m[2m:[0m cascadia worker starting [3mengine[0m[2m=[0mOvGenai [3mrank[0m[2m=[0m0 [3mtotal[0m[2m=[0m1 [3mdevice[0m[2m=[0mNPU [3mmodel[0m[2m=[0mC:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov
+[2m2026-11-11T18:40:20.207277Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner connect [3mupstream[0m[2m=[0mNone [3mdownstream[0m[2m=[0mNone
+[2m2026-11-11T18:40:20.207304Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner load
+Error: backend error: Exception from src\inference\src\cpp\core.cpp:120:
+Exception from src\inference\src\dev\plugin.cpp:54:
+Exception from src\inference\src\dev\plugin.cpp:54:
+Exception from src\plugins\intel_npu\src\plugin\src\plugin.cpp:560:
+Exception from src\plugins\intel_npu\src\compiler_adapter\src\compiler_impl.cpp:323:
+Compilation failed. vclAllocatedExecutableCreate4 result: 0x78000004 - [NPU_VCL] Compiler returned msg:
+Check '!dim::is_empty(minus_one_dim)' failed at src\core\shape_inference\include\reshape_shape_inference.hpp:347:
+While validating node 'opset1::Reshape Reshape_1819 (opset12::Pad __module.model.model.language_model/aten::pad/Pad[0]:boolean[1,1155], opset1::Concat __module.model.model.language_model/aten::index/Concat[0]:i32[2]) -> ()' with friendly_name 'Reshape_1819':
+Non-'-1' output dimensions do not evenly divide the input dimensions
+
+
+
+
+
+

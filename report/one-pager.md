@@ -30,6 +30,17 @@
 - On the vendor's benchmarks the 122B-A10B is 1–3 points ahead of the 35B-A3B on knowledge/reasoning and behind on coding/agentic tasks, at 3.3x the
   weights and 3.3x the active parameters per token (~3x slower per stream on the same silicon).
 
+## Follow-up round (same day)
+- **iGPU window on 32 GB boxes: 17.7 → 24.8 GiB** with one driver registry value (`GpuSystemMemoryPinninglimit` = 85%) + reboot. It does not rescue the
+  whole 35B (the driver keeps an 18.4 GB resident segment; decode 1.8–2.0 tok/s vs 1.5–1.7) but gives sharded ranks more KV headroom. Left enabled.
+- **Concurrency (OVMS continuous batching, 64 GB box):** 32 tok/s at 1 stream → 132 tok/s combined at 8 streams (16.6 each) at 34–36 W: 3x the tok/J.
+- **Device mix (Qwen3-8B dense on one 32 GB box):** GPU 22 tok/s and 0.3 s TTFT at 1k tokens; CPU 11 tok/s and 22 s TTFT. CPU decode is a 2x loss and
+  CPU prefill a 55–75x loss. The NPU does not load either the 8B or the 0.6B (OpenVINO 2026.4.1 NPU compiler error); no engine offers NPU-prefill /
+  GPU-decode for one model. A 35B shard pair with the tail rank on a CPU (C3) halves decode (10–13 vs 19 tok/s), cuts it 5x on long prompts and
+  makes TTFT 5–8x slower than the all-GPU pair, while needing 2x the stage size in RAM.
+- **122B GPU failure fixed in the builder** (`--expert-sym`: signed INT4 experts, no zero point). The rebuilt 35B runs whole on the 64 GB GPU **9% faster**
+  than Intel's export (53 vs 48 tok/s) at equal accuracy (19/20 GSM8K). {{D3_LINE}}
+
 ## ECG takeaways
 1. For 32 GB edge boxes, Cascadia sharding is the only way to run a 35B-class model, and it works: 3 ordinary NUCs = 18 tok/s, 28 W, 6 GB per box.
 2. If one 64 GB box fits the budget, use it whole: faster, more efficient, and it supports multi-stream serving via OVMS.

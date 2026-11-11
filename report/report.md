@@ -145,9 +145,9 @@ Per-stream speed halves once batching starts and then stays flat, so combined th
 power: 3x the tokens per joule of single-stream serving. (The OSS runtime's `--cb` path refuses VLM-layout IRs; OVMS does not.)
 
 ### 6.3 Device mix: CPU / GPU / NPU
-Measured on delta (the only 32 GB box with the NPU driver) with the dense Qwen3-8B INT4 export, which fits all three devices (TBD rows fill from
+Measured on delta (the only 32 GB box with the NPU driver) with the dense Qwen3-8B INT4 export, which fits all three devices (7.3, from
 `results/E-delta-q3-8b-*`). The 35B cannot target the NPU (static-shape NPU compilation of a 19 GB MoE VLM export is not supported by the
-engines) and `HETERO:GPU,CPU` on the 35B is a capability check (TBD). A mixed pipeline with a GPU head rank and a CPU tail rank (C3, TBD)
+engines) and `HETERO:GPU,CPU` on the 35B is a capability check (7.4). A mixed pipeline with a GPU head rank and a CPU tail rank (C3, 7.4)
 quantifies "CPU for decode" on a shard. No documented way exists in OpenVINO GenAI 2026.4 to run prefill on the NPU and decode on the GPU for one
 model; the NPU pipeline runs both phases on the NPU as static sub-models.
 
@@ -157,7 +157,75 @@ while Intel's NNCF export has varying zero points. The OpenVINO 2026.4.1 GPU plu
 MoE block extracted from the GPTQ 35B IR reproduces the failure on the GPU and compiles on CPU; rewriting its expert stacks as signed INT4 without
 a zero point (bit-identical values) compiles on the GPU in 2 s with matching output (`results/F-gptq-builder-gpu-fix/`). The builder gained
 `--expert-sym`; the 35B and 122B were rebuilt with it. Validation of the rebuilt 35B as a whole model on the 64 GB GPU (A6) and the 122B as a
-3-stage all-local pipeline on the NUCs with 85% windows (D3) are TBD below.
+3-stage all-local pipeline on the NUCs with 85% windows (D3) are in 7.1 and 7.5.
+
+## 7. Follow-up results
+
+### 7.1 GPTQ-sym 35B as a whole model on the 64 GB GPU (A6): the builder fix holds at model scale
+The rebuilt 35B (`--expert-sym`, signed INT4 experts, 19.8 GB) compiles and runs on tate-07's GPU where the u4 build did not.
+
+| | A1b Intel IR (whole, GPU) | A6 GPTQ-sym IR (whole, GPU) |
+|---|---|---|
+| TTFT short / medium / long | 0.12 / 0.60 / 2.89 s | 0.12 / 0.60 / 3.23 s |
+| decode tok/s (medium / steady loop / e2e) | 47.5 / 41.9 / 38.3 | 53.4 / 45.7 / 41.3 |
+| package W (idle / decode), tok/J | 7.2 / 34.2, 1.23 | 6.8 / 34.7, 1.32 |
+| GPU busy %, DDR GB/s | 98.4, 79.5 | 98.7, 75.9 |
+| GPU shared memory | 19.1 GB | 19.4 GB |
+| GSM8K (greedy, thinking off) | 37/40 | 19/20 |
+
+The GPTQ-sym build is 9% faster per token (no zero-point subtract in the expert decompression) at the same power, and its task accuracy is
+unchanged. Its outputs are not token-identical to Intel's NNCF export (0/6 exact), as expected for a different quantization of the same weights.
+This is the configuration that makes the 122B runnable on PTL GPUs (7.4).
+
+### 7.2 Bigger GPU window on 32 GB boxes (B3, B4): allocation window is not residency
+With the 85% pinning limit (24.77 GiB window) the whole 35B on alpha's GPU decodes at **1.8–2.0 tok/s** (B3, nine prompts, TTFT 0.6 / 1.2 /
+4.1 s), versus 1.5–1.7 tok/s at the default window (B1b on charlie). Resident GPU shared memory stays at 18.4 GB, the WDDM segment size.
+Forcing a 26 GB segment (B4, `qwMemorySize`) is rewritten by the driver at boot; the run reached 1.9–2.1 tok/s before the box ran out of RAM headroom
+and the server was killed by the harness (RAM-committed 30+ GB). Conclusion: the 32 GB box can be *allowed* to allocate 24.8 GiB on the GPU, but
+the driver still pages the 19.4 GB model through an 18.4 GB resident segment, so whole-model decode stays memory-thrashed. The window increase does
+help the sharded case (more KV headroom per rank) and is left enabled on alpha, beta, charlie and delta.
+
+### 7.3 Device mix on one 32 GB box: GPU vs CPU vs NPU (E-delta)
+Dense Qwen3-8B INT4 (5.4 GB) and Qwen3-0.6B INT4 on delta (Panther Lake, 32 GB, NPU driver installed), quick protocol (short 31 / medium 974 /
+long 7.7k-token prompts, 256-token answers, two runs each). Decode is the e2e rate of the second (prefix-cached) call, which is the robust figure for CPU
+where the two-call estimate breaks.
+
+| model, device | TTFT short / medium / long | decode tok/s (short / medium / long) | CPU % | GPU compute % | GPU shared |
+|---|---|---|---|---|---|
+| 8B, **GPU** | 0.08–0.13 / 0.30–0.40 / 3.4–4.5 s | 22 / 22–23 / 19–20 | 20 | 80 | 6.4 GB |
+| 8B, **CPU** | 0.7 / 22 / 220 s | 11–12 / 11 / 6–7 | 49 | 0 | 0.5 GB |
+| 0.6B, GPU | 0.04–0.13 / 0.06 / 0.5–0.7 s | 118–130 / 138–151 / 85–108 | 20 | 43 | 1.6 GB |
+| 0.6B, CPU | 0.06–0.09 / 1.3–1.8 / 35 s | 80–90 / 66–67 / 24 | 48 | 0 | 0.4 GB |
+| 8B or 0.6B, **NPU** | does not load | | | | |
+
+- **CPU for decode** on Panther Lake is a 2x loss on the 8B (11 vs 22 tok/s) and a 55–75x loss on prefill (22 s vs 0.3 s for a 1k prompt): the
+  CPU has the same DRAM bandwidth but no advantage in it, and far less compute. For the 35B (A2, B2) the CPU path is worse still because the OpenVINO CPU
+  plugin keeps ~2x the weights resident (27 GB RSS on a 32 GB box) and the prefill takes minutes. There is no decode-side win in moving to the CPU.
+- **NPU**: both the 8B and the 0.6B fail to compile on delta's NPU with OpenVINO 2026.4.1 (driver compiler error
+  `ZE_RESULT_ERROR_INVALID_NULL_POINTER ... [NPU_VCL]`, also with `MAX_PROMPT_LEN=1024`); the NUCs have no NPU driver installed at all, and the 35B
+  export cannot be compiled statically for the NPU. The NPU was idle in every configuration of this report.
+- **NPU for prefill + GPU for decode** is not a configuration OpenVINO GenAI 2026.4 offers for one model: the NPU LLM pipeline runs prefill and
+  decode as two static sub-models on the NPU, and the GPU pipeline runs both on the GPU; there is no cross-device KV hand-off. Cascadia's
+  pipeline-parallel engine splits by *layers*, not by phase, so the closest available "mixed" layouts are (a) a GPU rank feeding a CPU rank and (b)
+  OpenVINO's `HETERO:GPU,CPU` plugin, both measured on the 35B below.
+
+### 7.4 35B pipeline with a GPU head and a CPU tail (C3), and HETERO:GPU,CPU
+"CPU for decode" on a shard, measured directly: the 2-stage 35B tree with rank 0 (layers 0–19, 8.3 GB) on alpha's GPU and rank 1 (layers 20–39 + head,
+9.9 GB) on charlie's CPU, 2.5 GbE between them. Compared with the same two stages both on GPUs (C1):
+
+| 2 NUCs, 2 shards | TTFT short / medium / long | decode tok/s (medium) | decode tok/s (long) | head GPU busy | tail resident RAM |
+|---|---|---|---|---|---|
+| C1: GPU head + GPU tail | 0.32 / 3.5 / 22 s | 19–20 | 15–19 | 44% | 9.6 GB (GPU) |
+| C3: GPU head + **CPU tail** | 0.8–1.2 / 18 / 174 s | 10–13 | 3.1–3.7 | 6% | **19.3 GB** (CPU plugin, 2x the stage) |
+
+Putting half the layers on a CPU halves decode on a 1k prompt, cuts it 5x on a 7.7k prompt (the CPU stage's attention over a long KV cache dominates),
+and makes prefill 5–8x slower; the GPU head sits idle 94% of the time waiting on the tail, and the CPU rank needs twice its stage size in RAM.
+The CPU is not a useful decode device for these models even as a tail; it is a fallback for a box whose GPU window is already full.
+
+HETERO_PLACEHOLDER
+
+### 7.5 122B as a 3-stage all-local pipeline on the NUCs (D3)
+(pending: D3 result)
 
 ## 8. Scope notes
 - Continuous-batching concurrency on the whole model (A5) could not be run: the runtime's `--cb` path refuses VLM-layout exports, which is what the

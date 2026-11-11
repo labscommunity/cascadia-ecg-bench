@@ -1,0 +1,21 @@
+[13:06:11] [alpha/C3-mixed-alphaGPU-charlieCPU] waiting for health
+[13:24:48] [alpha/C3-mixed-alphaGPU-charlieCPU] waiting for health
+[13:37:32] [alpha/C3-mixed-alphaGPU-charlieCPU] waiting for health
+[13:54:44] [alpha/C3-mixed-alphaGPU-charlieCPU] waiting for health
+[13:55:20] [alpha/C3-mixed-alphaGPU-charlieCPU] HEALTHY after 35s model=q36-2stage
+[13:55:20] [alpha/C3-mixed-alphaGPU-charlieCPU] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 3.161, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the num
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 2.677, "status": 200, "error": null, "text": "**Spanish:**  \nEl carril 2 está cerrado más adelant
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 2.384, "status": 200, "error": null, "text": "The control room hums with the low, steady vibration of 
+[13:59:06] [alpha/C3-mixed-alphaGPU-charlieCPU] bench perf (warmup 1, repeats 2)
+warmup short ttft 1.2874 dec 20.124 tok 15 status 200 
+bench short ttft 1.2424 dec 19.003 tok 15 status 200 
+bench medium ttft 18.0547 dec 10.044 tok 256 status 200 
+bench long ttft 174.7968 dec 3.082 tok 256 status 200 
+bench short ttft 0.7756 dec 11.249 tok 15 status 200 
+bench medium ttft 17.9438 dec 12.735 tok 256 status 200 
+bench long ttft 173.9866 dec 3.717 tok 256 status 200 
+[14:18:54] [alpha/C3-mixed-alphaGPU-charlieCPU] stop server
+STOPPED n=1
+[14:18:55] [alpha/C3-mixed-alphaGPU-charlieCPU] collect results
+[14:18:55] [alpha/C3-mixed-alphaGPU-charlieCPU] done

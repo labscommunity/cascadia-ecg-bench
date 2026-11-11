@@ -1,0 +1,5 @@
+error: unexpected argument 'CPU' found
+
+Usage: cascadia.exe run [OPTIONS] <MODEL>
+
+For more information, try '--help'.
