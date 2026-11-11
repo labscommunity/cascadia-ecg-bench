@@ -68,3 +68,30 @@ tate07: STOPPED n=1
 tate07 svc=Running start=Automatic
 [17:38:02] [d2sym] restore honyaku + acrow
 [17:38:02] restoring beta (r2, r1)
+STOPPED n=0
+TASKS honyaku-watchdog=Ready cascadia-watchdog=Ready
+r2 task=Running procs=1
+r1 task=Running procs=1
+[17:38:56] restoring alpha (r0)
+STOPPED n=0
+TASKS honyaku-watchdog=Ready cascadia-watchdog=Ready
+r0 task=Running procs=1
+[17:39:25] restoring charlie (acrow)
+STOPPED n=0
+ACROW task=Running
+PROC=cascadia-node-acrow.exe pid=4632
+PROC=ovms.exe pid=6712
+PROC=ovms.exe pid=6840
+== alpha
+PROC=cascadia-node-honyaku.exe ws=5820MB
+== beta
+PROC=cascadia-node-honyaku.exe ws=5711MB
+PROC=cascadia-node-honyaku.exe ws=5057MB
+== charlie
+PROC=cascadia-node-acrow.exe ws=19MB
+PROC=ovms.exe ws=25MB
+PROC=ovms.exe ws=2123MB
+[17:43:19] honyaku probe:
+HONYAKU_OK: Hello! How can
+[17:43:21] NUC restore done
+[17:43:21] [d2sym] D2sym chain done
