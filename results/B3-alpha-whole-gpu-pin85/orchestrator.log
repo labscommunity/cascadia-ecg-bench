@@ -1,0 +1,12 @@
+[11:54:37] [alpha/B3-alpha-whole-gpu-pin85] launch server: C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov engine=ov-genai device=GPU api=:8130 extra=
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" run "C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov" --engine ov-genai --device GPU --api :8130 
+LAUNCH rc=0 cmdpid=3896 childpid=7536
+[11:54:40] [alpha/B3-alpha-whole-gpu-pin85] waiting for health
+[11:56:00] [alpha/B3-alpha-whole-gpu-pin85] HEALTHY after 79s model=Qwen3.6-35B-A3B-int4-ov
+[11:56:00] [alpha/B3-alpha-whole-gpu-pin85] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 8.118, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the num
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 9.28, "status": 200, "error": null, "text": "**Spanish:**  \nLa carril 2 está cerrada más adelante
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 8.349, "status": 200, "error": null, "text": "The control room hums with the low, steady vibration of 
+[11:57:31] [alpha/B3-alpha-whole-gpu-pin85] idle baseline (30 s)
+{"seconds":30,"started":"2026-11-11T09:57:32.3014222-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.2271,"pkg_power_mw_avg":3680.73,"pkg_energy_mj":110829.41,"ddr_reads_mb_s":141.54,"ddr_writes_mb_s":83.62,"ddr_total_gb_s":0.22}
+[11:58:08] [alpha/B3-alpha-whole-gpu-pin85] bench perf (warmup 1, repeats 3)

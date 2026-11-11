@@ -29,3 +29,8 @@ bench.util.jsonl
 [11:51:51] [delta] capability checks on the 35B: NPU and HETERO:GPU,CPU (the 35B IR must be fetched; 12 GB free on delta -> skip if no room)
 [11:51:52] [delta] delta free GB: 7
 [11:51:52] [delta] restore booth node: re-enable watchdog (it relaunches the node within 3 min)
+PROC=cascadia-node.exe
+PROC=ovms.exe
+[11:52:53] [delta] delta sweep done
+[11:53:39] [delta2] existing ptlbench NPU/GPU/CPU results for Qwen3-0.6B / 8B on delta (reference)
+[11:53:40] [delta2] pause booth node again

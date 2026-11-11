@@ -1,0 +1,3 @@
+[12:06:45] eval start on tate07 (A6-tate07-whole-gpu-gptq-sym-eval, n=20)
+{"kind": "summary", "n": 20, "correct": 19, "accuracy": 0.95, "total_completion_tokens": 5697, "wall_s": 119.0, "config": "A6-whole-gpu-64gb-gptq-sym", "model": "q35-35b-gptq-sym"}
+[12:08:53] eval done

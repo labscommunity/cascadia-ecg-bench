@@ -11,6 +11,9 @@
 | C1-2nuc-2shard | 0.32 s | 3.54 s | 22.24 s | 20.1 | 18.8 | 15.3 |
 | C2-3nuc-3shard | 0.86 s | 3.48 s | 31.19 s | 17.8 | 18.1 | 13.8 |
 | A1c-tate07-whole-gpu-rerun | 0.12 s | 0.61 s | 3.27 s | 48.0 | 42.7 | 38.9 |
+| A6-tate07-whole-gpu-gptq-sym | 0.12 s | 0.60 s | 3.23 s | 53.4 | 45.7 | 41.3 |
+| E-delta-q3-8b-CPU | 0.73 s | 22.15 s | 222.70 s | 258.4 |  |  |
+| E-delta-q3-8b-GPU | 0.11 s | 0.35 s | 3.99 s | 22.9 |  |  |
 
 ## Power and utilization (60 s SoC Watch window during sustained decode; 30 s idle with model loaded; for pipelines decode W = sum over ranks, memory = head rank)
 
@@ -25,6 +28,9 @@
 | C1-2nuc-2shard | 3.4 | 30.7 | 0.61 | 12.75 | 7.95 | 43.85 | 41.3 | 0.0 | 9.1 | 9.6 | 13.3 |
 | C2-3nuc-3shard | 3.5 | 27.6 | 0.65 | 8.5 | 5.25 | 28.9 | 27.65 | 0.0 | 6.1 | 6.6 | 10.3 |
 | A1c-tate07-whole-gpu-rerun |  | 34.7 | 1.23 | 81.13 | 17.35 | 97.3 | 8.6 | 0.0 | 19.1 | 19.5 | 32.9 |
+| A6-tate07-whole-gpu-gptq-sym | 6.8 | 34.7 | 1.32 | 75.89 | 16.5 | 98.7 | 9 | 0 | 19.4 | 19.9 | 33.0 |
+| E-delta-q3-8b-CPU |  |  |  |  |  |  |  |  |  |  |  |
+| E-delta-q3-8b-GPU |  |  |  |  |  |  |  |  |  |  |  |
 
 ## Per-rank package power during chain decode (W)
 
@@ -43,6 +49,9 @@
 | C1-2nuc-2shard | 2 | 0.45x | 5.90x | 7.70x | 0.90x | 0.50x | 0.96x |
 | C2-3nuc-3shard | 3 | 0.43x | 5.80x | 10.79x | 0.81x | 0.53x | 0.96x |
 | A1c-tate07-whole-gpu-rerun | 1 | 1.02x | 1.02x | 1.13x | 1.01x | 1.00x | 1.00x |
+| A6-tate07-whole-gpu-gptq-sym | 1 | 1.09x | 1.00x | 1.12x | 1.01x | 1.07x | 1.02x |
+| E-delta-q3-8b-CPU | 1 |  | 36.92x | 77.06x |  |  |  |
+| E-delta-q3-8b-GPU | 1 |  | 0.58x | 1.38x |  |  |  |
 
 ## Output parity vs. the whole model (same greedy prompts, 160 tokens)
 
@@ -56,6 +65,7 @@
 | C1-2nuc-2shard | 6 | 0/6 | 0.085 |
 | C2-3nuc-3shard | 6 | 0/6 | 0.085 |
 | A1c-tate07-whole-gpu-rerun | 6 | 6/6 | 1.0 |
+| A6-tate07-whole-gpu-gptq-sym | 6 | 0/6 | 0.028 |
 
 ## GSM8K-40 (exact match, greedy, thinking off, max 512 tokens)
 
@@ -63,6 +73,7 @@
 |---|---|---|---|---|
 | A1-tate07-whole-gpu-eval | 37/40 | 92.5% | 11923 | 279.5 |
 | A3-tate07-2shard-colocated-eval | 36/40 | 90.0% | 12274 | 369.8 |
+| A6-tate07-whole-gpu-gptq-sym-eval | 19/20 | 95.0% | 5697 | 119.0 |
 | C2-3nuc-3shard-eval | 36/40 | 90.0% | 12274 | 1080.4 |
 
 Notes: B1b-charlie-whole-gpu: power/utilization from the B1 window (same server state); steady decode there was measured end-to-end

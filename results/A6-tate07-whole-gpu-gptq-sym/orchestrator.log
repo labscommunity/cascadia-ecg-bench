@@ -1,0 +1,32 @@
+[11:57:21] [tate07/A6-tate07-whole-gpu-gptq-sym] launch server: C:\ecgbench\models\q35-gptq-sym-ov engine=ov-genai device=GPU api=:8130 extra=
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" run "C:\ecgbench\models\q35-gptq-sym-ov" --engine ov-genai --device GPU --api :8130 
+LAUNCH rc=0 cmdpid=35988 childpid=36960
+[11:57:25] [tate07/A6-tate07-whole-gpu-gptq-sym] waiting for health
+[11:58:02] [tate07/A6-tate07-whole-gpu-gptq-sym] HEALTHY after 35s model=q35-gptq-sym-ov
+[11:58:02] [tate07/A6-tate07-whole-gpu-gptq-sym] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 0.566, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the num
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 0.592, "status": 200, "error": null, "text": "Español: El carril 2 está cerrado más adelante debid
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 0.608, "status": 200, "error": null, "text": "The control room hums with the low vibration of servers,
+[11:58:16] [tate07/A6-tate07-whole-gpu-gptq-sym] idle baseline (30 s)
+{"seconds":30,"started":"2026-11-11T09:58:20.2928664-08:00","host":"PDX88-PA0794","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.2767,"pkg_power_mw_avg":6771.73,"pkg_energy_mj":203900.94,"ddr_reads_mb_s":1625.1,"ddr_writes_mb_s":1068.95,"ddr_total_gb_s":2.63}
+[11:58:55] [tate07/A6-tate07-whole-gpu-gptq-sym] bench perf (warmup 1, repeats 2)
+warmup short ttft 0.1568 dec 67.464 tok 15 status 200 
+bench short ttft 0.1207 dec 57.161 tok 15 status 200 
+bench medium ttft 0.6011 dec 54.658 tok 256 status 200 
+bench long ttft 3.2292 dec 104.938 tok 256 status 200 
+bench short ttft 0.1248 dec 59.609 tok 15 status 200 
+bench medium ttft 0.592 dec 52.049 tok 256 status 200 
+bench long ttft 3.2349 dec 101.526 tok 256 status 200 
+[11:59:36] [tate07/A6-tate07-whole-gpu-gptq-sym] parity set
+bench p_code ttft 0.2476 dec 52.435 tok 160 status 200
+bench p_reason ttft 0.2554 dec 53.176 tok 160 status 200
+bench p_explain ttft 0.187 dec 53.907 tok 160 status 200
+bench p_json ttft 0.255 dec 47.84 tok 129 status 200
+bench p_list ttft 0.1688 dec 48.145 tok 124 status 200
+bench p_math ttft 0.2487 dec 54.563 tok 160 status 200
+bench p_translate ttft 0.1639 dec 55.201 tok 68 status 200
+bench p_story ttft 0.1801 dec 53.55 tok 160 status 200
+[12:00:03] [tate07/A6-tate07-whole-gpu-gptq-sym] steady-state power (90 s loop, 60 s SoC Watch)
+{"seconds":60,"started":"2026-11-11T10:00:23.1091091-08:00","host":"PDX88-PA0794","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.3484,"pkg_power_mw_avg":34650.45,"pkg_energy_mj":2083499.27,"ddr_reads_mb_s":73435.909999999989,"ddr_writes_mb_s":4270.9500000000007,"ddr_total_gb_s":75.8
+[12:01:59] [tate07/A6-tate07-whole-gpu-gptq-sym] collect results
+[12:06:44] [tate07/A6-tate07-whole-gpu-gptq-sym] done
