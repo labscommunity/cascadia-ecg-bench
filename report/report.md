@@ -89,6 +89,10 @@ GPU compile error. A CPU fallback is ruled out by memory (the CPU plugin holds ~
 blocked by a software gap in the GPTQ-to-OpenVINO builder, not only by memory; fixing the builder's expert-constant layout for the GPU plugin
 is the prerequisite for any 122B measurement on this hardware.
 
+**Update (follow-up round, same day):** the builder gap was found and fixed (`--expert-sym`, §6.4), and the 122B now compiles and runs on Panther
+Lake GPUs: all-local on three NUCs it thrashes at 0.57 tok/s because each stage exceeds the 18.4 GB resident segment (§7.5); with four stages that
+fit their GPUs (three NUCs + the 64 GB tail over the relay) it runs at D2SYM_RATE tok/s and scores D2SYM_GSM on GSM8K-20 (§7.6).
+
 ### 4.3 Sharded vs. whole: accuracy, performance multiplier, utilization multiplier
 - **Token-level parity.** The whole model is deterministic: re-running it after a server restart with the same client reproduces all six 160-token greedy outputs byte-for-byte (A1c vs A1b, 6/6). The sharded engine is *not* token-identical to it: 2 or 3 co-located shards agree on the first ~50 characters of every answer and then take a different (equally coherent) continuation (A3/A4 vs A1b: 0/6 exact, ~8% common prefix). This is the f16 fusion-order / near-tie behaviour the exporter documents (its own check still shows chain-vs-full top-1 match and 8/8 greedy tokens on a short probe), so token agreement over long generations is the wrong yardstick; task accuracy is the right one. A side finding: the request path matters too, since the first client (streaming requests, no 1-token warm call) got different continuations from the same whole model (A1 vs A1b: 0/6), which argues for pinning the client method when comparing deployments.
 - **Task-level accuracy** is the right comparison: GSM8K-40 whole 35B = 37/40 (92.5%); sharded 35B = 36/40 (90.0%) both as 2 co-located shards and as a 3-NUC chain, with byte-identical token counts (12,274) in the two sharded runs, i.e. the staged engine is deterministic across topologies and the one-problem gap to the whole model is within noise for a 40-item set. No 122B row (not runnable, §4.2).
@@ -114,7 +118,11 @@ needs two 64 GB boxes instead of one and will decode roughly 3x slower per strea
 - **Model size:** the 122B-A10B does not fit any single Panther Lake node (64.3 GB INT4); it needs two 64 GB nodes and decodes ~3x slower per stream
   (10B vs 3B active parameters). The newer 35B-A3B is within 1–3 points of it on the vendor's knowledge/reasoning benchmarks and ahead on coding and
   agentic tasks, so for traffic-monitoring summarization, log triage and tool use the 35B-A3B is the right default and the 122B is a selective upgrade
-  (long-video and knowledge-heavy tasks) rather than a general one. The 122B could not be measured here (GPU compile failure of the only available IR, §4.2).
+  (long-video and knowledge-heavy tasks) rather than a general one. After the builder fix the 122B was measured (§7.5–7.6): on 32 GB nodes it needs stages under ~18 GB (four or more NUCs, or a 64 GB tail); it scored D2SYM_GSM on GSM8K-20 against the 35B's 37/40.
+- **Device mix (follow-up, §7.3–7.4):** CPU decode is a 2x loss on a dense 8B and worse on a 35B shard (half the layers on a CPU rank halves decode and
+  makes long-prompt decode 5x slower); the NPU does not load these models with OpenVINO 2026.4.1 and no engine splits prefill/decode across devices; `HETERO`
+  puts everything on the GPU anyway. Raising the iGPU window to 24.8 GiB does not fix whole-model decode on 32 GB boxes (the resident segment stays at 18.4 GB).
+  Concurrency through OVMS continuous batching scales linearly to 8 streams (132 tok/s combined) on the 64 GB box.
 - **Operational notes for ECG:** prefill, not decode, is where sharding hurts (long prompts cost 4–11x more TTFT when staged), so keep per-request
   context short (per-minute telemetry windows, not hour-long dumps) or pre-summarize; keep shard links on a local 2.5 GbE segment (a relayed WAN hop
   of 15 ms is tolerable, 100+ ms is not); the NPU is unused by these engines today, so NPU-capable boxes gain nothing for LLM serving; and use
