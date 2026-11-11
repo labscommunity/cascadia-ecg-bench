@@ -1,0 +1,6 @@
+[03:34:59] [tate07/A3-tate07-2shard-colocated] launch server: C:\ecgbench\shards\q36-2stage engine=qwen35 device=GPU api=:8130 extra=--prefix-cache-gb 0
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" run "C:\ecgbench\shards\q36-2stage" --engine qwen35 --device GPU --api :8130 --prefix-cache-gb 0
+LAUNCH rc=0 cmdpid=6136 childpid=33268
+[03:35:04] [tate07/A3-tate07-2shard-colocated] waiting for health
+[03:35:34] [tate07/A3-tate07-2shard-colocated] HEALTHY after 29s model=q36-2stage
+[03:35:34] [tate07/A3-tate07-2shard-colocated] calib

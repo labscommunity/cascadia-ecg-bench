@@ -1,0 +1,5 @@
+HOST=CHARLIE
+PING tate07-tailnet 100.82.253.76 min=80ms avg=188ms max=553ms n=10
+TCP22 tate07-tailnet median_ms=167.28 min_ms=115.92
+NIC Ethernet 2 2.5 Gbps
+NIC Tailscale 100 Gbps

@@ -1,0 +1,10 @@
+HOST=ALPHA
+PING beta-lan no reply (ICMP blocked?)
+PING charlie-lan no reply (ICMP blocked?)
+PING tate07-tailnet 100.82.253.76 min=109ms avg=181.3ms max=491ms n=10
+TCP22 beta median_ms=0.87 min_ms=0.43
+TCP22 charlie median_ms=0.78 min_ms=0.46
+TCP22 tate07-tailnet median_ms=118.78 min_ms=107.69
+NIC Ethernet 2.5 Gbps
+NIC Tailscale 100 Gbps
+NIC Ethernet 2 2.5 Gbps

@@ -1,68 +1,57 @@
 #!/usr/bin/env python3
-"""Aggregate results/<run>/ into a markdown table: median TTFT / decode tok/s per prompt, steady power, utilization, memory.
-usage: summarize.py results/ [--json out.json]"""
-import json, os, sys, statistics as st, glob, argparse
+"""Aggregate results/<run>/ into a markdown table (medians). usage: summarize.py results/ [--json out.json]"""
+import json, os, glob, argparse, statistics as st
 ap = argparse.ArgumentParser(); ap.add_argument('root'); ap.add_argument('--json', default=''); a = ap.parse_args()
 def jl(p):
     out = []
     if not os.path.exists(p): return out
     for l in open(p, encoding='utf-8-sig'):
         l = l.strip()
-        if not l: continue
-        try: out.append(json.loads(l))
-        except Exception: pass
+        if l:
+            try: out.append(json.loads(l))
+            except Exception: pass
     return out
 def med(xs):
     xs = [x for x in xs if isinstance(x, (int, float))]
-    return round(st.median(xs), 3) if xs else None
+    return round(st.median(xs), 2) if xs else None
+def sw(p):
+    try: return json.load(open(p, encoding='utf-8-sig'))
+    except Exception: return {}
 rows = []
 for d in sorted(glob.glob(os.path.join(a.root, '*'))):
     if not os.path.isdir(d): continue
-    run = os.path.basename(d)
-    # chain runs keep head results under rank0-*/ ; flat runs at top level
-    base = d
+    run = os.path.basename(d); base = d
     r0 = glob.glob(os.path.join(d, 'rank0-*'))
     if r0: base = r0[0]
     bench = [r for r in jl(os.path.join(base, 'bench.jsonl')) if r.get('kind') == 'bench' and r.get('status') == 200]
-    if not bench and not os.path.exists(os.path.join(base, 'idle.sw.json')): continue
-    row = {'run': run}
+    steady = [r for r in jl(os.path.join(base, 'steady.jsonl')) if r.get('status') == 200]
+    if not bench and not steady: continue
+    row = {'run': run, 'status': open(os.path.join(d, 'STATUS')).read().strip() if os.path.exists(os.path.join(d, 'STATUS')) else ''}
     for pid in ('short', 'medium', 'long'):
         b = [r for r in bench if r['prompt_id'] == pid]
-        row[f'{pid}_ttft_s'] = med([r['ttft_s'] for r in b]); row[f'{pid}_dec_tok_s'] = med([r['decode_tok_s'] for r in b])
-        if b and b[0].get('prompt_tokens'): row[f'{pid}_prompt_tok'] = b[0]['prompt_tokens']
-    cal = {r['prompt_id']: r.get('prompt_tokens') for r in jl(os.path.join(base, 'calib.jsonl'))}
-    for pid in ('short', 'medium', 'long'):
-        if cal.get(pid): row[f'{pid}_prompt_tok'] = cal[pid]
-    steady = [r for r in jl(os.path.join(base, 'steady.jsonl')) if r.get('status') == 200]
-    row['steady_dec_tok_s'] = med([r['decode_tok_s'] for r in steady]); row['steady_requests'] = len(steady)
-    for k in ('idle', 'steady'):
-        p = os.path.join(base, f'{k}.sw.json')
-        if os.path.exists(p):
-            try:
-                sw = json.load(open(p, encoding='utf-8-sig'))
-                row[f'{k}_pkg_w'] = round(sw.get('pkg_power_mw_avg', 0) / 1000, 2); row[f'{k}_ddr_gb_s'] = sw.get('ddr_total_gb_s')
-                if 'npu_power_mw_avg' in sw: row[f'{k}_npu_w'] = round(sw['npu_power_mw_avg'] / 1000, 2)
-            except Exception: pass
-        u = jl(os.path.join(base, f'{k}.util.jsonl'))
-        if u:
-            row[f'{k}_cpu_pct'] = med([x.get('cpu_util_pct') for x in u]); row[f'{k}_gpu3d_pct'] = med([x.get('gpu_3d_pct') for x in u])
-            row[f'{k}_gpucompute_pct'] = med([x.get('gpu_compute_pct') for x in u]); row[f'{k}_npu_pct'] = med([x.get('gpu_neural_pct') for x in u])
-            row[f'{k}_gpu_shared_gb'] = round((med([x.get('gpu_shared_mb') for x in u]) or 0) / 1024, 2)
-            row[f'{k}_proc_ws_gb'] = round((med([x.get('proc_ws_mb') for x in u]) or 0) / 1024, 2)
-            row[f'{k}_committed_gb'] = round((med([x.get('mem_committed_mb') for x in u]) or 0) / 1024, 2)
-    if row.get('steady_dec_tok_s') and row.get('steady_pkg_w'):
-        row['tok_per_joule'] = round(row['steady_dec_tok_s'] / row['steady_pkg_w'], 3)
-    # chain: per-rank steady power
+        row[f'{pid}_ptok'] = b[0].get('prompt_tokens') if b else None
+        row[f'{pid}_ttft_s'] = med([r.get('ttft_s') for r in b]); row[f'{pid}_dec'] = med([r.get('decode_tok_s') for r in b]); row[f'{pid}_e2e'] = med([r.get('e2e_tok_s') for r in b])
+        row[f'{pid}_wall_s'] = med([r.get('wall_s') for r in b])
+    row['steady_dec'] = med([r.get('decode_tok_s') for r in steady]); row['steady_e2e'] = med([r.get('e2e_tok_s') for r in steady]); row['steady_n'] = len(steady)
+    i, s = sw(os.path.join(base, 'idle.sw.json')), sw(os.path.join(base, 'steady.sw.json'))
+    row['idle_W'] = round(i.get('pkg_power_mw_avg', 0) / 1000, 1) if i else None; row['steady_W'] = round(s.get('pkg_power_mw_avg', 0) / 1000, 1) if s else None
+    row['steady_ddr_GBs'] = s.get('ddr_total_gb_s'); row['idle_ddr_GBs'] = i.get('ddr_total_gb_s')
+    if row['steady_dec'] and row['steady_W']: row['tok_per_J'] = round(row['steady_dec'] / row['steady_W'], 2)
+    u = jl(os.path.join(base, 'steady.util.jsonl')); ui = jl(os.path.join(base, 'idle.util.jsonl'))
+    if u:
+        row['cpu_pct'] = med([x.get('cpu_util_pct') for x in u]); row['gpu_3d_pct'] = med([x.get('gpu_3d_pct') for x in u]); row['gpu_compute_pct'] = med([x.get('gpu_compute_pct') for x in u])
+        row['npu_pct'] = med([x.get('gpu_neural_pct') for x in u]); row['gpu_shared_GB'] = round((med([x.get('gpu_shared_mb') for x in u]) or 0) / 1024, 1)
+        row['proc_ws_GB'] = round((med([x.get('proc_ws_mb') for x in u]) or 0) / 1024, 1); row['committed_GB'] = round((med([x.get('mem_committed_mb') for x in u]) or 0) / 1024, 1)
+    if ui: row['idle_committed_GB'] = round((med([x.get('mem_committed_mb') for x in ui]) or 0) / 1024, 1)
     for rk in sorted(glob.glob(os.path.join(d, 'rank*-*'))):
-        rname = os.path.basename(rk).split('-')[0]
-        for p in glob.glob(os.path.join(rk, f'steady-{rname}.sw.json')):
-            try: row[f'{rname}_pkg_w'] = round(json.load(open(p, encoding='utf-8-sig')).get('pkg_power_mw_avg', 0) / 1000, 2)
-            except Exception: pass
+        rn = os.path.basename(rk).split('-')[0]; p = os.path.join(rk, f'steady-{rn}.sw.json')
+        if os.path.exists(p): row[f'{rn}_W'] = round(sw(p).get('pkg_power_mw_avg', 0) / 1000, 1)
+        uu = jl(os.path.join(rk, f'steady-{rn}.util.jsonl'))
+        if uu: row[f'{rn}_gpu_shared_GB'] = round((med([x.get('gpu_shared_mb') for x in uu]) or 0) / 1024, 1); row[f'{rn}_ws_GB'] = round((med([x.get('proc_ws_mb') for x in uu]) or 0) / 1024, 1)
     rows.append(row)
-cols = ['run', 'short_prompt_tok', 'short_ttft_s', 'short_dec_tok_s', 'medium_prompt_tok', 'medium_ttft_s', 'medium_dec_tok_s', 'long_prompt_tok', 'long_ttft_s', 'long_dec_tok_s',
-        'steady_dec_tok_s', 'idle_pkg_w', 'steady_pkg_w', 'tok_per_joule', 'steady_ddr_gb_s', 'steady_cpu_pct', 'steady_gpu3d_pct', 'steady_gpucompute_pct', 'steady_npu_pct', 'steady_gpu_shared_gb', 'steady_proc_ws_gb', 'steady_committed_gb']
-extra = sorted({k for r in rows for k in r} - set(cols))
-cols += extra
+cols = ['run', 'short_ptok', 'short_ttft_s', 'medium_ptok', 'medium_ttft_s', 'long_ptok', 'long_ttft_s', 'medium_dec', 'steady_dec', 'steady_e2e', 'idle_W', 'steady_W', 'tok_per_J', 'steady_ddr_GBs', 'cpu_pct', 'gpu_compute_pct', 'gpu_3d_pct', 'npu_pct', 'gpu_shared_GB', 'proc_ws_GB', 'committed_GB']
+extra = sorted({k for r in rows for k in r} - set(cols) - {'status'})
 print('| ' + ' | '.join(cols) + ' |'); print('|' + '---|' * len(cols))
 for r in rows: print('| ' + ' | '.join('' if r.get(c) is None else str(r.get(c)) for c in cols) + ' |')
+print('\nextra columns: ' + ', '.join(f"{r['run']}: " + ', '.join(f'{k}={r[k]}' for k in extra if r.get(k) is not None) for r in rows))
 if a.json: json.dump(rows, open(a.json, 'w'), indent=1)

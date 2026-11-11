@@ -1,0 +1,29 @@
+[03:27:06] [tate07/A1b-tate07-whole-gpu] waiting for health
+[03:27:07] [tate07/A1b-tate07-whole-gpu] HEALTHY after 0s model=Qwen3.6-35B-A3B-int4-ov
+[03:27:07] [tate07/A1b-tate07-whole-gpu] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 0.602, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the num
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 0.525, "status": 200, "error": null, "text": "**Spanish:**  \nLa carril 2 est[03:27:18] [tate07/A1b-tate07-whole-gpu] idle baseline (30 s)
+{"seconds":30,"started":"2026-11-11T01:27:23.3654672-08:00","host":"PDX88-PA0794","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.2658,"pkg_power_mw_avg":7195.01,"pkg_energy_mj":216554.08,"ddr_reads_mb_s":1898.33,"ddr_writes_mb_s":1053.6399999999999,"ddr_total_gb_s":2.88}
+[03:27:58] [tate07/A1b-tate07-whole-gpu] bench perf (warmup 1, repeats 3)
+[03:28:58] [tate07/A1b-tate07-whole-gpu] parity set
+bench p_code ttft 0.2626 dec 46.078 tok 160 status 200
+bench p_reason ttft 0.2608 dec 46.572 tok 160 status 200
+bench p_explain ttft 0.1969 dec 47.865 tok 160 status 200
+bench p_json ttft 0.2561 dec 47.182 tok 142 status 200
+bench p_list ttft 0.1709 dec 46.408 tok 160 status 200
+bench p_math ttft 0.2449 dec 47.727 tok 160 status 200
+Traceback (most recent call last):
+File "C:\ecgbench\harness\bench_client.py", line 121, in <module>
+r = measure(p['id'], p['text'], p.get('max_tokens', args.max_tokens), diag=(args.stream_diag and rep == 0)); r.update({'kind': 'bench', 'rep': rep}); emit(r)
+^^^^^^^
+File "C:\ecgbench\harness\bench_client.py", line 89, in emit
+line = json.dumps(rec, ensure_ascii=False); print(line, flush=True)
+^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\devcloud\AppData\Local\Programs\Python\Python311\Lib\encodings\cp1252.py", line 19, in encode
+return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 382-424: character maps to <undefined>
+[03:29:25] [tate07/A1b-tate07-whole-gpu] steady-state power (90 s loop, 60 s SoC Watch)
+{"seconds":60,"started":"2026-11-11T01:29:46.4310915-08:00","host":"PDX88-PA0794","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.3318,"pkg_power_mw_avg":34160.47,"pkg_energy_mj":2054041.32,"ddr_reads_mb_s":77418.32,"ddr_writes_mb_s":3993.0699999999997,"ddr_total_gb_s":79.5}
+[03:31:21] [tate07/A1b-tate07-whole-gpu] collect results
+[03:34:47] [tate07/A1b-tate07-whole-gpu] done
