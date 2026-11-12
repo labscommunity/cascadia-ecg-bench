@@ -72,12 +72,12 @@ footer { margin-top: 3rem; border-top: 1px solid var(--rule); padding-top: 1rem;
 
 <h2>What the measurements say</h2>
 <div class="findings">
-  <div class="finding"><b>A 32 GB NUC cannot serve the 35B alone</b><p>The INT4 model is 19.4 GB and the iGPU can address 17.7 GB. It loads, but decodes at 1.7 tok/s; on CPU it reaches ~12 tok/s with RAM saturated and 53–447 s first-token waits.</p></div>
+  <div class="finding"><b>A 32 GB NUC cannot serve the 35B alone as shipped, and can after one registry change</b><p>As shipped the video-memory budget is 17.2 GiB and the 19.4 GB model decodes at 1.7 tok/s. With the dxgkrnl commit limit raised to 85% (follow-up round) the same NUC serves it whole at 30–33 tok/s, 0.75 s TTFT at 1k tokens, 33.5 W, byte-identical output to the 64 GB box.</p></div>
   <div class="finding"><b>Sharding across 2–3 NUCs makes it deployable</b><p>18–19 tok/s per stream (11x the single-NUC whole model), 3.5 s to first token on a 1k prompt, 6–9 GB GPU memory and 9–15 W per NUC, same GSM8K accuracy as the whole model.</p></div>
   <div class="finding"><b>One 64 GB box is the faster, leaner unit</b><p>Whole model: 42–48 tok/s, 0.6 s TTFT at 1k tokens, 34 W, 1.23 tok/J. Sharding on that box costs 35% of decode speed and 2.6x TTFT and only pays off if the memory is needed for something else.</p></div>
   <div class="finding"><b>Prefill is the sharding tax</b><p>TTFT on a 7.7k-token prompt: 2.9 s whole, 11 s with co-located shards, 22–31 s across NUCs. Decode loses 35–57%; prefill loses 4–11x. Keep per-request context short.</p></div>
   <div class="finding"><b>Accuracy survives sharding; token parity does not</b><p>Whole-model output is deterministic run to run (6/6 identical). Sharded output agrees for the first sentence then diverges (f16 near-tie flips), yet GSM8K-40 is 36/40 vs 37/40.</p></div>
-  <div class="finding"><b>The 122B runs after a builder fix, and needs stages under 18 GB</b><p>Its 64.3 GB INT4 IR fits no single box. The GPTQ-to-OpenVINO build first failed in the GPU plugin's MoE fusion; the fix (signed INT4 experts) makes it compile. Three 32 GB NUCs run it at 0.57 tok/s (every stage pages through the 18.4 GB resident segment); with four stages that fit their GPUs it runs at 1.2–2.7 tok/s, relay-bound, and scores 17/20 (3 misses = 400-token truncations; 35B: 18–19/20 on the same questions) on GSM8K-20.</p></div>
+  <div class="finding"><b>The 122B runs after a builder fix, and needs stages under 18 GB</b><p>Its 64.3 GB INT4 IR fits no single box. The GPTQ-to-OpenVINO build first failed in the GPU plugin's MoE fusion; the fix (signed INT4 experts) makes it compile. With the GPU window raised, three 32 GB NUCs run it all-local at 2.9–3.3 tok/s and 24 W (0.57 tok/s before, when every stage paged through a 17.2 GiB budget); it scores 17/20 on GSM8K-20 (3 misses = 400-token truncations; 35B: 18–19/20 on the same questions).</p></div>
 </div>
 
 <h2>Hardware and memory windows</h2>
@@ -228,7 +228,7 @@ Node: constant:..._postponed_decompression_byfx_moecompressed:
 
 <h2>Follow-up round (same day): memory window, concurrency, device mix, 122B fix</h2>
 <div class="findings">
-  <div class="finding"><b>The iGPU window on 32 GB boxes can be raised to 24.8 GiB</b><p>One registry value (the Intel Graphics Software "Shared GPU Memory Override", <span class="mono">GpuSystemMemoryPinninglimit</span> = 85%) plus a reboot. It does not rescue the whole 35B: the driver still keeps an 18.4 GB resident segment, so decode stays at 1.8–2.0 tok/s. It does give sharded ranks more KV headroom.</p></div>
+  <div class="finding"><b>The iGPU memory window on 32 GB boxes can be raised, and it changes everything</b><p>The real limit is a dxgkrnl setting Intel's INF installs at 57% (<span class="mono">GraphicsDrivers\MemoryManager\SystemPartitionCommitLimitPercentage</span>); at 85% the per-process GPU budget goes from 17.2 to 26.1 GiB. The whole 35B on one NUC goes from 1.7–1.9 to 33 (steady 30) tok/s, and the 122B runs all-local on three NUCs at 2.9–3.3 tok/s.</p></div>
   <div class="finding"><b>OVMS continuous batching scales linearly to 8 streams</b><p>On the 64 GB box: 32 tok/s for one stream, 132 tok/s combined at 8 streams (16.6 each), at 34–36 W throughout, so 3x the tokens per joule of single-stream serving.</p></div>
   <div class="finding"><b>CPU decode is a loss, the NPU does not load</b><p>Dense Qwen3-8B on one 32 GB box: 22 tok/s on the GPU, 11 on the CPU, with 1k-token prefill at 0.3 s vs 22 s. Neither the 8B nor the 0.6B compiles on the NPU with OpenVINO 2026.4.1 (driver compiler error); the NUCs have no NPU driver. A phase split (NPU prefill, GPU decode) does not exist in these engines.</p></div>
   <div class="finding"><b>The 122B GPU failure is fixed in the builder</b><p>GPTQ experts are symmetric (every zero point is 8) and the GPU MoE fusion rejects that form. Emitting signed INT4 experts without a zero point (<span class="mono">--expert-sym</span>, bit-identical values) compiles. The rebuilt 35B runs whole on the 64 GB GPU 9% faster than Intel's export at equal accuracy (A6).</p></div>
@@ -236,9 +236,22 @@ Node: constant:..._postponed_decompression_byfx_moecompressed:
   <div class="finding"><b>With four stages that fit, the 122B runs cleanly, and the relay sets the speed</b><p>alpha + beta + charlie + the 64 GB Tiber box as tail: no paging (head copy engine 3%), 2.0 s TTFT on a short prompt, 1.2–2.7 tok/s decode at every prompt length because each token crosses the Tiber relay twice. GSM8K-20: 17/20 (3 misses = 400-token truncations; 35B: 18–19/20 on the same questions). A fourth local 32 GB node would make it LAN-bound (est. 5–8 tok/s).</p></div>
 </div>
 
-<h3>Memory window on 32 GB Panther Lake</h3>
-<p>The 17.7 GB window is the driver default of 57% of RAM. Setting the pinning limit to 85% raised OpenVINO's <span class="mono">GPU_DEVICE_TOTAL_MEM_SIZE</span> on alpha, beta and charlie from 16.46 to 24.77 GiB; the compute-runtime percentage knob and the adapter's <span class="mono">qwMemorySize</span> had no effect (the driver rewrites the latter at boot). With the larger window the whole 35B on alpha's GPU (B3) decodes at 1.8–2.0 tok/s with 18.4 GB resident, against 1.5–1.7 tok/s at the default window; forcing a 26 GB segment (B4) was undone by the driver and the run ended when the box ran out of RAM headroom. The window increase is left enabled on all four 32 GB boxes.</p>
-
+<h3>Memory window on 32 GB Panther Lake: the real knob</h3>
+<p>Two settings look alike. Intel's <span class="mono">GMM\GpuSystemMemoryPinninglimit</span> (what the first attempt changed) only moves the total that OpenVINO reports (16.5 → 24.8 GiB). The segment the Windows video memory manager actually enforces, and the per-process budget it derives from it, come from <span class="mono">HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers\MemoryManager\SystemPartitionCommitLimitPercentage</span>, which Intel's INF sets to 57 ("DXGK regkey to override the default 50% pinning limit to 57%") and which Intel Graphics Software's "Shared GPU Memory Override" slider writes together with the GMM key. The budget, read with <span class="mono">D3DKMTQueryVideoMemoryInfo</span> (the number Task Manager shows), is the resident cap seen in every thrashing run of this report.</p>
+<div class="tablewrap"><table>
+<tr><th>Box</th><th class="num">Commit limit</th><th class="num">WDDM shared segment</th><th class="num">Per-process budget</th><th class="num">OpenVINO total</th></tr>
+<tr><td class="cfg">alpha / beta / charlie / delta, as shipped</td><td class="num">57%</td><td class="num">17.98 GiB (dxdiag's 18,412 MiB)</td><td class="num">17.23 GiB</td><td class="num">24.77 GiB (misleading)</td></tr>
+<tr><td class="cfg">alpha / beta / charlie after 85% + reboot</td><td class="num">85%</td><td class="num">26.81 GiB</td><td class="num">26.06 GiB</td><td class="num">24.77 GiB</td></tr>
+<tr><td class="cfg">tate-07 (64 GB)</td><td class="num">82%</td><td class="num">51.95 GiB</td><td class="num">51.20 GiB</td><td class="num">48.4 GiB</td></tr>
+</table></div>
+<p class="note">Budget = segment − 0.75 GiB in every case. Intel documents the slider's ceiling as 87% on the consumer driver and 93% on the Arc Pro workstation driver (release notes 101.8517/8805); the OS key is not capped by the slider, but Windows and the serving process still need RAM, so 85% on a 32 GB box (4.8 GB left for the OS) is the practical value used here. The setting is left enabled on the three NUCs; delta still carries the GMM key only.</p>
+<h3>Same runs, real window: whole 35B on one NUC (B5) and the all-local 122B (D3b)</h3>
+<div class="tablewrap"><table>
+<tr><th>Run</th><th class="num">Before (17.2 GiB budget)</th><th class="num">After (26.1 GiB budget)</th></tr>
+<tr><td class="cfg">Whole Qwen3.6-35B-A3B on one 32 GB NUC GPU</td><td class="num">1.7–1.9 tok/s · TTFT 0.6 / 1.2 / 4.1 s · copy engine 26%</td><td class="num"><b>33 (steady 30) tok/s</b> · TTFT 0.15 / 0.75 / 3.9 s · 33.5 W, 56 GB/s DDR, 1.0 tok/J (idle 3.3 W) · GPU 95% busy, copy 12%</td></tr>
+<tr><td class="cfg">Qwen3.5-122B-A10B, 3 stages (20.7 / 24.7 / 25.0 GB) on alpha + beta + charlie</td><td class="num">0.57 tok/s · TTFT 3.8 / 12 / 79 s</td><td class="num"><b>2.9–3.3 tok/s</b> · TTFT 1.2–1.5 / 5.7–6.3 / 41–45 s · 24.3 W chain (8.7 + 8.9 + 6.7) · GSM8K-20 17/20</td></tr>
+</table></div>
+<p>Both pipelines now hold their weights resident (head rank 20.4 GiB used of 26.06; ranks at 19.4–20.8 GiB; copy engines at a few percent). The 35B on a single 32 GB box goes from unusable to 33 (steady 30) tok/s, 1.7–1.8x the 3-NUC sharded chain and about 70% of the 64 GB box: a 32 GB Panther Lake node <em>can</em> serve the 35B whole. The 122B runs on three ordinary NUCs with no 64 GB node and no relay, token-identical to the relay layout (same 5,482 completion tokens on GSM8K-20) and 1.4x faster; at 2.9 tok/s with GPU compute at 14–15% and 5–6 GB/s of DDR traffic per box it is now kernel-launch and expert-gather bound (the 256-expert MoE path of the OpenVINO GPU plugin), a runtime question rather than a memory one.</p>
 <h3>Concurrency: OVMS continuous batching on the 64 GB box</h3>
 <div class="tablewrap"><table>
 <tr><th class="num">Streams</th><th class="num">Per-stream tok/s</th><th class="num">Combined tok/s</th><th class="num">Package W</th><th class="num">tok/J</th></tr>
@@ -284,13 +297,13 @@ Node: constant:..._postponed_decompression_byfx_moecompressed:
 
 <h2>What this means for ECG deployments</h2>
 <ul class="tight">
-  <li><b>32 GB edge boxes need Cascadia sharding to run a 35B-class model at all</b>, and it works: three ordinary AI PCs serve Qwen3.6-35B-A3B at 18 tok/s, 28 W total, 6 GB and 9 W per box, with task accuracy equal to the whole model.</li>
+  <li><b>Raise the GPU memory window on every 32 GB box first</b> (<span class="mono">SystemPartitionCommitLimitPercentage</span> = 85, reboot): a single NUC then serves Qwen3.6-35B-A3B whole at 30–33 tok/s. Sharding still works (three NUCs: 18 tok/s, 28 W, 6 GB per box, same accuracy) and is what makes the 122B run, but it is no longer the only way to run the 35B.</li>
   <li><b>If the budget allows one 64 GB node, run the model whole on it</b>: 2.3x the speed and 2x the energy efficiency of the NUC chain, 0.6 s to first token on a 1k-token prompt, and multi-stream serving through the OVMS backend.</li>
   <li><b>Design around prefill.</b> Shards cost 35–57% of decode but 4–11x of time to first token on long prompts. Feed per-minute telemetry windows or pre-summarized context rather than hour-long dumps.</li>
   <li><b>Keep shard links on a local 2.5 GbE segment.</b> A 15 ms relay hop is tolerable; the 110–350 ms NUC-to-cloud path is not.</li>
   <li><b>The NPU plays no part</b> in LLM serving with these engines today (the 8B and 0.6B do not even compile for it), NPU-capable SKUs gain nothing here, and there is no NPU-prefill / GPU-decode split to be had. CPU decode is a 2x loss on a dense 8B and worse on a 35B shard.</li>
   <li><b>Validate deployments with task-level checks</b>, not token-exact comparisons.</li>
-  <li><b>Default to Qwen3.6-35B-A3B.</b> The 122B now runs on Panther Lake (builder fixed) but needs stages under ~18 GB: four or more 32 GB nodes, or 64 GB nodes; three NUCs alone thrash at 0.57 tok/s. Through the relay to a 64 GB tail it reached 1.2–2.7 tok/s and 17/20 (3 misses = 400-token truncations; 35B: 18–19/20 on the same questions) on GSM8K-20.</li>
+  <li><b>Default to Qwen3.6-35B-A3B.</b> The 122B now runs on Panther Lake (builder fixed): three 32 GB NUCs with the window raised serve it all-local at 2.9–3.3 tok/s and 24 W, with the same GSM8K-20 score as the 35B (17/20 vs 18–19/20), so it is a selective upgrade at ~10x the per-token cost.</li>
 </ul>
 
 <h2>Method and scope notes</h2>

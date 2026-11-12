@@ -53,3 +53,18 @@ beta: STOPPED n=1
 charlie: STOPPED n=1
 [19:56:31] [chain/D3b-122b-3stage-3nuc-commit85] collect from every rank
 [19:56:37] [chain/D3b-122b-3stage-3nuc-commit85] done
+[20:05:28] restoring beta (r2, r1)
+STOPPED n=0
+TASKS honyaku-watchdog=Ready cascadia-watchdog=Ready
+r2 task=Running procs=1
+r1 task=Running procs=1
+[20:06:23] restoring alpha (r0)
+STOPPED n=0
+TASKS honyaku-watchdog=Ready cascadia-watchdog=Ready
+r0 task=Running procs=1
+[20:06:51] restoring charlie (acrow)
+STOPPED n=0
+ACROW task=Running
+PROC=cascadia-node-acrow.exe pid=7828
+PROC=ovms.exe pid=8620
+PROC=ovms.exe pid=5072

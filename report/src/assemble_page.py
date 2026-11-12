@@ -27,6 +27,16 @@ rep('<h2>What this means for ECG deployments</h2>', sec+'\n<h2>What this means f
 # 6. lede/meta mention
 rep('measured 11 Nov 2026</div>','measured 11 Nov 2026 · follow-up round the same day</div>')
 s=s.replace('D2SYM_RATE','1.2–2.7').replace('D2SYM_GSM','17/20 (3 misses = 400-token truncations; 35B: 18–19/20 on the same questions)')
+
+# 7. headline findings and takeaways that the window fix changes
+m=re.search(r'<div class="finding"><b>A 32 GB NUC cannot serve the 35B alone</b>.*?</div>', s, re.S); assert m
+s=s[:m.start()]+'<div class="finding"><b>A 32 GB NUC cannot serve the 35B alone as shipped, and can after one registry change</b><p>As shipped the video-memory budget is 17.2 GiB and the 19.4 GB model decodes at 1.7 tok/s. With the dxgkrnl commit limit raised to 85% (follow-up round) the same NUC serves it whole at 30–33 tok/s, 0.75 s TTFT at 1k tokens, 33.5 W, byte-identical output to the 64 GB box.</p></div>'+s[m.end():]
+m=re.search(r'<li><b>32 GB edge boxes need Cascadia sharding to run a 35B-class model at all</b>.*?</li>', s, re.S); assert m
+s=s[:m.start()]+'<li><b>Raise the GPU memory window on every 32 GB box first</b> (<span class="mono">SystemPartitionCommitLimitPercentage</span> = 85, reboot): a single NUC then serves Qwen3.6-35B-A3B whole at 30–33 tok/s. Sharding still works (three NUCs: 18 tok/s, 28 W, 6 GB per box, same accuracy) and is what makes the 122B run, but it is no longer the only way to run the 35B.</li>'+s[m.end():]
+s=s.replace('Three 32 GB NUCs run it at 0.57 tok/s (every stage pages through the 18.4 GB resident segment); with four stages that fit their GPUs it runs at 1.2–2.7 tok/s, relay-bound, and scores 17/20 (3 misses = 400-token truncations; 35B: 18–19/20 on the same questions) on GSM8K-20.',
+ 'With the GPU window raised, three 32 GB NUCs run it all-local at 2.9–3.3 tok/s and 24 W (0.57 tok/s before, when every stage paged through a 17.2 GiB budget); it scores 17/20 on GSM8K-20 (3 misses = 400-token truncations; 35B: 18–19/20 on the same questions).')
+s=s.replace('The 122B now runs on Panther Lake (builder fixed) but needs stages under ~18 GB: four or more 32 GB nodes, or 64 GB nodes; three NUCs alone thrash at 0.57 tok/s. Through the relay to a 64 GB tail it reached 1.2–2.7 tok/s and 17/20 (3 misses = 400-token truncations; 35B: 18–19/20 on the same questions) on GSM8K-20.',
+ 'The 122B now runs on Panther Lake (builder fixed): three 32 GB NUCs with the window raised serve it all-local at 2.9–3.3 tok/s and 24 W, with the same GSM8K-20 score as the 35B (17/20 vs 18–19/20), so it is a selective upgrade at ~10x the per-token cost.')
 left=re.findall(r'D2SYM_[A-Z]+|\{\{[A-Z_0-9]+\}\}', s)
 out=sys.argv[1] if len(sys.argv)>1 else page
 open(out,'w').write(s); print('assembled', len(s), 'bytes; placeholders left:', sorted(set(left)))

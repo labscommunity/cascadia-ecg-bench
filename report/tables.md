@@ -14,9 +14,12 @@
 | A6-tate07-whole-gpu-gptq-sym | 0.12 s | 0.60 s | 3.23 s | 53.4 | 45.7 | 41.3 |
 | B3-alpha-whole-gpu-pin85 | 0.59 s | 1.18 s | 4.16 s | 1.9 |  |  |
 | B4-alpha-whole-gpu-pin85-seg26 | 0.52 s | 1.20 s | 4.06 s | 2.1 |  |  |
+| B5-alpha-whole-gpu-commit85 | 0.15 s | 0.75 s | 3.90 s | 33.2 | 30.4 | 27.8 |
+| B5a-alpha-whole-gpu-commit85-honyaku-coresident | 0.15 s | 0.77 s | 3.97 s | 33.2 | 30.4 | 27.7 |
 | C3-mixed-alphaGPU-charlieCPU | 1.01 s | 18.00 s | 174.39 s | 11.4 |  |  |
 | D2sym-122b-4stage-3nuc-tate07 | 2.04 s | 18.50 s | 122.60 s | 2.0 |  |  |
 | D3-122b-3stage-3nuc | 3.84 s | 12.15 s | 79.36 s | 0.6 |  |  |
+| D3b-122b-3stage-3nuc-commit85 | 1.33 s | 6.15 s | 44.23 s | 3.2 | 2.9 | 2.7 |
 | E-charlie-35b-hetero3 | 0.73 s | 1.34 s | 3.97 s | 1.4 |  |  |
 | E-delta-q3-0.6b-CPU | 0.07 s | 1.52 s | 35.52 s | 118.1 |  |  |
 | E-delta-q3-0.6b-GPU | 0.09 s | 0.06 s | 0.60 s | 149.2 |  |  |
@@ -39,9 +42,12 @@
 | A6-tate07-whole-gpu-gptq-sym | 6.8 | 34.7 | 1.32 | 75.89 | 16.5 | 98.7 | 9 | 0 | 19.4 | 19.9 | 33.0 |
 | B3-alpha-whole-gpu-pin85 | 3.7 | 25.4 |  | 7.39 | 21.15 | 107.25 | 1.5 | 0.0 | 17.9 | 19.6 | 23.2 |
 | B4-alpha-whole-gpu-pin85-seg26 | 8.6 | 3.2 |  | 0.24 | 0.8 | 0.0 | 0.0 | 0.0 | 0.0 | 5.5 | 9.0 |
+| B5-alpha-whole-gpu-commit85 | 3.3 | 33.5 | 0.91 | 56.11 | 14.1 | 97.8 | 5.7 | 0 | 19.0 | 19.6 | 23.2 |
+| B5a-alpha-whole-gpu-commit85-honyaku-coresident | 7.1 | 33.9 | 0.9 | 56.2 | 14.45 | 97.75 | 5.8 | 0.0 | 24.4 | 24.7 | 28.7 |
 | C3-mixed-alphaGPU-charlieCPU |  |  |  |  |  |  |  |  |  |  |  |
 | D2sym-122b-4stage-3nuc-tate07 | 3.1 | 6.8 |  | 2.53 | 3.6 | 4.55 | 3.6 | 0.0 | 13.1 | 13.5 | 17.0 |
 | D3-122b-3stage-3nuc | 3.3 |  |  |  |  |  |  |  |  |  |  |
+| D3b-122b-3stage-3nuc-commit85 | 3.3 | 24.3 | 0.12 | 4.85 | 4.35 | 9.75 | 7.5 | 0.0 | 20.5 | 20.8 | 24.4 |
 | E-charlie-35b-hetero3 |  |  |  |  |  |  |  |  |  |  |  |
 | E-delta-q3-0.6b-CPU |  |  |  |  |  |  |  |  |  |  |  |
 | E-delta-q3-0.6b-GPU |  |  |  |  |  |  |  |  |  |  |  |
@@ -52,6 +58,7 @@
 
 - C1-2nuc-2shard: rank0 15.0 W, rank1 15.7 W -> total 30.7 W
 - C2-3nuc-3shard: rank0 9.0 W, rank1 9.1 W, rank2 9.5 W -> total 27.6 W
+- D3b-122b-3stage-3nuc-commit85: rank0 8.7 W, rank1 8.9 W, rank2 6.7 W -> total 24.3 W
 
 ## Sharding multipliers (relative to the whole model on the 64 GB box, A1b)
 
@@ -68,9 +75,12 @@
 | A6-tate07-whole-gpu-gptq-sym | 1 | 1.09x | 1.00x | 1.12x | 1.01x | 1.07x | 1.02x |
 | B3-alpha-whole-gpu-pin85 | 1 |  | 1.97x | 1.44x | 0.74x |  | 0.94x |
 | B4-alpha-whole-gpu-pin85-seg26 | 1 |  | 2.00x | 1.40x | 0.09x |  |  |
+| B5-alpha-whole-gpu-commit85 | 1 | 0.72x | 1.25x | 1.35x | 0.98x | 0.74x | 0.99x |
+| B5a-alpha-whole-gpu-commit85-honyaku-coresident | 1 | 0.73x | 1.28x | 1.37x | 0.99x | 0.73x | 1.28x |
 | C3-mixed-alphaGPU-charlieCPU | 2 |  | 30.00x | 60.34x |  |  |  |
 | D2sym-122b-4stage-3nuc-tate07 | 4 |  | 30.83x | 42.42x | 0.20x |  | 0.69x |
 | D3-122b-3stage-3nuc | 3 |  | 20.25x | 27.46x |  |  |  |
+| D3b-122b-3stage-3nuc-commit85 | 3 | 0.07x | 10.25x | 15.30x | 0.71x | 0.10x | 3.16x |
 | E-charlie-35b-hetero3 | 1 |  | 2.23x | 1.37x |  |  |  |
 | E-delta-q3-0.6b-CPU | 1 |  | 2.53x | 12.29x |  |  |  |
 | E-delta-q3-0.6b-GPU | 1 |  | 0.10x | 0.21x |  |  |  |
@@ -92,7 +102,10 @@
 | A6-tate07-whole-gpu-gptq-sym | 6 | 0/6 | 0.028 |
 | B3-alpha-whole-gpu-pin85 | 6 | 6/6 | 1.0 |
 | B4-alpha-whole-gpu-pin85-seg26 | 0 | 0/0 | 0.0 |
+| B5-alpha-whole-gpu-commit85 | 6 | 6/6 | 1.0 |
+| B5a-alpha-whole-gpu-commit85-honyaku-coresident | 6 | 6/6 | 1.0 |
 | D2sym-122b-4stage-3nuc-tate07 | 6 | 0/6 | 0.025 |
+| D3b-122b-3stage-3nuc-commit85 | 6 | 0/6 | 0.025 |
 
 ## GSM8K-40 (exact match, greedy, thinking off, max 512 tokens)
 
@@ -103,5 +116,6 @@
 | A6-tate07-whole-gpu-gptq-sym-eval | 19/20 | 95.0% | 5697 | 119.0 |
 | C2-3nuc-3shard-eval | 36/40 | 90.0% | 12274 | 1080.4 |
 | D2sym-122b-4stage-3nuc-tate07-eval | 17/20 | 85.0% | 5482 | 3463.3 |
+| D3b-122b-3stage-3nuc-commit85-eval | 17/20 | 85.0% | 5482 | 2437.9 |
 
 Notes: B1b-charlie-whole-gpu: power/utilization from the B1 window (same server state); steady decode there was measured end-to-end

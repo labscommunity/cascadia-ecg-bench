@@ -1,6 +1,6 @@
 # Cascadia on Panther Lake — sharded vs. whole-model serving (one-pager, 2026-11-11)
 
-**Hardware.** Three 32 GB Intel Core Ultra X7 358H NUCs (Arc B390 iGPU, 17.7 GB GPU window, 2.5 GbE) and one 64 GB X7 358H in Intel Tiber (52 GB GPU window).
+**Hardware.** Three 32 GB Intel Core Ultra X7 358H NUCs (Arc B390 iGPU, 17.2 GiB GPU budget as shipped, 26.1 GiB after the window fix, 2.5 GbE) and one 64 GB X7 358H in Intel Tiber (52 GB GPU window).
 **Software.** Cascadia runtime v0.2.7 (OpenVINO GenAI 2026.4.1), official INT4 Qwen3.6-35B-A3B IR (19.4 GB), greedy, thinking off, SoC Watch power.
 
 ## Qwen3.6-35B-A3B — what each layout delivers (single stream)
@@ -10,11 +10,13 @@
 | Whole model, one 64 GB box (GPU) | 0.60 s | 42–48 | 34 W | 1.23 | 19.1 GB | 37/40 |
 | 2 or 3 shards co-located on the 64 GB box | 1.56 s | 27 | 30 W | 0.9 | 18.4 GB | 36/40 |
 | Whole model, one 32 GB NUC (GPU) | 1.29 s | **1.7** (oversubscribed) | 23 W | 0.07 | 17.9 GB | — |
+| Whole model, one 32 GB NUC (GPU), **GPU window raised to 85%** | 0.75 s | **30–33** | 33.5 W | 0.91 | 19.0 GB | 6/6 identical to 64 GB box |
 | Whole model, one 32 GB NUC (CPU) | 53 s | ~12 e2e, RAM saturated | — | — | 27 GB RSS | — |
 | 2 shards, one per NUC (2.5 GbE) | 3.5 s | 19 | 31 W total (15 + 16) | 0.61 | 9.1 GB | — |
 | 3 shards, one per NUC | 3.5 s | 18 | 28 W total (9 + 9 + 10) | 0.66 | 6.1 GB | 36/40 |
 
-- **32 GB nodes cannot serve the 35B alone** (19.4 GB > 17.7 GB GPU window): 1.7 tok/s on GPU, minute-long first tokens on CPU.
+- **32 GB nodes cannot serve the 35B alone as shipped** (19.4 GB > 17.2 GiB video-memory budget): 1.7 tok/s on GPU, minute-long first tokens on CPU.
+  **With the dxgkrnl commit limit at 85% (one registry value + reboot) the same NUC serves it whole at 30–33 tok/s**, 70% of the 64 GB box.
 - **Sharding across 2–3 NUCs makes it work: 18–19 tok/s, 11x the single-NUC whole model**, same task accuracy, 6–9 GB and 9–15 W per node.
 - **A 64 GB node is 2.3x faster and 2x more energy-efficient per stream** than the NUC chain; sharding on one box costs 35% decode and 2.6x TTFT.
 - **Sharding hurts prefill most**: TTFT on a 7.7k-token prompt goes from 2.9 s (whole) to 11 s (co-located) and 22–31 s (across NUCs).
@@ -35,7 +37,7 @@
 ## Follow-up round (same day)
 - **iGPU window on 32 GB boxes: the real knob is dxgkrnl's `GraphicsDrivers\MemoryManager\SystemPartitionCommitLimitPercentage`** (Intel's INF sets 57;
   Intel Graphics Software's "Shared GPU Memory Override" slider writes it). At 85 + reboot the WDDM budget goes from 17.2 to **26.1 GiB** per process.
-  (The Intel GMM key alone only changes what OpenVINO reports.) **Whole 35B on one NUC: 1.7–1.9 → B5_1P tok/s.** All-local 122B on three NUCs:
+  (The Intel GMM key alone only changes what OpenVINO reports.) **Whole 35B on one NUC: 1.7–1.9 → 30–33 tok/s.** All-local 122B on three NUCs:
   0.57 → 2.9–3.3 tok/s, GSM8K-20 17/20, 24 W total, no 64 GB node and no relay needed.
 - **Concurrency (OVMS continuous batching, 64 GB box):** 32 tok/s at 1 stream → 132 tok/s combined at 8 streams (16.6 each) at 34–36 W: 3x the tok/J.
 - **Device mix (Qwen3-8B dense on one 32 GB box):** GPU 22 tok/s and 0.3 s TTFT at 1k tokens; CPU 11 tok/s and 22 s TTFT. CPU decode is a 2x loss and
@@ -47,9 +49,10 @@
   than Intel's export (53 vs 48 tok/s) at equal accuracy (19/20 GSM8K). The 122B itself now compiles and runs on PTL GPUs (D3/D2sym below).
 
 ## ECG takeaways
-1. For 32 GB edge boxes, Cascadia sharding is the only way to run a 35B-class model, and it works: 3 ordinary NUCs = 18 tok/s, 28 W, 6 GB per box.
+1. Raise the GPU memory window on every 32 GB box first (`SystemPartitionCommitLimitPercentage` = 85): a single NUC then serves the 35B whole at 30–33 tok/s.
+   Sharding still works (3 NUCs = 18 tok/s, 28 W, 6 GB per box) and is what makes the 122B run (3 NUCs, 2.9–3.3 tok/s), but it is no longer the only option for the 35B.
 2. If one 64 GB box fits the budget, use it whole: faster, more efficient, and it supports multi-stream serving via OVMS.
 3. Keep shards on a local 2.5 GbE segment and keep prompts short (prefill is the sharding tax); validate with task-level accuracy, not token parity.
-4. Default to Qwen3.6-35B-A3B; the 122B is a selective upgrade that needs two 64 GB nodes and a builder fix before it can be measured.
+4. Default to Qwen3.6-35B-A3B; the 122B now runs (builder fixed) on three 32 GB NUCs at ~3 tok/s and scored the same as the 35B on GSM8K-20, so it is a selective upgrade at ~10x the per-token cost.
 
 Repo: github.com/labscommunity/cascadia-ecg-bench (harness, raw results, full report, published-benchmark tables).

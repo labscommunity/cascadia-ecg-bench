@@ -1,0 +1,37 @@
+[19:58:48] [alpha/B5-alpha-whole-gpu-commit85] launch server: C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov engine=ov-genai device=GPU api=:8130 extra=
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" run "C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov" --engine ov-genai --device "GPU" --api :8130 
+LAUNCH rc=0 cmdpid=1176 childpid=2008
+[19:58:51] [alpha/B5-alpha-whole-gpu-commit85] waiting for health
+[20:00:10] [alpha/B5-alpha-whole-gpu-commit85] HEALTHY after 78s model=Qwen3.6-35B-A3B-int4-ov
+[20:00:10] [alpha/B5-alpha-whole-gpu-commit85] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 0.79, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the numb
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 0.831, "status": 200, "error": null, "text": "**Spanish:**  \nLa carril 2 está cerrada más adelant
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 0.857, "status": 200, "error": null, "text": "The control room hums with the low, steady vibration of 
+[20:00:27] [alpha/B5-alpha-whole-gpu-commit85] idle baseline (30 s)
+{"seconds":30,"started":"2026-11-11T18:00:27.7997802-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.2019,"pkg_power_mw_avg":3274.79,"pkg_energy_mj":98533.81,"ddr_reads_mb_s":150.17,"ddr_writes_mb_s":80.38000000000001,"ddr_total_gb_s":0.23}
+[20:01:03] [alpha/B5-alpha-whole-gpu-commit85] bench perf (warmup 1, repeats 3)
+warmup short ttft 0.2264 dec 41.672 tok 15 status 200 
+bench short ttft 0.1453 dec 33.909 tok 15 status 200 
+bench medium ttft 0.7396 dec 33.203 tok 256 status 200 
+bench long ttft 3.854 dec 49.743 tok 256 status 200 
+bench short ttft 0.1549 dec 34.452 tok 15 status 200 
+bench medium ttft 0.731 dec 33.207 tok 256 status 200 
+bench long ttft 3.8391 dec 49.636 tok 256 status 200 
+bench short ttft 0.1583 dec 34.915 tok 15 status 200 
+bench medium ttft 0.7312 dec 32.873 tok 256 status 200 
+bench long ttft 3.8441 dec 49.721 tok 256 status 200 
+[20:02:22] [alpha/B5-alpha-whole-gpu-commit85] parity set
+bench p_code ttft 0.4095 dec 33.628 tok 160 status 200
+bench p_reason ttft 0.2895 dec 32.72 tok 160 status 200
+bench p_explain ttft 0.2269 dec 32.285 tok 160 status 200
+bench p_json ttft 0.2922 dec 32.7 tok 142 status 200
+bench p_list ttft 0.1933 dec 32.251 tok 160 status 200
+bench p_math ttft 0.2801 dec 32.737 tok 160 status 200
+bench p_translate ttft 0.1966 dec 32.841 tok 65 status 200
+bench p_story ttft 0.2157 dec 32.292 tok 160 status 200
+[20:03:03] [alpha/B5-alpha-whole-gpu-commit85] steady-state power (90 s loop, 60 s SoC Watch)
+{"seconds":60,"started":"2026-11-11T18:03:18.6657302-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.2042,"pkg_power_mw_avg":33543.99,"pkg_energy_mj":2015937.74,"ddr_reads_mb_s":55105.95,"ddr_writes_mb_s":2348.17,"ddr_total_gb_s":56.11}
+[20:04:57] [alpha/B5-alpha-whole-gpu-commit85] stop server
+STOPPED n=1
+[20:04:58] [alpha/B5-alpha-whole-gpu-commit85] collect results
+[20:05:01] [alpha/B5-alpha-whole-gpu-commit85] done
