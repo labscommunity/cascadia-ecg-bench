@@ -68,3 +68,15 @@ ACROW task=Running
 PROC=cascadia-node-acrow.exe pid=7828
 PROC=ovms.exe pid=8620
 PROC=ovms.exe pid=5072
+== alpha
+PROC=cascadia-node-honyaku.exe ws=5741MB
+== beta
+PROC=cascadia-node-honyaku.exe ws=5693MB
+PROC=cascadia-node-honyaku.exe ws=4964MB
+== charlie
+PROC=cascadia-node-acrow.exe ws=41MB
+PROC=ovms.exe ws=3302MB
+PROC=ovms.exe ws=474MB
+[20:10:45] honyaku probe:
+HONYAKU_OK: Hello! How can
+[20:10:48] NUC restore done
