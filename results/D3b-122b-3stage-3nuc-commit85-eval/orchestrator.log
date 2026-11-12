@@ -1,0 +1,3 @@
+[19:15:02] eval start on alpha (D3b-122b-3stage-3nuc-commit85-eval, n=20)
+{"kind": "summary", "n": 20, "correct": 17, "accuracy": 0.85, "total_completion_tokens": 5482, "wall_s": 2437.9, "config": "D3b-122b-3stage-3nuc-commit85", "stages": "3", "model": "q35-122b"}
+[19:56:29] eval done

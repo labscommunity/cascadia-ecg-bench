@@ -33,8 +33,10 @@
   weights and 3.3x the active parameters per token (~3x slower per stream on the same silicon).
 
 ## Follow-up round (same day)
-- **iGPU window on 32 GB boxes: 17.7 → 24.8 GiB** with one driver registry value (`GpuSystemMemoryPinninglimit` = 85%) + reboot. It does not rescue the
-  whole 35B (the driver keeps an 18.4 GB resident segment; decode 1.8–2.0 tok/s vs 1.5–1.7) but gives sharded ranks more KV headroom. Left enabled.
+- **iGPU window on 32 GB boxes: the real knob is dxgkrnl's `GraphicsDrivers\MemoryManager\SystemPartitionCommitLimitPercentage`** (Intel's INF sets 57;
+  Intel Graphics Software's "Shared GPU Memory Override" slider writes it). At 85 + reboot the WDDM budget goes from 17.2 to **26.1 GiB** per process.
+  (The Intel GMM key alone only changes what OpenVINO reports.) **Whole 35B on one NUC: 1.7–1.9 → B5_1P tok/s.** All-local 122B on three NUCs:
+  0.57 → 2.9–3.3 tok/s, GSM8K-20 17/20, 24 W total, no 64 GB node and no relay needed.
 - **Concurrency (OVMS continuous batching, 64 GB box):** 32 tok/s at 1 stream → 132 tok/s combined at 8 streams (16.6 each) at 34–36 W: 3x the tok/J.
 - **Device mix (Qwen3-8B dense on one 32 GB box):** GPU 22 tok/s and 0.3 s TTFT at 1k tokens; CPU 11 tok/s and 22 s TTFT. CPU decode is a 2x loss and
   CPU prefill a 55–75x loss. The NPU does not load either the 8B or the 0.6B (OpenVINO 2026.4.1 NPU compiler error); no engine offers NPU-prefill /

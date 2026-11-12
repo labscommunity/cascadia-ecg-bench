@@ -1,0 +1,1 @@
+{"kind": "steady", "thread": 0, "prompt_id": "medium", "wall_s": 93.3357, "completion_tokens": 256, "prompt_tokens": 975, "status": 200, "error": null, "ttft_ref_s": 6.3565, "e2e_tok_s": 2.743, "decode_tok_s": 2.932, "model": "q35-122b", "config": "D3b-122b-3shard-3nuc-commit85", "stages": "3", "host": "alpha"}

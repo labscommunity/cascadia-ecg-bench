@@ -1,0 +1,55 @@
+[18:39:05] [chain/D3b-122b-3stage-3nuc-commit85] launch rank 2 on charlie -Listen :9100  
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" worker --rank 2 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=8664 childpid=5708
+[18:41:02] [chain/D3b-122b-3stage-3nuc-commit85] launch rank 2 on charlie -Listen :9100  
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" worker --rank 2 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=9032 childpid=9008
+[18:41:26] [chain/D3b-122b-3stage-3nuc-commit85] launch rank 1 on beta -Listen :9100 -Next 192.168.0.188:9100 
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" worker --rank 1 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --next 192.168.0.188:9100 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=4512 childpid=7600
+[18:41:50] [chain/D3b-122b-3stage-3nuc-commit85] launch rank 0 on alpha  -Next 192.168.0.103:9100 -Api ':8130'
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" worker --rank 0 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --next 192.168.0.103:9100 --api :8130 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=1084 childpid=5932
+[18:42:15] [alpha/D3b-122b-3stage-3nuc-commit85] waiting for health
+[18:42:29] [alpha/D3b-122b-3stage-3nuc-commit85] HEALTHY after 14s model=q122-sym-3
+[18:42:29] [alpha/D3b-122b-3stage-3nuc-commit85] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 3.622, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the num
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 3.246, "status": 200, "error": null, "text": "**Español:**  \nEl carril 2 está cerrado más adelant
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 4.18, "status": 200, "error": null, "text": "At 03:00, the highway stretches into a void of silence", 
+[18:43:55] [alpha/D3b-122b-3stage-3nuc-commit85] idle baseline (30 s)
+{"seconds":30,"started":"2026-11-11T16:43:56.1008927-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.6883,"pkg_power_mw_avg":3316.89,"pkg_energy_mj":99832.03,"ddr_reads_mb_s":163.46,"ddr_writes_mb_s":77.41,"ddr_total_gb_s":0.24}
+[18:44:32] [alpha/D3b-122b-3stage-3nuc-commit85] bench perf (warmup 1, repeats 3)
+warmup short ttft 1.4441 dec 4.442 tok 24 status 200 
+bench short ttft 1.3264 dec 4.129 tok 24 status 200 
+bench medium ttft 5.6641 dec 3.341 tok 256 status 200 
+bench long ttft 41.3515 dec 6.84 tok 256 status 200 
+bench short ttft 1.4671 dec 2.985 tok 24 status 200 
+bench medium ttft 6.1512 dec 3.167 tok 256 status 200 
+bench long ttft 44.2331 dec 1.857 tok 256 status 200 
+bench short ttft 1.2254 dec 3.763 tok 24 status 200 
+bench medium ttft 6.2624 dec 1.881 tok 256 status 200 
+bench long ttft 44.5343 dec 3.204 tok 256 status 200 
+[19:00:28] [alpha/D3b-122b-3stage-3nuc-commit85] parity set
+bench p_code ttft 1.8887 dec 3.355 tok 160 status 200
+bench p_reason ttft 1.5121 dec 1.604 tok 160 status 200
+bench p_explain ttft 2.1681 dec 1.348 tok 154 status 200
+bench p_json ttft 1.7946 dec 2.037 tok 139 status 200
+bench p_list ttft 1.4164 dec 2.932 tok 151 status 200
+bench p_math ttft 1.753 dec 1.429 tok 160 status 200
+bench p_translate ttft 0.8169 dec 2.483 tok 68 status 200
+bench p_story ttft 0.8636 dec 1.55 tok 160 status 200
+[19:11:13] [alpha/D3b-122b-3stage-3nuc-commit85] steady-state power (90 s loop, 60 s SoC Watch)
+{"seconds":60,"started":"2026-11-11T17:11:28.5141349-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.1852,"pkg_power_mw_avg":7929.23,"pkg_energy_mj":476394.9,"ddr_reads_mb_s":4647.82,"ddr_writes_mb_s":323.37,"ddr_total_gb_s":4.85}
+[19:13:04] [alpha/D3b-122b-3stage-3nuc-commit85] collect results
+[19:13:07] [alpha/D3b-122b-3stage-3nuc-commit85] done
+[19:13:07] [chain/D3b-122b-3stage-3nuc-commit85] chain-wide steady window: samplers + SoC Watch on every rank
+rank1(beta): {"seconds":60,"started":"2026-11-11T17:13:23.7244169-08:00","host":"BETA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.3022,"pkg_power_mw_avg":8910.12,"pkg_energy_mj":536373.17,"ddr_reads_mb_s":4930.84,"ddr_writes_mb_s":300.39,"ddr_total_gb_s":5.11}
+rank2(charlie): {"seconds":60,"started":"2026-11-11T17:13:24.3316300-08:00","host":"CHARLIE","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.1956,"pkg_power_mw_avg":6681.48,"pkg_energy_mj":401546.45,"ddr_reads_mb_s":6162.62,"ddr_writes_mb_s":330.37,"ddr_total_gb_s":6.34}
+rank0(alpha): {"seconds":60,"started":"2026-11-11T17:13:21.9093231-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.1862,"pkg_power_mw_avg":8660.87,"pkg_energy_mj":520446.9,"ddr_reads_mb_s":4838.1900000000005,"ddr_writes_mb_s":292.83,"ddr_total_gb_s":5.01}
+[19:15:02] [chain/D3b-122b-3stage-3nuc-commit85] GSM8K eval on the chain head (N=20)
+[19:56:29] [chain/D3b-122b-3stage-3nuc-commit85] stop all ranks
+alpha: STOPPED n=1
+beta: STOPPED n=1
+charlie: STOPPED n=1
+[19:56:31] [chain/D3b-122b-3stage-3nuc-commit85] collect from every rank
+[19:56:37] [chain/D3b-122b-3stage-3nuc-commit85] done

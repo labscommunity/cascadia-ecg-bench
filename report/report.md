@@ -297,13 +297,13 @@ Every 32 GB box now has a 26.06 GiB per-process GPU budget (6.1). Two runs that 
 | run | before (17.2 GiB budget) | after (26.1 GiB budget) |
 |---|---|---|
 | B5: whole Qwen3.6-35B-A3B on one NUC GPU (19.4 GB IR) | 1.7–1.9 tok/s, TTFT 0.6 / 1.2 / 4.1 s, copy engine 26% (B1b/B3) | **B5_DECODE tok/s**, TTFT B5_TTFT, B5_POWER, GPU busy B5_GPU, copy engine B5_COPY |
-| D3b: Qwen3.5-122B-A10B, 3 stages (20.7 / 24.7 / 25.0 GB) on alpha + beta + charlie, 2.5 GbE | 0.57 tok/s, TTFT 3.8 / 12 / 79 s (D3) | **D3B_DECODE tok/s**, TTFT D3B_TTFT, chain D3B_POWER; GSM8K-20 D3B_GSM |
+| D3b: Qwen3.5-122B-A10B, 3 stages (20.7 / 24.7 / 25.0 GB) on alpha + beta + charlie, 2.5 GbE | 0.57 tok/s, TTFT 3.8 / 12 / 79 s (D3) | **2.9–3.3 tok/s**, TTFT 1.2–1.5 / 5.7–6.3 / 41–45 s, chain 24.3 W (8.7 + 8.9 + 6.7), 0.12 tok/J; GSM8K-20 17/20 (token-identical to the relay layout: same 5,482 completion tokens, same three truncations) |
 
 Both pipelines now hold their weights resident (head rank 20.4 GiB used of 26.06; ranks 1–2 at 19.4–20.1 GiB; copy engines at 1–3%).
 The 35B on one NUC goes from unusable to B5_DECODE tok/s, which is the single biggest change in this report: a 32 GB Panther Lake box serves the 35B
 whole, at B5_VS_SHARD the speed of the 3-NUC sharded chain (18 tok/s) and about B5_VS_64 of the 64 GB box (42–48 tok/s).
-The all-local 122B runs correctly on three 32 GB boxes with no 64 GB node and no relay, at D3B_DECODE tok/s: 6x the paging case and
-D3B_VS_RELAY the relay-bound 4-stage layout (7.6), but well below a bandwidth estimate (10B active parameters at ~50 GB/s per box would allow
+The all-local 122B runs correctly on three 32 GB boxes with no 64 GB node and no relay, at 2.9–3.3 tok/s: 6x the paging case and
+1.4x the relay-bound 4-stage layout (7.6), but well below a bandwidth estimate (10B active parameters at ~50 GB/s per box would allow
 ~10+ tok/s); the GPU compute engines sit at only a few percent during decode, so the 122B's per-token cost on the iGPU is kernel-launch and
 expert-gather bound, not bandwidth bound. That is a runtime/kernel question (OpenVINO GPU MoE path for 256-expert layers), not a memory one.
 
