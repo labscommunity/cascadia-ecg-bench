@@ -131,13 +131,35 @@ needs two 64 GB boxes instead of one and will decode roughly 3x slower per strea
 
 ## 6. Follow-up round (same day): memory window, concurrency, device mix, 122B builder fix
 
-### 6.1 Raising the iGPU memory window on 32 GB Panther Lake (works)
-The 17.7 GB GPU window on the NUCs is the Intel driver's default "Shared GPU Memory Override" of 57% of RAM (the Intel Graphics Software
-slider added in driver 32.0.101.6987). The slider writes `HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0000\GMM\GpuSystemMemoryPinninglimit`
-(DWORD, percent); tate-07 carried 82, the NUCs had no value. Setting it to 85 and rebooting raised OpenVINO's `GPU_DEVICE_TOTAL_MEM_SIZE`
-on alpha, beta and charlie from 16.46 GiB to **24.77 GiB** (dxdiag's static "Shared Memory" line does not change). Neither the
-compute-runtime percentage knob (`ClDeviceGlobalMemSizeAvailablePercent`) nor the adapter's `HardwareInformation.qwMemorySize` had any effect.
-**But a bigger allocation window alone does not fix the 32 GB whole-model case (B3):** with the 24.77 GiB window the whole 35B on alpha still decodes at 1.9 tok/s, and the process's resident GPU shared memory sits at 18.4 GB, exactly the segment size dxdiag still reports (18,412 MB). The pinning limit raises what the GPU may allocate, not the WDDM shared segment it keeps resident, so the model still pages every token. tate-07 has both values high (82% and a 52 GiB `HardwareInformation.qwMemorySize`). Raising the segment value on alpha as well (B4) changed nothing: the driver rewrites that value at boot from the pinning limit, resident GPU shared memory stayed capped at 18,412 MB, decode stayed at ~2 tok/s, and the server aborted mid-run once RAM headroom fell to 2.8 GB (committed 29.5 of 31.5 GB). On a 32 GB Panther Lake box the whole 35B is therefore not usable on the iGPU with any of these knobs; the window override is still useful for shards (more KV/activation headroom, and it makes a 3 x ~22 GB layout of the 122B possible, see D3). The pinning setting was left in place on the three NUCs; remove the value to return to the 57% default.
+### 6.1 Raising the iGPU memory window on 32 GB Panther Lake: the real knob (corrected)
+**Correction (evening round).** The first attempt changed the wrong key and drew the wrong conclusion. There are two settings:
+
+| setting | who reads it | what it changes |
+|---|---|---|
+| `HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-…}\0000\GMM\GpuSystemMemoryPinninglimit` (DWORD %) | Intel's user-mode driver / compute runtime | what OpenVINO *reports* as `GPU_DEVICE_TOTAL_MEM_SIZE` (16.46 → 24.77 GiB) |
+| `HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers\MemoryManager\SystemPartitionCommitLimitPercentage` (DWORD %) | dxgkrnl's video memory manager | the WDDM shared segment and the per-process video-memory **budget**, i.e. what can actually be resident |
+
+Intel's INF installs the second one at 57 (`;DXGK regkey to override the default 50% pinning limit to 57%`), and Intel Graphics Software's
+"Shared GPU Memory Override" slider writes both. tate-07 carried 82 in both (its 52 GB window); the NUCs had 85 in the GMM key and 57 in the
+dxgkrnl key, which is why B3 saw a bigger reported window but the same 18.4 GB of resident memory. Measured with `D3DKMTQueryVideoMemoryInfo`
+(`tools/vidmem.py`, the API Task Manager uses):
+
+| box | commit limit | WDDM shared segment | per-process budget | OpenVINO total |
+|---|---|---|---|---|
+| alpha, beta, charlie, delta before | 57% | 17.98 GiB (18,412 MiB, dxdiag's number) | 17.23 GiB | 24.77 GiB (misleading) |
+| alpha after setting 85% + reboot | 85% | **26.81 GiB** | **26.06 GiB** | 24.77 GiB |
+| tate-07 (64 GB) | 82% | 51.95 GiB | 51.20 GiB | 48.4 GiB |
+
+The budget is the segment minus 0.75 GiB in every case, and it is exactly the "resident cap" seen in B3/B4 and D3. Intel documents the slider's
+ceiling as 87% on the consumer driver and 93% on the Arc Pro workstation driver (release notes 101.8517/8805, "a 64 GB host can have up to
+93% or 59.5 GB"); the dxgkrnl key itself is not capped by Intel's slider, but the OS and the serving process still need their own RAM, so 85% on a
+32 GB box (4.8 GB left for Windows) is the practical setting and is what the rest of this section uses.
+
+**Result on the whole 35B (B5a, alpha, 26 GiB budget):** the model that decoded at 1.7–1.9 tok/s inside a 17.2 GiB budget now runs at
+**30–34 tok/s** on one 32 GB NUC (TTFT 0.15 / 0.77 / 3.95 s; 33.9 W package, 56 GB/s DDR, GPU 96% busy, 24.4 GB GPU shared with a 5.5 GB
+honyaku rank co-resident; the memory copy engine drops from 26% to the 12% of a non-paging run). That is 17x, and it changes the headline of
+this report: a 32 GB Panther Lake box *can* serve Qwen3.6-35B-A3B whole. The clean rerun (B5, honyaku off) and the all-local 122B at the
+new budget (D3b) are in 7.7.
 
 ### 6.2 Concurrency through OVMS continuous batching (64 GB box)
 With the enterprise OVMS backend (continuous batching, 8 GB KV cache, up to 8 sequences) serving the official 35B IR on tate-07's GPU:
