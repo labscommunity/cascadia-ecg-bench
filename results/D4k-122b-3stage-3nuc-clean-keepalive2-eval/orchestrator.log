@@ -1,0 +1,3 @@
+[13:04:06] eval start on alpha (D4k-122b-3stage-3nuc-clean-keepalive2-eval, n=20)
+{"kind": "summary", "n": 20, "correct": 17, "accuracy": 0.85, "total_completion_tokens": 5482, "wall_s": 568.8, "config": "D4k-122b-3stage-3nuc-clean-keepalive2", "stages": "3", "model": "q35-122b"}
+[13:14:16] eval done

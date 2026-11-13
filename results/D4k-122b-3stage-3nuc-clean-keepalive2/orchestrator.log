@@ -1,0 +1,62 @@
+[12:35:52] [chain/D4k-122b-3stage-3nuc-clean-keepalive2] launch rank 2 on charlie -Listen :9100  
+CMD="C:\ecgbench\rt\clean\cascadia.exe" worker --rank 2 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --prefix-cache-gb 0 --gpu-keepalive-ms 2
+LAUNCH rc=0 cmdpid=2836 childpid=6848
+[12:36:17] [chain/D4k-122b-3stage-3nuc-clean-keepalive2] launch rank 1 on beta -Listen :9100 -Next 192.168.0.188:9100 
+CMD="C:\ecgbench\rt\clean\cascadia.exe" worker --rank 1 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --next 192.168.0.188:9100 --prefix-cache-gb 0 --gpu-keepalive-ms 2
+LAUNCH rc=0 cmdpid=5152 childpid=5916
+[12:36:41] [chain/D4k-122b-3stage-3nuc-clean-keepalive2] launch rank 0 on alpha  -Next 192.168.0.103:9100 -Api ':8130'
+CMD="C:\ecgbench\rt\clean\cascadia.exe" worker --rank 0 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --next 192.168.0.103:9100 --api :8130 --prefix-cache-gb 0 --gpu-keepalive-ms 2
+LAUNCH rc=0 cmdpid=4344 childpid=0
+[12:37:05] [alpha/D4k-122b-3stage-3nuc-clean-keepalive2] waiting for health
+[12:47:07] [chain/D4k-122b-3stage-3nuc-clean-keepalive2] launch rank 2 on charlie -Listen :9100  
+CMD="C:\ecgbench\rt\clean\cascadia.exe" worker --rank 2 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --prefix-cache-gb 0 --gpu-keepalive-ms 2
+LAUNCH rc=0 cmdpid=7076 childpid=4724
+[12:47:32] [chain/D4k-122b-3stage-3nuc-clean-keepalive2] launch rank 1 on beta -Listen :9100 -Next 192.168.0.188:9100 
+CMD="C:\ecgbench\rt\clean\cascadia.exe" worker --rank 1 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --next 192.168.0.188:9100 --prefix-cache-gb 0 --gpu-keepalive-ms 2
+LAUNCH rc=0 cmdpid=7744 childpid=5740
+[12:47:56] [chain/D4k-122b-3stage-3nuc-clean-keepalive2] launch rank 0 on alpha  -Next 192.168.0.103:9100 -Api ':8130'
+CMD="C:\ecgbench\rt\clean\cascadia.exe" worker --rank 0 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --next 192.168.0.103:9100 --api :8130 --prefix-cache-gb 0 --gpu-keepalive-ms 2
+LAUNCH rc=0 cmdpid=2504 childpid=7132
+[12:48:20] [alpha/D4k-122b-3stage-3nuc-clean-keepalive2] waiting for health
+[12:48:35] [alpha/D4k-122b-3stage-3nuc-clean-keepalive2] HEALTHY after 14s model=q122-sym-3
+[12:48:35] [alpha/D4k-122b-3stage-3nuc-clean-keepalive2] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 2.39, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the numb
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 2.412, "status": 200, "error": null, "text": "**Español:**  \nEl carril 2 está cerrado más adelant
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 2.464, "status": 200, "error": null, "text": "At 03:00, the highway stretches into a void of silence",
+[12:49:49] [alpha/D4k-122b-3stage-3nuc-clean-keepalive2] idle baseline (30 s)
+{"seconds":30,"started":"2026-11-13T10:49:52.3974349-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.2029,"pkg_power_mw_avg":3302.75,"pkg_energy_mj":99357.67,"ddr_reads_mb_s":203.13,"ddr_writes_mb_s":81.76,"ddr_total_gb_s":0.28}
+[12:50:25] [alpha/D4k-122b-3stage-3nuc-clean-keepalive2] bench perf (warmup 1, repeats 3)
+warmup short ttft 0.9105 dec 12.206 tok 24 status 200 
+bench short ttft 0.5925 dec 10.475 tok 24 status 200 
+bench medium ttft 4.9343 dec 10.541 tok 256 status 200 
+bench long ttft 36.9254 dec 10.064 tok 256 status 200 
+bench short ttft 0.6117 dec 10.489 tok 24 status 200 
+bench medium ttft 4.9542 dec 10.58 tok 256 status 200 
+bench long ttft 36.8792 dec 10.103 tok 256 status 200 
+bench short ttft 0.6256 dec 10.78 tok 24 status 200 
+bench medium ttft 4.9074 dec 10.501 tok 256 status 200 
+bench long ttft 36.812 dec 10.046 tok 256 status 200 
+[12:58:15] [alpha/D4k-122b-3stage-3nuc-clean-keepalive2] parity set
+bench p_code ttft 1.4087 dec 10.708 tok 160 status 200
+bench p_reason ttft 0.9915 dec 10.524 tok 160 status 200
+bench p_explain ttft 0.8362 dec 10.439 tok 154 status 200
+bench p_json ttft 1.0135 dec 10.539 tok 139 status 200
+bench p_list ttft 0.7418 dec 10.511 tok 151 status 200
+bench p_math ttft 0.9676 dec 10.498 tok 160 status 200
+bench p_translate ttft 0.7578 dec 10.481 tok 68 status 200
+bench p_story ttft 0.8073 dec 10.49 tok 160 status 200
+[13:00:20] [alpha/D4k-122b-3stage-3nuc-clean-keepalive2] steady-state power (90 s loop, 60 s SoC Watch)
+{"seconds":60,"started":"2026-11-13T11:00:38.5657060-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.1851,"pkg_power_mw_avg":19650.71,"pkg_energy_mj":1180753.66,"ddr_reads_mb_s":16405.71,"ddr_writes_mb_s":868.88000000000011,"ddr_total_gb_s":16.87}
+[13:02:11] [alpha/D4k-122b-3stage-3nuc-clean-keepalive2] collect results
+[13:02:14] [alpha/D4k-122b-3stage-3nuc-clean-keepalive2] done
+[13:02:14] [chain/D4k-122b-3stage-3nuc-clean-keepalive2] chain-wide steady window: samplers + SoC Watch on every rank
+rank0(alpha): {"seconds":60,"started":"2026-11-13T11:02:32.0258372-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.1865,"pkg_power_mw_avg":20261.42,"pkg_energy_mj":1217521.18,"ddr_reads_mb_s":16427.76,"ddr_writes_mb_s":904.88000000000011,"ddr_total_gb_s":16.93}
+rank1(beta): {"seconds":60,"started":"2026-11-13T11:02:31.3928345-08:00","host":"BETA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.1991,"pkg_power_mw_avg":19090.6,"pkg_energy_mj":1147235.96,"ddr_reads_mb_s":15993.93,"ddr_writes_mb_s":951.63,"ddr_total_gb_s":16.55}
+rank2(charlie): {"seconds":60,"started":"2026-11-13T11:02:31.0627311-08:00","host":"CHARLIE","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.6756,"pkg_power_mw_avg":19334.54,"pkg_energy_mj":1161911.56,"ddr_reads_mb_s":19315.8,"ddr_writes_mb_s":982.75,"ddr_total_gb_s":19.82}
+[13:04:06] [chain/D4k-122b-3stage-3nuc-clean-keepalive2] GSM8K eval on the chain head (N=20)
+[13:14:16] [chain/D4k-122b-3stage-3nuc-clean-keepalive2] stop all ranks
+alpha: STOPPED n=1
+beta: STOPPED n=1
+charlie: STOPPED n=1
+[13:14:18] [chain/D4k-122b-3stage-3nuc-clean-keepalive2] collect from every rank
+[13:14:26] [chain/D4k-122b-3stage-3nuc-clean-keepalive2] done

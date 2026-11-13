@@ -1,0 +1,18 @@
+[12:40:50] [tate07/S7q-tate07-35b-clean-staged3-base] waiting for health
+[12:41:12] [tate07/S7q-tate07-35b-clean-staged3-base] HEALTHY after 21s model=q36-3stage
+[12:41:12] [tate07/S7q-tate07-35b-clean-staged3-base] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 0.901, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the num
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 0.986, "status": 200, "error": null, "text": "**Spanish:**  \nLa carril 2 está cerrada más adelant
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 0.96, "status": 200, "error": null, "text": "The control room hums with the low, steady vibration of s
+[12:41:39] [tate07/S7q-tate07-35b-clean-staged3-base] bench perf (warmup 1, repeats 2)
+warmup short ttft 0.2732 dec 26.441 tok 15 status 200 
+bench short ttft 0.241 dec 29.609 tok 15 status 200 
+bench medium ttft 1.7471 dec 27.193 tok 256 status 200 
+bench long ttft 12.397 dec 25.212 tok 256 status 200 
+bench short ttft 0.2607 dec 25.981 tok 15 status 200 
+bench medium ttft 1.687 dec 27.476 tok 256 status 200 
+bench long ttft 12.2742 dec 25.365 tok 256 status 200 
+[12:43:40] [tate07/S7q-tate07-35b-clean-staged3-base] stop server
+STOPPED n=1
+[12:43:41] [tate07/S7q-tate07-35b-clean-staged3-base] collect results
+[12:43:45] [tate07/S7q-tate07-35b-clean-staged3-base] done

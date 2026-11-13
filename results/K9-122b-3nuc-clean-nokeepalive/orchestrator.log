@@ -1,0 +1,35 @@
+[13:14:47] [chain/K9-122b-3nuc-clean-nokeepalive] launch rank 2 on charlie -Listen :9100  
+CMD="C:\ecgbench\rt\clean\cascadia.exe" worker --rank 2 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=8708 childpid=4628
+[13:15:11] [chain/K9-122b-3nuc-clean-nokeepalive] launch rank 1 on beta -Listen :9100 -Next 192.168.0.188:9100 
+CMD="C:\ecgbench\rt\clean\cascadia.exe" worker --rank 1 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --next 192.168.0.188:9100 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=8960 childpid=7680
+[13:15:35] [chain/K9-122b-3nuc-clean-nokeepalive] launch rank 0 on alpha  -Next 192.168.0.103:9100 -Api ':8130'
+CMD="C:\ecgbench\rt\clean\cascadia.exe" worker --rank 0 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --next 192.168.0.103:9100 --api :8130 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=1436 childpid=7040
+[13:15:59] [alpha/K9-122b-3nuc-clean-nokeepalive] waiting for health
+[13:16:14] [alpha/K9-122b-3nuc-clean-nokeepalive] HEALTHY after 14s model=q122-sym-3
+[13:16:14] [alpha/K9-122b-3nuc-clean-nokeepalive] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 18.504, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the nu
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 18.669, "status": 200, "error": null, "text": "**Español:**  \nEl carril 2 está cerrado más adelan
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 12.682, "status": 200, "error": null, "text": "At 03:00, the highway stretches into a void of silence"
+[13:19:45] [alpha/K9-122b-3nuc-clean-nokeepalive] bench perf (warmup 1, repeats 2)
+warmup short ttft 1.69 dec 3.685 tok 24 status 200 
+bench short ttft 1.2208 dec 4.07 tok 24 status 200 
+bench medium ttft 6.7484 dec 2.783 tok 256 status 200 
+bench long ttft 47.9587 dec 4.233 tok 256 status 200 
+bench short ttft 1.8497 dec 1.497 tok 24 status 200 
+bench medium ttft 7.096 dec 2.495 tok 256 status 200 
+bench long ttft 48.1459 dec 5.372 tok 256 status 200 
+[13:30:37] [alpha/K9-122b-3nuc-clean-nokeepalive] collect results
+[13:30:38] [alpha/K9-122b-3nuc-clean-nokeepalive] done
+[13:30:38] [chain/K9-122b-3nuc-clean-nokeepalive] chain-wide steady window: samplers + SoC Watch on every rank
+rank1(beta): {"seconds":60,"started":"2026-11-13T11:30:55.4024403-08:00","host":"BETA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.2182,"pkg_power_mw_avg":9097.48,"pkg_energy_mj":546805.48,"ddr_reads_mb_s":4699.7900000000009,"ddr_writes_mb_s":296.79,"ddr_total_gb_s":4.88}
+rank2(charlie): {"seconds":60,"started":"2026-11-13T11:30:56.2246980-08:00","host":"CHARLIE","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.217,"pkg_power_mw_avg":9429.84,"pkg_energy_mj":566719.79,"ddr_reads_mb_s":5873.6100000000006,"ddr_writes_mb_s":318.27,"ddr_total_gb_s":6.05}
+rank0(alpha): {"seconds":60,"started":"2026-11-13T11:30:56.0499432-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.1832,"pkg_power_mw_avg":10104.99,"pkg_energy_mj":607062.74,"ddr_reads_mb_s":4770.98,"ddr_writes_mb_s":361.77000000000004,"ddr_total_gb_s":5.01}
+[13:32:30] [chain/K9-122b-3nuc-clean-nokeepalive] stop all ranks
+alpha: STOPPED n=1
+beta: STOPPED n=1
+charlie: STOPPED n=1
+[13:32:32] [chain/K9-122b-3nuc-clean-nokeepalive] collect from every rank
+[13:32:37] [chain/K9-122b-3nuc-clean-nokeepalive] done

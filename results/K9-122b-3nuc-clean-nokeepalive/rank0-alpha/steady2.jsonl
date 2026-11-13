@@ -1,0 +1,1 @@
+{"kind": "steady", "thread": 0, "prompt_id": "medium", "wall_s": 102.5767, "completion_tokens": 256, "prompt_tokens": 975, "status": 200, "error": null, "ttft_ref_s": 6.7835, "e2e_tok_s": 2.496, "decode_tok_s": 2.662, "model": "q122-sym-3", "config": "K9-122b-3nuc-clean-nokeepalive", "stages": "3", "host": "alpha"}

@@ -1,0 +1,5 @@
+  ✓ OpenVINO devices — CPU, GPU
+      GPU: Intel(R) Graphics (iGPU)
+      GPU: GPU_DEVICE_TOTAL_MEM_SIZE 24.77 GiB
+  ✓ WDDM GPU budget — adapter 00000000-0000977e: shared segment 26.81 GiB, per-process budget 26.06 GiB (0.00 GiB in use by this process)
+  ✓ GPU memory — OpenVINO total 24.77 GiB within the WDDM per-process budget 26.06 GiB
