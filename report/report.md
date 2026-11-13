@@ -310,6 +310,53 @@ The all-local 122B runs correctly on three 32 GB boxes with no 64 GB node and no
 ~10+ tok/s); the GPU compute engines sit at only a few percent during decode, so the 122B's per-token cost on the iGPU is kernel-launch and
 expert-gather bound, not bandwidth bound. That is a runtime/kernel question (OpenVINO GPU MoE path for 256-expert layers), not a memory one.
 
+## 9. Round 3: speculative decoding, GPU clocks, and the per-stage profile (2026-11-13)
+
+### 9.1 Speculative decoding (branch `ecg/spec-decode` of labscommunity/cascadia)
+Two kinds were added and measured. **Whole model:** OpenVINO GenAI's prompt lookup and FastDraft, enabled through the runtime's existing
+`--prompt-lookup` / `--draft-model` worker flags; GenAI 2026.4.1 refuses them with prefix caching on (`Check '!m_scheduler->get_config().enable_prefix_caching'`),
+so the shim now passes a scheduler config with prefix caching disabled for those pipelines (LLM and VLM-layout paths). **Staged engine:** greedy n-gram
+(prompt-lookup) speculation implemented in `qwen36.rs`: the head drafts up to k tokens from n-gram matches over prompt + output, the chain verifies them in one
+T=k+1 pass (the last stage now emits logits for every position, `cascadia shard --full-logits`; existing trees can be rewired in place with `tools/unslice_logits.py`),
+rank 0 accepts the longest matching prefix, and because the Gated DeltaNet state cannot be rewound, every rank snapshots its DeltaNet variables before the verify
+pass and on a partial accept restores them, masks the rejected cache slots and re-feeds the accepted tokens (new frames VERIFY/TOKENS/COMMIT, per-variable
+`get/set_state_vars` in the shim, `cascadia_spec_*` metrics).
+
+| configuration | plain | speculative | ratio | acceptance / cost |
+|---|---|---|---|---|
+| whole 35B, 64 GB GPU, GenAI prompt lookup n=3 k=5 (S1p) | 47 tok/s, TTFT 0.61 s | 30–31 tok/s, TTFT 1.22 s | 0.66x | CB-pipeline overhead; long-prompt TTFT 3.2 → 9.8 s |
+| whole 35B, GenAI prompt lookup n=2 k=8 (S2p) | 47 | 32 | 0.68x | same |
+| whole 35B, GenAI draft model Qwen3.5-0.8B | — | refused | — | `--draft-model` is rejected on VLM-layout exports; the official IR and the GPTQ-sym build are both VLM-layout |
+| staged 35B, 3 stages co-located on the 64 GB GPU, plain (S7p, new build) | 31.6 tok/s, TTFT 0.33 s | | | |
+| staged 35B, same, n-gram n=3 k=5 (S8p) | 31.6 | 14–15 tok/s | 0.47x | acceptance 1.6% (975-tok prompt, 127 drafted / 2 accepted) and 19.7% (7.7k prompt, 305 / 60); snapshot 122 ms + verify 92 ms per step vs a 32 ms plain step |
+| staged 122B, 3 NUCs, n-gram n=3 k=5 (P1) | P0_MED tok/s | P1_MED tok/s | P1_RATIO | P1_WHY |
+
+Parity: short outputs identical to plain decoding; the 975- and 7,690-token outputs differ by one or two characters (the f16 T>1-vs-T=1 DeltaNet effect the
+surgery documents). Verdict: speculative decoding is a net loss on these iGPUs for these models: n-gram drafts rarely match on prose/telemetry, and a recurrent
+state makes rollback cost more than three plain tokens. The flags stay in the branch, off by default; a learned draft (the shipped MTP head, or a 0.8B draft on
+a text-only export) is the next experiment.
+
+### 9.2 GPU clocks
+The iGPU's actual frequency during 122B decode bounces between 100 and 2,500 MHz (median 1,450 on alpha, 1,750 on beta; sampled via Level Zero Sysman,
+`tools/zefreq.py`). Pinning it at 2,500 MHz (`tools/zepin.py`, `zesFrequencySetRange`) leaves the all-local 122B at 1.4–3.3 tok/s (G1) and the whole 35B on
+beta at 33.0–33.2 tok/s (B6); compiling with `GPU_QUEUE_THROTTLE=HIGH` + `GPU_QUEUE_PRIORITY=HIGH` gives 2.6–2.7 tok/s (G2). The Intel graphics power plan
+was already "Maximum Performance". Standalone, pinning + queue hints shorten a 122B stage step from 50.9 to 48.0 ms (6%). Clock state is a symptom.
+
+### 9.3 Where a 122B token's time goes, and the fix
+`CASCADIA_QWEN36_PROFILE=1` (new) gives per-rank, per-step timings. On the all-local 122B (P0, new build): stage inference p50 33–34 ms / p95 250–550 ms on
+every rank; input/output copies 0.07–0.2 ms; sampling 0.3 ms; wire 1.7 ms p50; waiting for the other ranks p50 68–70 ms / p95 540–670 ms. The medians add
+up to ~105 ms per token (9.5 tok/s); the measured 330 ms comes from the tails. A standalone OpenVINO loop on one stage (`tools/stage_profile.py`) never
+stalls: 300 steps at p50 51 / p99 57 ms, with or without a kernel cache, on alpha's stage0 and charlie's stage2. Insert a 70 ms pause between steps, which is
+exactly what a rank in a 3-stage lockstep pipeline sees, and 16% of steps take ~570 ms (p90 559 ms), pinned clock or not. Fill the pause with a 1.7 ms
+keep-alive inference every 5 ms and the stalls vanish (p99 68 ms; back-to-back keep-alive: p99 56 ms). So the iGPU incurs a ~0.5 s penalty when it idles
+for tens of milliseconds while holding 20–25 GB, and the pipeline's own hop structure triggers it. The engine fix, `CASCADIA_QWEN36_GPU_KEEPALIVE_MS=<n>`,
+keeps each rank's device busy with a tiny synthetic model while it waits on the network (opt-in, off by default). Result: K1_RESULT
+
+Of the 51 ms standalone step, OpenVINO's per-op profile attributes 18–22 ms to kernels (149 compressed matmuls 13–17 ms, transposes 2.4 ms, 12 GatedDeltaNet
+ops 1.1 ms; the fused MoE experts are not attributed), so roughly 30 ms per step is host-side dispatch across ~1,100 nodes of a dynamic-shape graph. The first
+requests after a load are far slower (14–18 s for 16 tokens) while kernels are specialised for new prompt lengths; a persistent `CACHE_DIR` does not change the
+steady-state step.
+
 ## 8. Scope notes
 - Continuous-batching concurrency on the whole model (A5) could not be run: the runtime's `--cb` path refuses VLM-layout exports, which is what the
   official Qwen3.6 IR is (`results/A5-tate07-whole-gpu-cb/NOTE.md`); the sharded engine is single-flight by design. Concurrency through the enterprise
