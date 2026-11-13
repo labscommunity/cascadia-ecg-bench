@@ -14,3 +14,22 @@ LAUNCH rc=0 cmdpid=8760 childpid=7540
 {"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 2.443, "status": 200, "error": null, "text": "**Español:**  \nEl carril 2 está cerrado más adelant
 {"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 2.506, "status": 200, "error": null, "text": "At 03:00, the highway stretches into a void of silence",
 [02:31:42] [alpha/K5-122b-3nuc-keepalive2] bench perf (warmup 1, repeats 2)
+warmup short ttft 0.8166 dec 11.534 tok 24 status 200 
+bench short ttft 0.6113 dec 10.529 tok 24 status 200 
+bench medium ttft 5.5078 dec 10.608 tok 256 status 200 
+bench long ttft 41.0892 dec 10.091 tok 256 status 200 
+bench short ttft 0.6262 dec 10.345 tok 24 status 200 
+bench medium ttft 5.5109 dec 10.482 tok 256 status 200 
+bench long ttft 41.131 dec 10.1 tok 256 status 200 
+[02:37:40] [alpha/K5-122b-3nuc-keepalive2] collect results
+[02:37:40] [alpha/K5-122b-3nuc-keepalive2] done
+[02:37:40] [chain/K5-122b-3nuc-keepalive2] chain-wide steady window: samplers + SoC Watch on every rank
+rank1(beta): {"seconds":60,"started":"2026-11-13T00:37:57.7500387-08:00","host":"BETA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.205,"pkg_power_mw_avg":18362.35,"pkg_energy_mj":1103588.38,"ddr_reads_mb_s":15800.34,"ddr_writes_mb_s":900.4799999999999,"ddr_total_gb_s":16.31}
+rank0(alpha): {"seconds":60,"started":"2026-11-13T00:37:58.6000077-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.2,"pkg_power_mw_avg":19877.9,"pkg_energy_mj":1194569.09,"ddr_reads_mb_s":16230.84,"ddr_writes_mb_s":935.22,"ddr_total_gb_s":16.76}
+rank2(charlie): {"seconds":60,"started":"2026-11-13T00:37:57.6543673-08:00","host":"CHARLIE","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.2014,"pkg_power_mw_avg":19522.05,"pkg_energy_mj":1173339.05,"ddr_reads_mb_s":19085.410000000003,"ddr_writes_mb_s":1082.3700000000001,"ddr_total_gb_s":19.7}
+[02:39:31] [chain/K5-122b-3nuc-keepalive2] stop all ranks
+alpha: STOPPED n=1
+beta: STOPPED n=1
+charlie: STOPPED n=1
+[02:39:33] [chain/K5-122b-3nuc-keepalive2] collect from every rank
+[02:39:39] [chain/K5-122b-3nuc-keepalive2] done

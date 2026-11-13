@@ -11,3 +11,15 @@ LAUNCH rc=0 cmdpid=5792 childpid=3320
 [02:04:38] [alpha/D3k-122b-3stage-3nuc-keepalive] HEALTHY after 14s model=q122-sym-3
 [02:04:38] [alpha/D3k-122b-3stage-3nuc-keepalive] calib
 {"prompt_id": "short", "kind": "calib", "prompt_tokens": 31, "completion_tokens": 16, "wall_s": 3.123, "status": 200, "error": null, "text": "The capital of France is Paris. The Seine River runs throu
+[02:39:42] [chain/D3k-122b-3stage-3nuc-keepalive] launch rank 2 on charlie -Listen :9100  
+CMD="C:\ecgbench\rt\spec\cascadia.exe" worker --rank 2 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=7856 childpid=8088
+[02:40:07] [chain/D3k-122b-3stage-3nuc-keepalive] launch rank 1 on beta -Listen :9100 -Next 192.168.0.188:9100 
+CMD="C:\ecgbench\rt\spec\cascadia.exe" worker --rank 1 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --next 192.168.0.188:9100 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=2080 childpid=7504
+[02:40:31] [chain/D3k-122b-3stage-3nuc-keepalive] launch rank 0 on alpha  -Next 192.168.0.103:9100 -Api ':8130'
+CMD="C:\ecgbench\rt\spec\cascadia.exe" worker --rank 0 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --next 192.168.0.103:9100 --api :8130 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=8616 childpid=8448
+[02:40:55] [alpha/D3k-122b-3stage-3nuc-keepalive] waiting for health
+[02:41:10] [alpha/D3k-122b-3stage-3nuc-keepalive] HEALTHY after 14s model=q122-sym-3
+[02:41:10] [alpha/D3k-122b-3stage-3nuc-keepalive] calib
