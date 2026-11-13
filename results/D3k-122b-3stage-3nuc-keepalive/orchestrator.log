@@ -23,3 +23,43 @@ LAUNCH rc=0 cmdpid=8616 childpid=8448
 [02:40:55] [alpha/D3k-122b-3stage-3nuc-keepalive] waiting for health
 [02:41:10] [alpha/D3k-122b-3stage-3nuc-keepalive] HEALTHY after 14s model=q122-sym-3
 [02:41:10] [alpha/D3k-122b-3stage-3nuc-keepalive] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 2.435, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the num
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 2.448, "status": 200, "error": null, "text": "**Español:**  \nEl carril 2 está cerrado más adelant
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 2.503, "status": 200, "error": null, "text": "At 03:00, the highway stretches into a void of silence",
+[02:42:29] [alpha/D3k-122b-3stage-3nuc-keepalive] idle baseline (30 s)
+{"seconds":30,"started":"2026-11-13T00:42:32.7821498-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":30.1957,"pkg_power_mw_avg":3683.97,"pkg_energy_mj":110834.29,"ddr_reads_mb_s":319.84000000000003,"ddr_writes_mb_s":166.08,"ddr_total_gb_s":0.47}
+[02:43:05] [alpha/D3k-122b-3stage-3nuc-keepalive] bench perf (warmup 1, repeats 3)
+warmup short ttft 0.917 dec 12.32 tok 24 status 200 
+bench short ttft 0.6192 dec 10.531 tok 24 status 200 
+bench medium ttft 5.509 dec 10.639 tok 256 status 200 
+bench long ttft 41.2774 dec 10.036 tok 256 status 200 
+bench short ttft 0.6336 dec 10.564 tok 24 status 200 
+bench medium ttft 5.5364 dec 10.611 tok 256 status 200 
+bench long ttft 41.3496 dec 10.133 tok 256 status 200 
+bench short ttft 0.6546 dec 10.676 tok 24 status 200 
+bench medium ttft 5.5259 dec 10.564 tok 256 status 200 
+bench long ttft 41.3023 dec 10.103 tok 256 status 200 
+[02:51:30] [alpha/D3k-122b-3stage-3nuc-keepalive] parity set
+bench p_code ttft 1.4179 dec 10.829 tok 160 status 200
+bench p_reason ttft 1.045 dec 10.54 tok 160 status 200
+bench p_explain ttft 0.8936 dec 10.525 tok 154 status 200
+bench p_json ttft 1.0399 dec 10.597 tok 139 status 200
+bench p_list ttft 0.7623 dec 10.501 tok 151 status 200
+bench p_math ttft 0.9975 dec 10.542 tok 160 status 200
+bench p_translate ttft 0.779 dec 10.477 tok 68 status 200
+bench p_story ttft 0.8672 dec 10.541 tok 160 status 200
+[02:53:35] [alpha/D3k-122b-3stage-3nuc-keepalive] steady-state power (90 s loop, 60 s SoC Watch)
+{"seconds":60,"started":"2026-11-13T00:53:53.3690975-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.1978,"pkg_power_mw_avg":19424.66,"pkg_energy_mj":1167099.43,"ddr_reads_mb_s":16184.869999999999,"ddr_writes_mb_s":871.63,"ddr_total_gb_s":16.66}
+[02:55:26] [alpha/D3k-122b-3stage-3nuc-keepalive] collect results
+[02:55:29] [alpha/D3k-122b-3stage-3nuc-keepalive] done
+[02:55:29] [chain/D3k-122b-3stage-3nuc-keepalive] chain-wide steady window: samplers + SoC Watch on every rank
+rank0(alpha): {"seconds":60,"started":"2026-11-13T00:55:47.6520383-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.1897,"pkg_power_mw_avg":19859.1,"pkg_energy_mj":1193284.42,"ddr_reads_mb_s":15973.11,"ddr_writes_mb_s":910.58,"ddr_total_gb_s":16.49}
+rank2(charlie): {"seconds":60,"started":"2026-11-13T00:55:46.7702087-08:00","host":"CHARLIE","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.1826,"pkg_power_mw_avg":19408.75,"pkg_energy_mj":1166134.58,"ddr_reads_mb_s":19271.190000000002,"ddr_writes_mb_s":1119.23,"ddr_total_gb_s":19.91}
+rank1(beta): {"seconds":60,"started":"2026-11-13T00:55:46.8398022-08:00","host":"BETA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.2099,"pkg_power_mw_avg":18804.59,"pkg_energy_mj":1130350.1,"ddr_reads_mb_s":15611.710000000001,"ddr_writes_mb_s":892.79,"ddr_total_gb_s":16.12}
+[02:57:21] [chain/D3k-122b-3stage-3nuc-keepalive] GSM8K eval on the chain head (N=20)
+[03:07:31] [chain/D3k-122b-3stage-3nuc-keepalive] stop all ranks
+alpha: STOPPED n=1
+beta: STOPPED n=1
+charlie: STOPPED n=1
+[03:07:33] [chain/D3k-122b-3stage-3nuc-keepalive] collect from every rank
+[03:07:41] [chain/D3k-122b-3stage-3nuc-keepalive] done

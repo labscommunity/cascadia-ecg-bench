@@ -1,258 +1,247 @@
-<title>Cascadia Panther Lake Benchmark</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<title>Cascadia on Panther Lake</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400..600&display=swap">
 <style>
-/* Layout: a single reading column (~70ch) for prose; tables and charts may run to 1100px inside their own scroll containers. */
-:root {
-  --bg: #f5f7f8; --surface: #ffffff; --fg: #1a2229; --muted: #5b6770; --rule: #d8dee3;
-  --accent: #1d6f8c; --accent-soft: #d9ecf2; --warn: #9a6b17; --warn-soft: #f6ecd4; --bad: #a53b2a;
-  --mark: #1d6f8c; --mark-dim: #9bb8c4;
-  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: "IBM Plex Sans Condensed", "IBM Plex Sans", system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
-}
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #121a1f; --surface: #182229; --fg: #e4e9ec; --muted: #9aa8b1; --rule: #2a3741;
-  --accent: #5fc0da; --accent-soft: #163340; --warn: #d9a441; --warn-soft: #3a2f14; --bad: #e07a68;
-  --mark: #5fc0da; --mark-dim: #3d6b7a; color-scheme: dark } }
-:root[data-theme="dark"] {
-  --bg: #121a1f; --surface: #182229; --fg: #e4e9ec; --muted: #9aa8b1; --rule: #2a3741;
-  --accent: #5fc0da; --accent-soft: #163340; --warn: #d9a441; --warn-soft: #3a2f14; --bad: #e07a68;
-  --mark: #5fc0da; --mark-dim: #3d6b7a; color-scheme: dark }
-body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.55; margin: 0; }
-.wrap { max-width: 1100px; margin: 0 auto; padding-block: 2.5rem 4rem; padding-inline: 20px; }
-header.top { border-bottom: 1px solid var(--rule); padding-bottom: 1.5rem; margin-bottom: 2rem; }
-.eyebrow { font-family: var(--font-mono); font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.9rem, 4vw, 2.7rem); line-height: 1.1; margin: .4rem 0 .6rem; text-wrap: balance; }
-h2 { font-family: var(--font-display); font-weight: 600; font-size: 1.45rem; margin: 2.6rem 0 .8rem; text-wrap: balance; }
-h3 { font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; margin: 1.6rem 0 .5rem; }
-p, li { max-width: 72ch; }
-.lede { font-size: 1.08rem; color: var(--fg); max-width: 72ch; }
-.meta { color: var(--muted); font-size: .92rem; }
-.findings { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin: 1.4rem 0; }
-.finding { background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--accent); padding: .9rem 1rem; }
-.finding b { display: block; font-family: var(--font-display); font-size: 1.02rem; margin-bottom: .25rem; }
-.finding.warn { border-left-color: var(--warn); }
-.finding p { margin: 0; font-size: .95rem; }
-.tablewrap { overflow-x: auto; margin: .8rem 0 1.2rem; border: 1px solid var(--rule); background: var(--surface); }
-table { border-collapse: collapse; width: 100%; font-size: .9rem; font-variant-numeric: tabular-nums; }
-th, td { text-align: left; padding: .5rem .7rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
-th { font-family: var(--font-mono); font-size: .74rem; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); font-weight: 500; white-space: nowrap; }
-td.num, th.num { text-align: right; }
-td.cfg { white-space: nowrap; font-weight: 500; }
-tr.hl td { background: var(--accent-soft); }
-tr.bad td { color: var(--bad); }
-.note { font-size: .88rem; color: var(--muted); max-width: 80ch; }
-code, .mono { font-family: var(--font-mono); font-size: .88em; }
-pre { background: var(--surface); border: 1px solid var(--rule); padding: .8rem 1rem; overflow-x: auto; font-size: .82rem; line-height: 1.45; }
-.charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; margin: 1rem 0 1.5rem; }
-figure { margin: 0; background: var(--surface); border: 1px solid var(--rule); padding: 1rem 1rem .6rem; min-width: 0; }
-figcaption { font-family: var(--font-display); font-weight: 600; font-size: 1rem; margin-bottom: .2rem; }
-figure .sub { font-size: .85rem; color: var(--muted); margin-bottom: .6rem; }
-figure svg { width: 100%; height: auto; display: block; }
-.bar { fill: var(--mark); } .bar.dim { fill: var(--mark-dim); }
-.axis { stroke: var(--rule); stroke-width: 1; }
-.lbl { font-family: var(--font-body); font-size: 12px; fill: var(--fg); }
-.val { font-family: var(--font-mono); font-size: 12px; fill: var(--fg); }
-.cat { font-family: var(--font-mono); font-size: 10.5px; fill: var(--muted); letter-spacing: .04em; }
-ul.tight li { margin-bottom: .35rem; }
-.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-.two > div { min-width: 0; }
-a { color: var(--accent); }
-footer { margin-top: 3rem; border-top: 1px solid var(--rule); padding-top: 1rem; color: var(--muted); font-size: .88rem; }
-@media (prefers-reduced-motion: no-preference) { .bar { transition: opacity .15s; } .bar:hover { opacity: .8; } }
-</style>
+/* Cascadia brand tokens (cascadia.to globals.css), dark-first; light theme mirrors the site's light sections */
+:root{--sans:"Geist","Geist Variable",ui-sans-serif,system-ui,sans-serif;--mono:"Geist Mono","Geist Mono Variable",ui-monospace,SFMono-Regular,monospace;
+ --bg:#000;--panel:#181a1d;--panel-2:#0f1113;--line:#313235;--line-2:#232528;--fg-1:#fff;--fg-2:#c9cbce;--fg-3:#9d9e9f;--fg-4:#6c7078;
+ --accent:#80decc;--accent-2:#b7eecf;--accent-dim:rgba(128,222,204,.14);--celadon:#86ccc3;--persian:#23a392;--pine:#2a8378;--iris:#5438ff;--iris-light:#7d67ff;--warn:#ff8389;--warn-dim:rgba(255,131,137,.14);
+ --grid:rgba(255,255,255,.04);--max:1280px;--gutter:40px;color-scheme:dark}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#f9faf7;--panel:#fff;--panel-2:#f4f4f4;--line:#d9dcd4;--line-2:#e8eae4;--fg-1:#1b212b;--fg-2:#2f3847;--fg-3:#4a5568;--fg-4:#8a94a3;--accent:#23a392;--accent-2:#2a8378;--accent-dim:rgba(35,163,146,.12);--iris:#5438ff;--iris-light:#5438ff;--warn:#c0392b;--warn-dim:rgba(192,57,43,.1);--grid:rgba(19,35,58,.05);color-scheme:light}}
+:root[data-theme="light"]{--bg:#f9faf7;--panel:#fff;--panel-2:#f4f4f4;--line:#d9dcd4;--line-2:#e8eae4;--fg-1:#1b212b;--fg-2:#2f3847;--fg-3:#4a5568;--fg-4:#8a94a3;--accent:#23a392;--accent-2:#2a8378;--accent-dim:rgba(35,163,146,.12);--iris:#5438ff;--iris-light:#5438ff;--warn:#c0392b;--warn-dim:rgba(192,57,43,.1);--grid:rgba(19,35,58,.05);color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg-2);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:48px 48px}
+.wrap{max-width:var(--max);margin:0 auto;padding-block:48px 96px;padding-inline:clamp(16px,4vw,var(--gutter))}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-dim)}a:hover{border-bottom-color:var(--accent)}
+h1,h2,h3,h4{color:var(--fg-1);font-weight:400;margin:0;text-wrap:balance;letter-spacing:0}
+h1{font-size:clamp(32px,5.2vw,48px);line-height:1.2;letter-spacing:-1px;font-weight:500}
+h2{font-size:clamp(28px,4.4vw,40px);line-height:1.2;margin-top:88px;padding-top:28px;border-top:1px solid var(--line)}
+h3{font-size:clamp(22px,3.6vw,28px);line-height:1.25;margin-top:48px}
+h4{font-size:20px;line-height:1.3;margin-top:28px}
+p{margin:14px 0;max-width:72ch}.lede{font-size:18px;line-height:1.4;color:var(--fg-2);max-width:68ch}
+.eyebrow,.label,th,.k{font-family:var(--mono);text-transform:uppercase;letter-spacing:.07em;font-size:12px;color:var(--fg-3)}
+.eyebrow{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px}.eyebrow span+span::before{content:"·";margin-right:16px;color:var(--fg-4)}
+.meta{color:var(--fg-3);font-size:14px;max-width:80ch}
+.mono{font-family:var(--mono);font-size:.92em;letter-spacing:0;color:var(--fg-2)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.findings{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:28px}
+.finding{background:var(--panel);padding:22px 22px 20px;min-width:0}.finding b{display:block;color:var(--fg-1);font-weight:500;font-size:17px;line-height:1.3;margin-bottom:8px}.finding p{margin:0;font-size:15px;color:var(--fg-2);max-width:none}
+.finding .k{display:block;margin-bottom:10px;color:var(--accent)}.finding.warn .k{color:var(--warn)}
+.hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:36px}
+.stat{background:var(--panel);padding:20px 22px;min-width:0}.stat .v{font-family:var(--mono);font-size:clamp(28px,4vw,40px);line-height:1.1;color:var(--fg-1);letter-spacing:-1px}.stat .v small{font-size:16px;color:var(--fg-3);letter-spacing:0;margin-left:6px}.stat .k{display:block;margin-bottom:10px}.stat .d{font-size:13px;color:var(--fg-3);margin-top:8px;line-height:1.35}
+.tablewrap{overflow-x:auto;margin:22px 0;border:1px solid var(--line);background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:10px 14px;border-bottom:1px solid var(--line-2);vertical-align:top;text-align:left}th{background:var(--panel-2);font-weight:400;white-space:nowrap}tr:last-child td{border-bottom:0}
+td.cfg{color:var(--fg-1);min-width:200px}td b{color:var(--fg-1);font-weight:500}tr.hl td{background:var(--accent-dim)}tr.dim td{color:var(--fg-4)}
+.note{font-size:13.5px;color:var(--fg-3);max-width:90ch;margin-top:-8px}
+.bars{display:grid;gap:8px;margin:18px 0 8px;max-width:900px}.bar{display:grid;grid-template-columns:minmax(150px,240px) 1fr 72px;gap:12px;align-items:center;font-size:14px}.bar .n{color:var(--fg-2);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bar .t{height:16px;background:var(--panel-2);border:1px solid var(--line-2);position:relative;min-width:0}.bar .t i{display:block;height:100%;background:var(--accent);opacity:.9}.bar.alt .t i{background:var(--iris-light)}.bar.warn .t i{background:var(--warn)}.bar .v{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;color:var(--fg-1)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px}.two>div{min-width:0}
+pre{background:var(--panel);border:1px solid var(--line);padding:14px 16px;font-family:var(--mono);font-size:13px;line-height:1.45;color:var(--fg-2);overflow-x:auto;margin:14px 0}
+ul.tight{padding-left:20px;max-width:80ch}ul.tight li{margin:8px 0}ul.tight li b{color:var(--fg-1);font-weight:500}
+.callout{border-left:3px solid var(--accent);padding:12px 18px;margin:20px 0;background:var(--accent-dim);max-width:80ch;color:var(--fg-2)}.callout.warn{border-color:var(--warn);background:var(--warn-dim)}
+.toc{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:28px;font-family:var(--mono);font-size:13px}.toc a{border:0;color:var(--fg-3)}.toc a:hover{color:var(--accent)}
+footer{margin-top:80px;border-top:1px solid var(--line);padding-top:18px;color:var(--fg-4);font-size:13px;font-family:var(--mono)}
+figure{margin:22px 0}figcaption{font-size:13px;color:var(--fg-3);margin-top:8px}
+@media (max-width:640px){.bar{grid-template-columns:minmax(110px,1fr) 1fr 60px}h2{margin-top:64px}}
 
+</style>
 <div class="wrap">
-<header class="top">
-  <div class="eyebrow">Cascadia · ECG benchmarking · measured 11 Nov 2026 · follow-up round the same day</div>
-  <h1>Sharded vs. whole-model MoE serving on Intel Panther Lake</h1>
-  <p class="lede">Qwen3.6-35B-A3B and Qwen3.5-122B-A10B on three 32 GB Core Ultra X7 358H NUCs and one 64 GB X7 358H in Intel Tiber: time to first token, decode speed, package power, CPU/GPU/NPU and memory utilization, output parity and task accuracy, for the whole model and for 2–4 pipeline shards.</p>
-  <p class="meta">Runtime labscommunity/cascadia v0.2.7 (OpenVINO GenAI 2026.4.1) · greedy decoding, thinking off · medians of 3 repeats · power from Intel SoC Watch · raw data and harness in the private repo <span class="mono">labscommunity/cascadia-ecg-bench</span>.</p>
+<header>
+  <div class="eyebrow"><span>Cascadia</span><span>ECG benchmark</span><span>Intel Panther Lake</span><span>November 2026</span></div>
+  <h1>Serving Qwen MoE models on Intel Panther Lake AI PCs: whole, sharded, and what the memory window changes</h1>
+  <p class="lede">Qwen3.6-35B-A3B and Qwen3.5-122B-A10B measured on three 32 GB Core Ultra X7 358H NUCs and one 64 GB X7 358H in Intel Tiber: time to first token, decode speed, package power, CPU / iGPU / NPU and memory utilization, output parity and task accuracy, for every layout the hardware allows. Includes the GPU memory window fix that lets a 32 GB box serve the 35B whole, the 122B builder fix, speculative decoding, GPU clocks, and a per-stage profile.</p>
+  <p class="meta">Runtime labscommunity/cascadia v0.2.7 (OpenVINO GenAI 2026.4.1) plus the speculative-decoding branch described in §6 · greedy decoding, thinking off · medians of 3 repeats unless marked quick (2) · power from Intel SoC Watch · memory budgets from <span class="mono">D3DKMTQueryVideoMemoryInfo</span> · raw data, harness and orchestrators in the private repo <span class="mono">labscommunity/cascadia-ecg-bench</span>.</p>
+  <nav class="toc"><a href="#findings">Findings</a><a href="#hardware">Hardware &amp; memory window</a><a href="#m35">Qwen3.6-35B-A3B</a><a href="#m122">Qwen3.5-122B-A10B</a><a href="#spec">Speculative decoding</a><a href="#clocks">GPU clocks &amp; profile</a><a href="#concurrency">Concurrency</a><a href="#devices">Device mix</a><a href="#accuracy">Accuracy</a><a href="#ecg">For ECG</a><a href="#method">Method</a></nav>
 </header>
 
-<h2>What the measurements say</h2>
+<div class="hero">
+  <div class="stat"><span class="k">35B · one 32 GB NUC · window raised</span><div class="v">33<small>tok/s</small></div><div class="d">was 1.7 tok/s as shipped. 0.75 s to first token at 1k tokens, 33.5 W, output byte-identical to the 64 GB box.</div></div>
+  <div class="stat"><span class="k">35B · three NUCs sharded</span><div class="v">18<small>tok/s</small></div><div class="d">28 W total, 6 GB and 9 W per box, GSM8K 36/40 vs 37/40 whole.</div></div>
+  <div class="stat"><span class="k">35B · one 64 GB box</span><div class="v">42–48<small>tok/s</small></div><div class="d">34 W, 1.23 tok/J single stream; 132 tok/s combined at 8 streams through OVMS continuous batching.</div></div>
+  <div class="stat"><span class="k">122B · three NUCs all-local</span><div class="v">10.5<small>tok/s</small></div><div class="d">after the builder fix, the memory window fix, and a GPU keep-alive + pinned clock that removed per-step stalls (was 0.57, then 3.0); GSM8K-20 17/20.</div></div>
+</div>
+
+<h2 id="findings">What the measurements say</h2>
 <div class="findings">
-  <div class="finding"><b>A 32 GB NUC cannot serve the 35B alone as shipped, and can after one registry change</b><p>As shipped the video-memory budget is 17.2 GiB and the 19.4 GB model decodes at 1.7 tok/s. With the dxgkrnl commit limit raised to 85% (follow-up round) the same NUC serves it whole at 30–33 tok/s, 0.75 s TTFT at 1k tokens, 33.5 W, byte-identical output to the 64 GB box.</p></div>
-  <div class="finding"><b>Sharding across 2–3 NUCs makes it deployable</b><p>18–19 tok/s per stream (11x the single-NUC whole model), 3.5 s to first token on a 1k prompt, 6–9 GB GPU memory and 9–15 W per NUC, same GSM8K accuracy as the whole model.</p></div>
-  <div class="finding"><b>One 64 GB box is the faster, leaner unit</b><p>Whole model: 42–48 tok/s, 0.6 s TTFT at 1k tokens, 34 W, 1.23 tok/J. Sharding on that box costs 35% of decode speed and 2.6x TTFT and only pays off if the memory is needed for something else.</p></div>
-  <div class="finding"><b>Prefill is the sharding tax</b><p>TTFT on a 7.7k-token prompt: 2.9 s whole, 11 s with co-located shards, 22–31 s across NUCs. Decode loses 35–57%; prefill loses 4–11x. Keep per-request context short.</p></div>
-  <div class="finding"><b>Accuracy survives sharding; token parity does not</b><p>Whole-model output is deterministic run to run (6/6 identical). Sharded output agrees for the first sentence then diverges (f16 near-tie flips), yet GSM8K-40 is 36/40 vs 37/40.</p></div>
-  <div class="finding"><b>The 122B runs after a builder fix, and needs stages under 18 GB</b><p>Its 64.3 GB INT4 IR fits no single box. The GPTQ-to-OpenVINO build first failed in the GPU plugin's MoE fusion; the fix (signed INT4 experts) makes it compile. With the GPU window raised, three 32 GB NUCs run it all-local at 2.9–3.3 tok/s and 24 W (0.57 tok/s before, when every stage paged through a 17.2 GiB budget); it scores 17/20 on GSM8K-20 (3 misses = 400-token truncations; 35B: 18–19/20 on the same questions).</p></div>
+  <div class="finding"><span class="k">Memory window</span><b>A 32 GB Panther Lake box can serve the 35B whole, once one dxgkrnl value is raised</b><p>As shipped, Windows lets the iGPU keep 17.2 GiB resident (Intel's INF sets the commit limit to 57%), and the 19.4 GB model pages at 1.7 tok/s. At 85% the budget is 26.1 GiB and the same NUC decodes at 33 tok/s with 0.75 s TTFT. This is the single largest result in the report.</p></div>
+  <div class="finding"><span class="k">Sharding</span><b>Sharding across two or three NUCs works and costs prefill, not accuracy</b><p>18–19 tok/s per stream, 3.5 s to first token on a 1k prompt, 6–9 GB GPU memory and 9–15 W per NUC, same GSM8K accuracy as the whole model. TTFT on a 7.7k prompt goes from 2.9 s whole to 22–31 s across NUCs.</p></div>
+  <div class="finding"><span class="k">64 GB node</span><b>One 64 GB box is the faster, leaner unit for the 35B</b><p>Whole model: 42–48 tok/s, 0.6 s TTFT, 34 W, 1.23 tok/J, and linear multi-stream scaling to 132 tok/s at 8 streams. Sharding on that box costs 35% of decode and 2.6x TTFT.</p></div>
+  <div class="finding"><span class="k">122B</span><b>The 122B needed three fixes; it now runs on three NUCs at 10.5 tok/s</b><p>No public IR exists; the GPTQ build first failed in the GPU plugin's MoE fusion (symmetric experts), and with signed INT4 experts it compiles. Its 20–25 GB stages only fit once the memory window is raised (0.57 → 3 tok/s), and a 2 ms GPU keep-alive removes the pipeline's idle stalls (3 → 10.5 tok/s). A 64 GB tail over the Tiber relay runs the same answers at 1.2–2.7 tok/s.</p></div>
+  <div class="finding"><span class="k">Where the 122B's time goes</span><b>The pipeline's own idle gaps were costing two thirds of every token</b><p>Per-rank profiling of the 122B pipeline shows each stage's GPU step at 33–34 ms median, which would be ~105 ms per token (9.5 tok/s), but 250–550 ms stalls on 40–50% of steps on every rank. The stall reproduces standalone whenever the iGPU idles ~70 ms between steps and disappears when it is kept busy; a 5 ms keep-alive inference during the network waits removes it. With a 2 ms keep-alive (or 5 ms plus a pinned clock), the 122B runs at 10.5 tok/s on the same three NUCs, 3.3x the baseline and 18x the as-shipped memory window.</p></div>
+  <div class="finding"><span class="k">Speculative decoding</span><b>Speculative decoding does not pay on these GPUs: prompt lookup costs 35% on the whole 35B, n-gram speculation halves the staged 35B</b><p>OpenVINO GenAI's prompt-lookup path (continuous batching) drops the whole 35B from 47 to 31–32 tok/s and doubles TTFT; a draft model is refused on VLM-layout exports, which every Qwen3.6 IR here is. In the staged engine, greedy n-gram speculation with DeltaNet state snapshot/rollback runs the single-box 35B at 14–15 tok/s against 31.6 plain: 2–20% draft acceptance and 120 ms per state snapshot. On the all-local 122B the same path drops 2.8–3.3 tok/s to 1.5–1.7 (acceptance 14–23%), because every rollback is paid on all three ranks in sequence. Output parity with plain decoding held on 4 of 6 outputs; the rest differ by a character or two (f16 verify-vs-decode).</p></div>
+  <div class="finding"><span class="k">GPU clocks</span><b>GPU clocks are not the limit: pinning the iGPU at 2.5 GHz or raising the OpenVINO queue priority changes nothing</b><p>During 122B decode the iGPU bounces between 100 and 2500 MHz (median 1450). Pinning it at 2500 MHz through Level Zero Sysman, or compiling with GPU_QUEUE_THROTTLE/PRIORITY=HIGH, leaves the 122B at 1.4–3.2 tok/s and the whole 35B on a NUC at 33 tok/s. The Intel graphics power plan was already Maximum Performance.</p></div>
+  <div class="finding"><span class="k">Device mix</span><b>CPU decode is a 2x loss, the NPU does not load these models, HETERO changes nothing</b><p>Dense Qwen3-8B on one 32 GB box: 22 tok/s GPU vs 11 CPU, 1k-token prefill 0.3 s vs 22 s. A 35B shard pair with its tail on a CPU halves decode and makes long-prompt decode 5x slower. Neither the 8B nor the 0.6B compiles for the NPU with OpenVINO 2026.4.1, and no engine splits prefill and decode across devices.</p></div>
+  <div class="finding"><span class="k">Accuracy</span><b>Accuracy survives every layout; token parity holds only for the same IR on a GPU</b><p>GSM8K: whole 35B 37/40, sharded 36/40, 122B 17/20 (all misses 400-token truncations; the 35B scored 18–19/20 on the same questions). The whole model is byte-identical across the 64 GB box and the window-raised NUC; sharded output diverges after the first sentence (f16 near-ties) without changing task scores.</p></div>
 </div>
 
-<h2>Hardware and memory windows</h2>
-<p>Every box is an Intel Core Ultra X7 358H (4P + 8E + 4LPE cores, Arc B390 iGPU). What limits the whole-model case is not RAM but the share of it the GPU can address, which OpenVINO reports as <span class="mono">GPU_DEVICE_TOTAL_MEM_SIZE</span>.</p>
+<h2 id="hardware">Hardware, memory, and the window</h2>
+<p>Every box is an Intel Core Ultra X7 358H (4P + 8E + 4LPE cores, Arc B390 iGPU). What limits the whole-model case is not RAM but the share of it the Windows video memory manager lets the iGPU keep resident: the per-process <em>budget</em> the OS derives from the WDDM shared segment, which Intel's driver INF sets at 57% of RAM.</p>
 <div class="tablewrap"><table>
-<tr><th>Box</th><th>RAM</th><th class="num">GPU window</th><th>Memory</th><th>Network</th><th>Role</th></tr>
-<tr><td class="cfg">alpha · beta · charlie (ASRock NUC BOX-358H)</td><td>31.5 GB</td><td class="num">16.46 GiB (17.7 GB)</td><td>DDR5 at 4800 MT/s (6400-rated modules, XMP off); charlie 5600</td><td>2.5 GbE LAN, &lt;1 ms TCP round trip</td><td>32 GB nodes; one shard each</td></tr>
-<tr><td class="cfg">tate-07 (Intel Tiber AI Cloud)</td><td>63.4 GB</td><td class="num">48.4 GiB (52 GB)</td><td>LPDDR5X</td><td>Tiber LAN; 110–350 ms relay to the NUCs</td><td>64 GB node; whole model and co-located shards</td></tr>
+<tr><th>Box</th><th>RAM</th><th class="num">Commit limit</th><th class="num">WDDM shared segment</th><th class="num">Per-process budget</th><th>Memory</th><th>Network</th><th>Role</th></tr>
+<tr><td class="cfg">alpha · beta · charlie (ASRock NUC BOX-358H)</td><td>31.5 GB</td><td class="num">57% as shipped → 85%</td><td class="num">17.98 → 26.81 GiB</td><td class="num">17.23 → <b>26.06 GiB</b></td><td>DDR5 at 4800 MT/s (6400-rated modules, XMP off)</td><td>2.5 GbE LAN, &lt;1 ms TCP round trip</td><td>32 GB nodes</td></tr>
+<tr><td class="cfg">delta (Zenbook S14)</td><td>31.4 GB</td><td class="num">57%</td><td class="num">17.98 GiB</td><td class="num">17.16 GiB</td><td>LPDDR5X</td><td>Wi-Fi</td><td>only box with an NPU driver; device-mix sweep</td></tr>
+<tr><td class="cfg">tate-07 (Intel Tiber AI Cloud)</td><td>63.4 GB</td><td class="num">82%</td><td class="num">51.95 GiB</td><td class="num">51.20 GiB</td><td>LPDDR5X</td><td>Tiber LAN; 110–350 ms relay to the NUCs</td><td>64 GB node</td></tr>
 </table></div>
-<div class="tablewrap"><table>
-<tr><th>Model</th><th>Params (active)</th><th class="num">INT4 IR</th><th class="num">Per layer</th><th>Fits one 32 GB window?</th><th>Fits the 64 GB window?</th></tr>
-<tr><td class="cfg">Qwen3.6-35B-A3B</td><td>35B (3B)</td><td class="num">19.4 GB</td><td class="num">0.46 GB</td><td>No (loads over-committed, 1.7 tok/s)</td><td>Yes</td></tr>
-<tr><td class="cfg">Qwen3.5-122B-A10B</td><td>122B (10B)</td><td class="num">64.3 GB</td><td class="num">1.31 GB</td><td>No</td><td>No (64 &gt; 52 GB window, &gt; 61 GB RAM)</td></tr>
-</table></div>
-<p class="note">The 35B IR is Intel's official OpenVINO export (INT4 asym, group 64). The 122B IR was built here from Qwen's GPTQ-Int4 checkpoint with the runtime's GPTQ-to-OpenVINO builder (21.5 min on 8 vCPUs); a config-based estimate of 64.2 GB matched the measured 64.3 GB. The CPU plugin holds about twice the IR in resident memory (40 GB measured for the 35B), so CPU is not a way around the GPU window.</p>
-
-<h2>Qwen3.6-35B-A3B: eight configurations</h2>
-<p>Prompts: short (31 tokens), medium (975 tokens, a traffic-incident log), long (7,690 tokens, an hour of camera telemetry). TTFT is the wall time of a 1-token request (prefill plus first token); decode speed is derived from a second N-token request; the steady-loop column is a continuous 90 s decode run on the medium prompt, which is also the window for power and utilization.</p>
-<div class="tablewrap"><table>
-<tr><th>Configuration</th><th class="num">TTFT 31 tok</th><th class="num">TTFT 975 tok</th><th class="num">TTFT 7.7k tok</th><th class="num">Decode tok/s (975)</th><th class="num">Decode tok/s (steady)</th><th class="num">End-to-end tok/s</th></tr>
-<tr class="hl"><td class="cfg">Whole model · 64 GB · GPU</td><td class="num">0.12 s</td><td class="num">0.60 s</td><td class="num">2.9 s</td><td class="num">47.5</td><td class="num">41.9</td><td class="num">38.3</td></tr>
-<tr><td class="cfg">2 shards co-located · 64 GB · one XPU</td><td class="num">0.26 s</td><td class="num">1.56 s</td><td class="num">11.4 s</td><td class="num">34.0</td><td class="num">27.3</td><td class="num">23.5</td></tr>
-<tr><td class="cfg">3 shards co-located · 64 GB · one XPU</td><td class="num">0.28 s</td><td class="num">1.58 s</td><td class="num">11.5 s</td><td class="num">32.7</td><td class="num">27.1</td><td class="num">23.1</td></tr>
-<tr><td class="cfg">Whole model · 64 GB · CPU</td><td class="num">1.32 s</td><td class="num">40.3 s</td><td class="num">347 s</td><td class="num">—</td><td class="num">—</td><td class="num">12.5</td></tr>
-<tr class="bad"><td class="cfg">Whole model · 32 GB NUC · GPU</td><td class="num">0.67 s</td><td class="num">1.29 s</td><td class="num">4.2 s</td><td class="num">1.7</td><td class="num">—</td><td class="num">~1.6</td></tr>
-<tr class="bad"><td class="cfg">Whole model · 32 GB NUC · CPU</td><td class="num">1.72 s</td><td class="num">52.7 s</td><td class="num">447 s</td><td class="num">—</td><td class="num">—</td><td class="num">11.6</td></tr>
-<tr class="hl"><td class="cfg">2 shards · one per NUC · 2.5 GbE</td><td class="num">0.32 s</td><td class="num">3.54 s</td><td class="num">22.2 s</td><td class="num">20.1</td><td class="num">18.8</td><td class="num">15.3</td></tr>
-<tr class="hl"><td class="cfg">3 shards · one per NUC · 2.5 GbE</td><td class="num">0.86 s</td><td class="num">3.48 s</td><td class="num">31.2 s</td><td class="num">17.8</td><td class="num">18.1</td><td class="num">13.8</td></tr>
-</table></div>
-<p class="note">CPU rows: the two-call method cannot separate decode from prefill there because the first call carries a large one-off cost (page-in and shape compile), so only end-to-end speed for a 256-token answer is reported. The 32 GB GPU row's end-to-end figure comes from the full 3-repeat run of the same server (256 tokens in 164 s).</p>
-
-<div class="charts">
-<figure>
-  <figcaption>Decode speed, single stream</figcaption>
-  <div class="sub">tokens per second, steady 90 s loop on the 975-token prompt (32 GB whole-GPU: 975-token two-call)</div>
-  <svg viewBox="0 0 520 262" role="img" aria-label="Bar chart of decode tokens per second by configuration">
-    <g class="cat">
-      <text x="4" y="24">64 GB whole · GPU</text>
-      <text x="4" y="58">64 GB 2 shards co-located</text>
-      <text x="4" y="92">64 GB 3 shards co-located</text>
-      <text x="4" y="126">2 NUCs · 1 shard each</text>
-      <text x="4" y="160">3 NUCs · 1 shard each</text>
-      <text x="4" y="194">64 GB whole · CPU (e2e)</text>
-      <text x="4" y="228">32 GB NUC whole · GPU</text>
-    </g>
-    <line class="axis" x1="190" y1="6" x2="190" y2="240"/>
-    <!-- scale: 1 tok/s = 6.4 px, x0 = 190, max 48 -> 497 -->
-    <rect class="bar" x="190" y="12" width="268.2" height="18" rx="4"><title>Whole model, 64 GB GPU: 41.9 tok/s</title></rect><text class="val" x="464" y="26">41.9</text>
-    <rect class="bar" x="190" y="46" width="174.7" height="18" rx="4"><title>2 co-located shards: 27.3 tok/s</title></rect><text class="val" x="370" y="60">27.3</text>
-    <rect class="bar" x="190" y="80" width="173.4" height="18" rx="4"><title>3 co-located shards: 27.1 tok/s</title></rect><text class="val" x="369" y="94">27.1</text>
-    <rect class="bar" x="190" y="114" width="120.3" height="18" rx="4"><title>2 NUCs: 18.8 tok/s</title></rect><text class="val" x="316" y="128">18.8</text>
-    <rect class="bar" x="190" y="148" width="115.8" height="18" rx="4"><title>3 NUCs: 18.1 tok/s</title></rect><text class="val" x="312" y="162">18.1</text>
-    <rect class="bar dim" x="190" y="182" width="80" height="18" rx="4"><title>Whole model, 64 GB CPU: 12.5 tok/s end-to-end</title></rect><text class="val" x="276" y="196">12.5</text>
-    <rect class="bar dim" x="190" y="216" width="10.9" height="18" rx="4"><title>Whole model, 32 GB NUC GPU: 1.7 tok/s</title></rect><text class="val" x="207" y="230">1.7</text>
-    <g class="cat"><text x="190" y="256">0</text><text x="310" y="256">20</text><text x="438" y="256">40 tok/s</text></g>
-  </svg>
-</figure>
-<figure>
-  <figcaption>Energy efficiency</figcaption>
-  <div class="sub">tokens per joule = steady decode tok/s ÷ total package power of every box in the configuration</div>
-  <svg viewBox="0 0 520 194" role="img" aria-label="Bar chart of tokens per joule by configuration">
-    <g class="cat">
-      <text x="4" y="24">64 GB whole · GPU (34.2 W)</text>
-      <text x="4" y="58">64 GB 2 shards (30.9 W)</text>
-      <text x="4" y="92">64 GB 3 shards (30.0 W)</text>
-      <text x="4" y="126">3 NUCs (27.6 W total)</text>
-      <text x="4" y="160">2 NUCs (30.7 W total)</text>
-    </g>
-    <line class="axis" x1="190" y1="6" x2="190" y2="172"/>
-    <!-- scale: 1 tok/J = 240 px, x0 = 190, max 1.3 -> 502 -->
-    <rect class="bar" x="190" y="12" width="295.2" height="18" rx="4"><title>Whole model, 64 GB GPU: 1.23 tok/J</title></rect><text class="val" x="491" y="26">1.23</text>
-    <rect class="bar" x="190" y="46" width="211.2" height="18" rx="4"><title>2 co-located shards: 0.88 tok/J</title></rect><text class="val" x="407" y="60">0.88</text>
-    <rect class="bar" x="190" y="80" width="216" height="18" rx="4"><title>3 co-located shards: 0.90 tok/J</title></rect><text class="val" x="412" y="94">0.90</text>
-    <rect class="bar" x="190" y="114" width="156" height="18" rx="4"><title>3 NUCs: 0.65 tok/J</title></rect><text class="val" x="352" y="128">0.65</text>
-    <rect class="bar" x="190" y="148" width="146.4" height="18" rx="4"><title>2 NUCs: 0.61 tok/J</title></rect><text class="val" x="342" y="162">0.61</text>
-    <g class="cat"><text x="190" y="188">0</text><text x="304" y="188">0.5</text><text x="424" y="188">1.0 tok/J</text></g>
-  </svg>
-</figure>
+<div class="two">
+<div>
+<h3>The knob, and the one that only looks like it</h3>
+<p>Two registry values sit next to each other. Intel's <span class="mono">…\Class\{4d36e968-…}\0000\GMM\GpuSystemMemoryPinninglimit</span> changes what the user-mode driver reports, so OpenVINO's <span class="mono">GPU_DEVICE_TOTAL_MEM_SIZE</span> rises from 16.5 to 24.8 GiB and nothing else happens. The segment the OS enforces comes from <span class="mono">HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers\MemoryManager\SystemPartitionCommitLimitPercentage</span>, which the INF installs at 57 ("DXGK regkey to override the default 50% pinning limit to 57%") and which Intel Graphics Software's "Shared GPU Memory Override" slider writes together with the GMM key. The budget is the segment minus 0.75 GiB on every box measured, and it is exactly the resident cap seen in every paging run here.</p>
+<pre>reg add "HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers\MemoryManager" ^
+  /v SystemPartitionCommitLimitPercentage /t REG_DWORD /d 85 /f
+reg add "HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0000\GMM" ^
+  /v GpuSystemMemoryPinninglimit /t REG_DWORD /d 85 /f
+shutdown /r /t 5</pre>
 </div>
+<div>
+<h3>Model sizes against those budgets</h3>
+<div class="tablewrap"><table>
+<tr><th>Model</th><th>Params (active)</th><th class="num">INT4 IR</th><th class="num">Per layer</th><th>32 GB box, 17.2 GiB budget</th><th>32 GB box, 26.1 GiB budget</th><th>64 GB box</th></tr>
+<tr><td class="cfg">Qwen3.6-35B-A3B</td><td>35B (3B)</td><td class="num">19.4 GB</td><td class="num">0.46 GB</td><td>pages (1.7 tok/s)</td><td><b>fits, 33 tok/s</b></td><td>fits, 42–48 tok/s</td></tr>
+<tr><td class="cfg">Qwen3.5-122B-A10B</td><td>122B (10B)</td><td class="num">64.3 GB</td><td class="num">1.31 GB</td><td>3 stages page (0.57 tok/s)</td><td><b>3 stages fit, 2.9–3.3 tok/s</b></td><td>does not fit whole (64 &gt; 51 GiB)</td></tr>
+</table></div>
+<p class="note">Intel documents the slider's ceiling as 87% on the consumer driver and 93% on the Arc Pro workstation driver (release notes 101.8517 / 101.8805). The OS key is not capped by the slider, but Windows and the serving process still need RAM; 85% on a 32 GB box (4.8 GB left for the OS) is what this report uses and leaves enabled on the three NUCs.</p>
+</div>
+</div>
+
+<h2 id="m35">Qwen3.6-35B-A3B: every layout</h2>
+<p>Official OpenVINO INT4 IR (19.4 GB; INT4 asymmetric, group 64). Prompts: short (31 tokens), medium (975 tokens, a traffic-incident log), long (7,690 tokens, an hour of camera telemetry). TTFT is the wall time of a 1-token request (prefill plus first token); decode speed is derived from a second N-token request; the steady column is a 60 s continuous decode loop. Shards are cut at layer boundaries (IR surgery, no re-quantization) and chained rank to rank over TCP.</p>
+<figure>
+<div class="bars">
+<div class="bar "><div class="n" title="Whole · 64 GB GPU · GPTQ-sym">Whole · 64 GB GPU · GPTQ-sym</div><div class="t"><i style="width:100.0%"></i></div><div class="v">53.4</div></div>
+<div class="bar "><div class="n" title="Whole · 64 GB GPU">Whole · 64 GB GPU</div><div class="t"><i style="width:89.0%"></i></div><div class="v">47.5</div></div>
+<div class="bar alt"><div class="n" title="Whole · 32 GB NUC · window raised">Whole · 32 GB NUC · window raised</div><div class="t"><i style="width:62.2%"></i></div><div class="v">33.2</div></div>
+<div class="bar warn"><div class="n" title="Whole · 64 GB · GenAI prompt lookup">Whole · 64 GB · GenAI prompt lookup</div><div class="t"><i style="width:59.0%"></i></div><div class="v">31.5</div></div>
+<div class="bar "><div class="n" title="2 shards co-located · 64 GB">2 shards co-located · 64 GB</div><div class="t"><i style="width:58.1%"></i></div><div class="v">31</div></div>
+<div class="bar "><div class="n" title="3 shards co-located · 64 GB">3 shards co-located · 64 GB</div><div class="t"><i style="width:58.1%"></i></div><div class="v">31</div></div>
+<div class="bar "><div class="n" title="2 NUCs">2 NUCs</div><div class="t"><i style="width:37.6%"></i></div><div class="v">20.1</div></div>
+<div class="bar "><div class="n" title="3 NUCs">3 NUCs</div><div class="t"><i style="width:33.3%"></i></div><div class="v">17.8</div></div>
+<div class="bar warn"><div class="n" title="3 co-located · staged n-gram spec">3 co-located · staged n-gram spec</div><div class="t"><i style="width:27.7%"></i></div><div class="v">14.8</div></div>
+<div class="bar warn"><div class="n" title="Whole · 64 GB CPU (e2e)">Whole · 64 GB CPU (e2e)</div><div class="t"><i style="width:25.3%"></i></div><div class="v">13.5</div></div>
+<div class="bar warn"><div class="n" title="Whole · 32 GB NUC CPU (e2e)">Whole · 32 GB NUC CPU (e2e)</div><div class="t"><i style="width:22.5%"></i></div><div class="v">12</div></div>
+<div class="bar warn"><div class="n" title="2 NUCs · CPU tail">2 NUCs · CPU tail</div><div class="t"><i style="width:21.3%"></i></div><div class="v">11.4</div></div>
+<div class="bar warn"><div class="n" title="Whole · 32 GB NUC · as shipped">Whole · 32 GB NUC · as shipped</div><div class="t"><i style="width:3.2%"></i></div><div class="v">1.7</div></div>
+<div class="bar warn"><div class="n" title="Whole · 32 GB NUC · HETERO">Whole · 32 GB NUC · HETERO</div><div class="t"><i style="width:2.6%"></i></div><div class="v">1.4</div></div>
+</div>
+<figcaption>Decode speed on the 975-token prompt, single stream. Mint: GPU layouts. Violet: the window-raised 32 GB NUC. Red: layouts that page or run on the CPU.</figcaption>
+</figure>
+<div class="tablewrap"><table>
+<tr><th>Layout</th><th class="num">TTFT 31 tok</th><th class="num">TTFT 975 tok</th><th class="num">TTFT 7.7k tok</th><th class="num">Decode tok/s (975)</th><th class="num">Steady loop</th><th class="num">End-to-end</th><th class="num">Decode W</th><th class="num">tok/J</th><th class="num">GPU memory</th></tr>
+<tr><td class="cfg">Whole · 64 GB GPU (A1b)</td><td class="num">0.12 s</td><td class="num">0.60 s</td><td class="num">2.89 s</td><td class="num">47.5</td><td class="num">41.9</td><td class="num">38.3</td><td class="num">34.2</td><td class="num">1.23</td><td class="num">19.1 GB</td></tr>
+<tr><td class="cfg">Whole · 64 GB GPU · GPTQ-sym rebuild (A6)</td><td class="num">0.12 s</td><td class="num">0.60 s</td><td class="num">3.23 s</td><td class="num">53.4</td><td class="num">45.7</td><td class="num">41.3</td><td class="num">34.7</td><td class="num">1.32</td><td class="num">19.4 GB</td></tr>
+<tr><td class="cfg">2 shards co-located · 64 GB GPU (A3)</td><td class="num">0.37 s</td><td class="num">1.56 s</td><td class="num">11.4 s</td><td class="num">31</td><td class="num">27</td><td class="num">28</td><td class="num">30.9</td><td class="num">0.89</td><td class="num">18.4 GB</td></tr>
+<tr><td class="cfg">3 shards co-located · 64 GB GPU (A4)</td><td class="num">0.36 s</td><td class="num">1.58 s</td><td class="num">11.5 s</td><td class="num">31</td><td class="num">27</td><td class="num">27</td><td class="num">30.0</td><td class="num">0.90</td><td class="num">18.4 GB</td></tr>
+<tr class="dim"><td class="cfg">Whole · 64 GB CPU (A2)</td><td class="num">1.1 s</td><td class="num">40 s</td><td class="num">347 s</td><td class="num">—</td><td class="num">—</td><td class="num">13–14</td><td class="num">40.7</td><td class="num">—</td><td class="num">40 GB RAM</td></tr>
+<tr class="dim"><td class="cfg">Whole · 32 GB NUC GPU · as shipped (B1b)</td><td class="num">0.67 s</td><td class="num">1.29 s</td><td class="num">4.23 s</td><td class="num">1.7</td><td class="num">—</td><td class="num">1.7</td><td class="num">23.0</td><td class="num">0.07</td><td class="num">17.9 GB</td></tr>
+<tr class="dim"><td class="cfg">Whole · 32 GB NUC GPU · Intel GMM key only, 24.8 GiB reported (B3)</td><td class="num">0.59 s</td><td class="num">1.18 s</td><td class="num">4.16 s</td><td class="num">1.9</td><td class="num">—</td><td class="num">1.9</td><td class="num">25.4</td><td class="num">—</td><td class="num">17.9 GB</td></tr>
+<tr class="hl"><td class="cfg">Whole · 32 GB NUC GPU · commit limit 85%, 26.1 GiB budget (B5)</td><td class="num">0.15 s</td><td class="num">0.75 s</td><td class="num">3.90 s</td><td class="num"><b>33.2</b></td><td class="num">30.4</td><td class="num">27.8</td><td class="num">33.5</td><td class="num">0.91</td><td class="num">19.0 GB</td></tr>
+<tr class="dim"><td class="cfg">Whole · 32 GB NUC CPU (B2)</td><td class="num">1.3 s</td><td class="num">53 s</td><td class="num">447 s</td><td class="num">—</td><td class="num">—</td><td class="num">~12</td><td class="num">—</td><td class="num">—</td><td class="num">27 GB RAM</td></tr>
+<tr class="dim"><td class="cfg">Whole · 32 GB NUC · HETERO:GPU,CPU (E)</td><td class="num">0.73 s</td><td class="num">1.34 s</td><td class="num">3.97 s</td><td class="num">1.4</td><td class="num">—</td><td class="num">1.4</td><td class="num">—</td><td class="num">—</td><td class="num">18.0 GB</td></tr>
+<tr><td class="cfg">2 NUCs · 1 shard each · 2.5 GbE (C1)</td><td class="num">0.32 s</td><td class="num">3.54 s</td><td class="num">22.2 s</td><td class="num">20.1</td><td class="num">18.8</td><td class="num">15.3</td><td class="num">30.7 total</td><td class="num">0.61</td><td class="num">9.1 GB / box</td></tr>
+<tr><td class="cfg">3 NUCs · 1 shard each · 2.5 GbE (C2)</td><td class="num">0.86 s</td><td class="num">3.48 s</td><td class="num">31.2 s</td><td class="num">17.8</td><td class="num">18.1</td><td class="num">13.8</td><td class="num">27.6 total</td><td class="num">0.65</td><td class="num">6.1 GB / box</td></tr>
+<tr class="dim"><td class="cfg">2 NUCs · GPU head + CPU tail (C3)</td><td class="num">1.0 s</td><td class="num">18.0 s</td><td class="num">174 s</td><td class="num">11.4</td><td class="num">—</td><td class="num">6.3</td><td class="num">—</td><td class="num">—</td><td class="num">9.3 GB + 19.3 GB RAM</td></tr>
+<tr class="dim"><td class="cfg">Whole · 64 GB GPU · GenAI prompt lookup n=3, k=5 (S1p)</td><td class="num">0.13 s</td><td class="num">1.22 s</td><td class="num">9.8 s</td><td class="num">30–31</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">19.1 GB</td></tr>
+<tr class="dim"><td class="cfg">Whole · 64 GB GPU · GenAI prompt lookup n=2, k=8 (S2p)</td><td class="num">0.13 s</td><td class="num">1.22 s</td><td class="num">9.8 s</td><td class="num">32</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">19.1 GB</td></tr>
+<tr><td class="cfg">3 shards co-located · 64 GB GPU · staged engine, full-logits tree (S7p)</td><td class="num">0.30 s</td><td class="num">0.33 s</td><td class="num">0.6 s</td><td class="num">31.6</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">18.4 GB</td></tr>
+<tr class="dim"><td class="cfg">3 shards co-located · 64 GB GPU · staged n-gram speculation n=3, k=5 (S8p)</td><td class="num">0.33 s</td><td class="num">0.36 s</td><td class="num">0.64 s</td><td class="num">14–15</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">18.4 GB</td></tr>
+</table></div>
+<p class="note">B-rows on the NUCs were measured before (B1b, B3) and after (B5) the memory window change; everything else is independent of it. The CPU rows report end-to-end tok/s because the two-call decode estimate is not meaningful when a prefix cache makes the second call's prefill free.</p>
 
 <h3>Power and utilization during sustained decode</h3>
 <div class="tablewrap"><table>
-<tr><th>Configuration</th><th class="num">Idle W (model loaded)</th><th class="num">Decode W</th><th class="num">DDR GB/s</th><th class="num">CPU %</th><th class="num">GPU busy %</th><th class="num">GPU copy %</th><th class="num">NPU %</th><th class="num">GPU memory</th><th class="num">Process WS</th><th class="num">Committed</th></tr>
-<tr><td class="cfg">Whole · 64 GB · GPU</td><td class="num">7.2</td><td class="num">34.2</td><td class="num">79.5</td><td class="num">16</td><td class="num">98</td><td class="num">8</td><td class="num">0</td><td class="num">19.1 GB</td><td class="num">19.8 GB</td><td class="num">33.1 GB</td></tr>
-<tr><td class="cfg">2 shards co-located · 64 GB</td><td class="num">6.8</td><td class="num">30.9</td><td class="num">57.5</td><td class="num">17</td><td class="num">100</td><td class="num">86</td><td class="num">0</td><td class="num">18.4 GB</td><td class="num">18.8 GB</td><td class="num">32.1 GB</td></tr>
-<tr><td class="cfg">3 shards co-located · 64 GB</td><td class="num">7.4</td><td class="num">30.0</td><td class="num">56.0</td><td class="num">17</td><td class="num">98</td><td class="num">86</td><td class="num">0</td><td class="num">18.4 GB</td><td class="num">18.8 GB</td><td class="num">32.1 GB</td></tr>
-<tr><td class="cfg">Whole · 64 GB · CPU</td><td class="num">6.5</td><td class="num">40.7</td><td class="num">13.2</td><td class="num">60</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0.3 GB</td><td class="num">40.4 GB</td><td class="num">36.8 GB</td></tr>
-<tr><td class="cfg">Whole · 32 GB NUC · GPU</td><td class="num">3.0</td><td class="num">23.0</td><td class="num">8.1</td><td class="num">20</td><td class="num">95</td><td class="num">1</td><td class="num">n/a</td><td class="num">17.9 GB</td><td class="num">19.5 GB</td><td class="num">23.2 GB</td></tr>
-<tr><td class="cfg">Whole · 32 GB NUC · CPU</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">47</td><td class="num">0</td><td class="num">0</td><td class="num">n/a</td><td class="num">—</td><td class="num">27.2 GB</td><td class="num">26.9 GB (410 MB free)</td></tr>
-<tr><td class="cfg">2 NUCs · 1 shard each</td><td class="num">3.4 (head)</td><td class="num">30.7 (15.0 + 15.7)</td><td class="num">12.8 (head)</td><td class="num">8</td><td class="num">44</td><td class="num">41</td><td class="num">n/a</td><td class="num">9.1 + 9.2 GB</td><td class="num">9.6 GB each</td><td class="num">13.3 GB (head)</td></tr>
-<tr><td class="cfg">3 NUCs · 1 shard each</td><td class="num">3.5 (head)</td><td class="num">27.6 (9.0 + 9.1 + 9.5)</td><td class="num">8.5 (head)</td><td class="num">5</td><td class="num">29</td><td class="num">28</td><td class="num">n/a</td><td class="num">6.1 / 5.6 / 6.6 GB</td><td class="num">6.0–7.0 GB</td><td class="num">10.3 GB (head)</td></tr>
+<tr><th>Layout</th><th class="num">Idle W (model loaded)</th><th class="num">Decode W</th><th class="num">DDR GB/s</th><th class="num">CPU %</th><th class="num">GPU busy %</th><th class="num">GPU copy %</th><th class="num">NPU %</th><th class="num">GPU shared memory</th><th class="num">Process WS</th></tr>
+<tr><td class="cfg">Whole · 64 GB GPU</td><td class="num">7.2</td><td class="num">34.2</td><td class="num">79.5</td><td class="num">16</td><td class="num">98</td><td class="num">8</td><td class="num">0</td><td class="num">19.1 GB</td><td class="num">19.8 GB</td></tr>
+<tr><td class="cfg">2 shards co-located · 64 GB</td><td class="num">6.8</td><td class="num">30.9</td><td class="num">57.5</td><td class="num">17</td><td class="num">100</td><td class="num">86</td><td class="num">0</td><td class="num">18.4 GB</td><td class="num">19.0 GB</td></tr>
+<tr><td class="cfg">3 shards co-located · 64 GB</td><td class="num">7.4</td><td class="num">30.0</td><td class="num">56.0</td><td class="num">17</td><td class="num">98</td><td class="num">86</td><td class="num">0</td><td class="num">18.4 GB</td><td class="num">19.1 GB</td></tr>
+<tr><td class="cfg">Whole · 64 GB CPU</td><td class="num">6.5</td><td class="num">40.7</td><td class="num">13.2</td><td class="num">60</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0.3 GB</td><td class="num">40.4 GB</td></tr>
+<tr><td class="cfg">Whole · 32 GB NUC GPU · as shipped</td><td class="num">3.0</td><td class="num">23.0</td><td class="num">8.1</td><td class="num">20</td><td class="num">95</td><td class="num">1</td><td class="num">n/a</td><td class="num">17.9 GB</td><td class="num">19.5 GB</td></tr>
+<tr class="hl"><td class="cfg">Whole · 32 GB NUC GPU · window raised</td><td class="num">3.3</td><td class="num">33.5</td><td class="num">56.1</td><td class="num">14</td><td class="num">98</td><td class="num">6</td><td class="num">n/a</td><td class="num">19.0 GB</td><td class="num">19.6 GB</td></tr>
+<tr><td class="cfg">2 NUCs · 1 shard each</td><td class="num">3.4 (head)</td><td class="num">30.7 (15.0 + 15.7)</td><td class="num">12.8 (head)</td><td class="num">8</td><td class="num">44</td><td class="num">41</td><td class="num">n/a</td><td class="num">9.1 GB / box</td><td class="num">9.6 GB / box</td></tr>
+<tr><td class="cfg">3 NUCs · 1 shard each</td><td class="num">3.5 (head)</td><td class="num">27.6 (9.0 + 9.1 + 9.5)</td><td class="num">8.5 (head)</td><td class="num">5</td><td class="num">29</td><td class="num">28</td><td class="num">n/a</td><td class="num">6.1 GB / box</td><td class="num">6.6 GB / box</td></tr>
 </table></div>
-<p class="note">GPU busy is the iGPU's compute engine (reported as the "neural" engine class by this driver; attributed per adapter). The NPU adapter's engines stayed at 0 in every GPU configuration on the 64 GB box; the NUCs have no NPU driver installed. CPU figures are whole-system utilization. The 32 GB whole-GPU row's power is from the full run of the same server; the quick re-measure that produced its TTFT/decode numbers had no power window.</p>
+<p class="note">GPU busy is the iGPU compute engine (reported as the "neural" engine class by this driver, attributed per adapter). The copy engine is the tell for paging: 86% on co-located shards and 26% on the as-shipped NUC, 6–8% when the weights are resident. The NPU adapter stayed at 0 in every configuration on the 64 GB box; the NUCs have no NPU driver installed.</p>
 
-<h3>Sharding multipliers relative to the whole model on the 64 GB box</h3>
+<h3>What sharding costs, relative to the whole model on the 64 GB box</h3>
 <div class="tablewrap"><table>
-<tr><th>Configuration</th><th class="num">Shards</th><th class="num">Decode</th><th class="num">TTFT 975 tok</th><th class="num">TTFT 7.7k tok</th><th class="num">Power (total)</th><th class="num">tok/J</th><th class="num">GPU memory per box</th></tr>
+<tr><th>Layout</th><th class="num">Shards</th><th class="num">Decode</th><th class="num">TTFT 975 tok</th><th class="num">TTFT 7.7k tok</th><th class="num">Power (total)</th><th class="num">tok/J</th><th class="num">GPU memory per box</th></tr>
 <tr><td class="cfg">2 shards co-located</td><td class="num">2</td><td class="num">0.65x</td><td class="num">2.6x</td><td class="num">3.9x</td><td class="num">0.90x</td><td class="num">0.72x</td><td class="num">0.96x</td></tr>
 <tr><td class="cfg">3 shards co-located</td><td class="num">3</td><td class="num">0.65x</td><td class="num">2.6x</td><td class="num">4.0x</td><td class="num">0.88x</td><td class="num">0.73x</td><td class="num">0.96x</td></tr>
 <tr><td class="cfg">2 NUCs</td><td class="num">2</td><td class="num">0.45x</td><td class="num">5.9x</td><td class="num">7.7x</td><td class="num">0.90x</td><td class="num">0.50x</td><td class="num">0.48x</td></tr>
 <tr><td class="cfg">3 NUCs</td><td class="num">3</td><td class="num">0.43x</td><td class="num">5.8x</td><td class="num">10.8x</td><td class="num">0.81x</td><td class="num">0.53x</td><td class="num">0.32x</td></tr>
-<tr><td class="cfg">Whole model, 32 GB NUC (the alternative on that hardware)</td><td class="num">1</td><td class="num">0.04x</td><td class="num">2.2x</td><td class="num">1.5x</td><td class="num">0.67x</td><td class="num">0.06x</td><td class="num">0.94x</td></tr>
+<tr class="hl"><td class="cfg">Whole on one 32 GB NUC, window raised</td><td class="num">1</td><td class="num">0.72x</td><td class="num">1.25x</td><td class="num">1.35x</td><td class="num">0.98x</td><td class="num">0.74x</td><td class="num">0.99x</td></tr>
 </table></div>
-<ul class="tight">
-  <li><b>Going from 2 to 3 co-located shards costs nothing extra.</b> The staged engine's overhead on one XPU is per pipeline (chunked prefill, state hand-off through the copy engine at 86%), not per stage.</li>
-  <li><b>Across NUCs the chain waits more than it computes.</b> GPU busy drops to 44% (2 NUCs) and 29% (3 NUCs) and head-node DDR traffic to 8–13 GB/s, versus 98% and 80 GB/s for the whole model: each token crosses the LAN once per hop and the ranks idle in between. That is also why total power is similar (28–31 W) while output halves, giving half the tokens per joule.</li>
-  <li><b>Per-node footprint scales down as expected</b>: 9 GB and 15 W per NUC with 2 shards, 6 GB and 9 W with 3.</li>
-  <li><b>Measured against the only alternative on 32 GB hardware</b> (the whole model on one NUC), the pipelines are 11x faster and 9–10x more efficient.</li>
-</ul>
+<p>Decode loses 35% when stages are co-located and 55–57% across NUCs; prefill loses 4–11x because every prompt chunk crosses each stage boundary in turn. The window-raised NUC gives up 28% of the 64 GB box's decode and nothing on memory, which makes it the better unit per dollar for the 35B as long as one stream per box is enough.</p>
 
-<h3>Accuracy: parity and task score</h3>
-<div class="two">
-<div><div class="tablewrap"><table>
-<tr><th>Comparison vs. whole model (6 prompts, 160 greedy tokens)</th><th class="num">Exact</th><th class="num">Common prefix</th></tr>
-<tr><td>Whole model again after a server restart</td><td class="num">6/6</td><td class="num">100%</td></tr>
-<tr><td>Whole model via the first client's streaming request path</td><td class="num">0/6</td><td class="num">7%</td></tr>
-<tr><td>2 or 3 co-located shards</td><td class="num">0/6</td><td class="num">8–9%</td></tr>
-<tr><td>2 or 3 NUC pipeline</td><td class="num">0/6</td><td class="num">8–9%</td></tr>
-<tr><td>Whole model on CPU</td><td class="num">0/6</td><td class="num">11%</td></tr>
-</table></div></div>
-<div><div class="tablewrap"><table>
-<tr><th>GSM8K-40, greedy, thinking off</th><th class="num">Correct</th><th class="num">Tokens</th><th class="num">Wall</th></tr>
-<tr><td>Whole model · 64 GB GPU</td><td class="num">37/40</td><td class="num">11,923</td><td class="num">280 s</td></tr>
-<tr><td>2 shards co-located · 64 GB</td><td class="num">36/40</td><td class="num">12,274</td><td class="num">370 s</td></tr>
-<tr><td>3 NUCs · 1 shard each</td><td class="num">36/40</td><td class="num">12,274</td><td class="num">1,080 s</td></tr>
-</table></div></div>
-</div>
-<p>The whole model is deterministic when driven the same way (byte-identical answers across a server restart). Sharded output matches it for the first sentence and then takes a different, equally coherent continuation; so does the whole model on CPU, and so does the whole model on GPU when requests arrive through a different code path. These are f16 near-tie flips in greedy decoding, not errors, which is why token-exact comparison is the wrong acceptance test for a sharded deployment and task-level accuracy is the right one: 36/40 vs 37/40 is within the noise of a 40-item set, and the two sharded runs produced byte-identical token counts, so the staged engine is itself deterministic across topologies.</p>
-
-<h2>Qwen3.5-122B-A10B: built, sized, first blocked on the GPU, then fixed</h2>
+<h2 id="m122">Qwen3.5-122B-A10B</h2>
 <div class="two">
 <div>
-<p><b>Built.</b> No public OpenVINO IR exists. From <span class="mono">Qwen/Qwen3.5-122B-A10B-GPTQ-Int4</span> (79 GB) the runtime's builder produced a 64.3 GB INT4 IR, cut into 2 stages (29 + 33 GB) and 4 stages (12 / 16 / 16 / 26 GB). The 2-stage cut passed the exporter's chain-vs-full check: logits rel 2.0e-2, top-1 match, 8 of 8 greedy tokens.</p>
-<p><b>Sized.</b> The smallest GPU layouts are two 64 GB boxes (the two Tiber boxes see each other at 15 ms) or three 32 GB NUCs plus a 64 GB tail (a 110–350 ms relay hop per token). The CPU plugin's 2x residency puts CPU stages at 24–51 GB, beyond the NUCs.</p>
+<p><b>Built.</b> No public OpenVINO IR exists. From <span class="mono">Qwen/Qwen3.5-122B-A10B-GPTQ-Int4</span> (79 GB) the runtime's GPTQ-to-OpenVINO builder produced a 64.3 GB INT4 IR (21.5 min on 8 vCPUs), cut into 2, 3 and 4 stages. The 2-stage cut passed the exporter's chain-vs-full check (logits rel 2.0e-2, top-1 match, top-5 4/5, 8/8 greedy tokens).</p>
+<p><b>Blocked, then fixed.</b> Every stage first failed at load in the OpenVINO 2026.4.1 GPU plugin on its first MoE layer (<span class="mono">[GPU] ProgramBuilder build failed … MOECompressed</span>). The cause: GPTQ experts are symmetric, so every zero point is exactly 8, and the GPU MoE fusion rejects that form; Intel's NNCF export has varying zero points. A layer-0 MoE block extracted from the IR reproduced the failure alone and compiled in 2 s once its expert stacks were rewritten as signed INT4 without a zero point (bit-identical values). The builder gained <span class="mono">--expert-sym</span>; the 35B rebuilt the same way runs 9% faster than Intel's export at equal accuracy (A6), which validated the fix before the 122B was re-cut.</p>
 </div>
 <div>
-<p><b>Blocked, then fixed.</b> Every rank of the 4-stage layout first failed at load in the OpenVINO 2026.4.1 GPU plugin, on its first MoE layer:</p>
-<pre>[GPU] ProgramBuilder build failed!
-Node which is about to be added in between two other nodes
-should not have any existing dependencies.
-Node: constant:..._postponed_decompression_byfx_moecompressed:
-  layers.0.mlp/aten::sum/ReduceSum_Reshape/MOECompressed</pre>
-<p>The official NNCF-exported 35B compiles on the same stack. The cause (follow-up round below): GPTQ experts are symmetric, every zero point is 8, and the GPU MoE fusion rejects that form. Emitting signed INT4 experts without a zero point compiles, and the 122B measurements in the follow-up section were made with that build.</p>
+<p><b>Sized.</b> 64.3 GB fits no single Panther Lake box: the 64 GB node's budget is 51.2 GiB and the 32 GB nodes' 26.1 GiB. The all-local layout is three NUC stages of 20.7 / 24.7 / 25.0 GB, which only fit after the window change; the alternative is three NUC stages of 13 / 16 / 16 GB plus a 26 GB tail on the 64 GB node, which crosses the NUC-to-Tiber relay twice per token.</p>
+<p><b>Measured.</b> Four runs of the same IR:</p>
 </div>
 </div>
-<h3>What the larger model would buy</h3>
-<p>On the vendor's own benchmarks the 122B-A10B is 1–3 points ahead of the newer 35B-A3B on knowledge and reasoning (MMLU-Pro 86.7 vs 85.2, SuperGPQA 67.1 vs 64.7, HLE 25.3 vs 21.4) and on long video (LVBench 74.4 vs 71.4), while the 35B-A3B is ahead on coding and agentic rows (LiveCodeBench 80.4 vs 78.9, Terminal-Bench 51.5 vs 49.4, SWE-bench Verified 73.4 vs 72.0) and on detection and grounding. The price is 3.3x the weights and 3.3x the active parameters per token: two 64 GB boxes instead of one, and roughly 3x slower per stream on the same silicon.</p>
-
-<h2>Follow-up round (same day): memory window, concurrency, device mix, 122B fix</h2>
-<div class="findings">
-  <div class="finding"><b>The iGPU memory window on 32 GB boxes can be raised, and it changes everything</b><p>The real limit is a dxgkrnl setting Intel's INF installs at 57% (<span class="mono">GraphicsDrivers\MemoryManager\SystemPartitionCommitLimitPercentage</span>); at 85% the per-process GPU budget goes from 17.2 to 26.1 GiB. The whole 35B on one NUC goes from 1.7–1.9 to 33 (steady 30) tok/s, and the 122B runs all-local on three NUCs at 2.9–3.3 tok/s.</p></div>
-  <div class="finding"><b>OVMS continuous batching scales linearly to 8 streams</b><p>On the 64 GB box: 32 tok/s for one stream, 132 tok/s combined at 8 streams (16.6 each), at 34–36 W throughout, so 3x the tokens per joule of single-stream serving.</p></div>
-  <div class="finding"><b>CPU decode is a loss, the NPU does not load</b><p>Dense Qwen3-8B on one 32 GB box: 22 tok/s on the GPU, 11 on the CPU, with 1k-token prefill at 0.3 s vs 22 s. Neither the 8B nor the 0.6B compiles on the NPU with OpenVINO 2026.4.1 (driver compiler error); the NUCs have no NPU driver. A phase split (NPU prefill, GPU decode) does not exist in these engines.</p></div>
-  <div class="finding"><b>The 122B GPU failure is fixed in the builder</b><p>GPTQ experts are symmetric (every zero point is 8) and the GPU MoE fusion rejects that form. Emitting signed INT4 experts without a zero point (<span class="mono">--expert-sym</span>, bit-identical values) compiles. The rebuilt 35B runs whole on the 64 GB GPU 9% faster than Intel's export at equal accuracy (A6).</p></div>
-  <div class="finding warn"><b>The 122B runs on the NUCs now, but three 32 GB boxes thrash</b><p>With the fixed IR the 3-stage 122B loads and answers on alpha + beta + charlie (health in 14 s), at 0.57 tok/s: each 20–23 GB stage exceeds the 18.4 GB the driver keeps resident per iGPU, so every rank pages weights on every token. Stages must stay under ~18 GB: four or more 32 GB nodes, or a 64 GB tail.</p></div>
-  <div class="finding"><b>With four stages that fit, the 122B runs cleanly, and the relay sets the speed</b><p>alpha + beta + charlie + the 64 GB Tiber box as tail: no paging (head copy engine 3%), 2.0 s TTFT on a short prompt, 1.2–2.7 tok/s decode at every prompt length because each token crosses the Tiber relay twice. GSM8K-20: 17/20 (3 misses = 400-token truncations; 35B: 18–19/20 on the same questions). A fourth local 32 GB node would make it LAN-bound (est. 5–8 tok/s).</p></div>
-</div>
-
-<h3>Memory window on 32 GB Panther Lake: the real knob</h3>
-<p>Two settings look alike. Intel's <span class="mono">GMM\GpuSystemMemoryPinninglimit</span> (what the first attempt changed) only moves the total that OpenVINO reports (16.5 → 24.8 GiB). The segment the Windows video memory manager actually enforces, and the per-process budget it derives from it, come from <span class="mono">HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers\MemoryManager\SystemPartitionCommitLimitPercentage</span>, which Intel's INF sets to 57 ("DXGK regkey to override the default 50% pinning limit to 57%") and which Intel Graphics Software's "Shared GPU Memory Override" slider writes together with the GMM key. The budget, read with <span class="mono">D3DKMTQueryVideoMemoryInfo</span> (the number Task Manager shows), is the resident cap seen in every thrashing run of this report.</p>
 <div class="tablewrap"><table>
-<tr><th>Box</th><th class="num">Commit limit</th><th class="num">WDDM shared segment</th><th class="num">Per-process budget</th><th class="num">OpenVINO total</th></tr>
-<tr><td class="cfg">alpha / beta / charlie / delta, as shipped</td><td class="num">57%</td><td class="num">17.98 GiB (dxdiag's 18,412 MiB)</td><td class="num">17.23 GiB</td><td class="num">24.77 GiB (misleading)</td></tr>
-<tr><td class="cfg">alpha / beta / charlie after 85% + reboot</td><td class="num">85%</td><td class="num">26.81 GiB</td><td class="num">26.06 GiB</td><td class="num">24.77 GiB</td></tr>
-<tr><td class="cfg">tate-07 (64 GB)</td><td class="num">82%</td><td class="num">51.95 GiB</td><td class="num">51.20 GiB</td><td class="num">48.4 GiB</td></tr>
+<tr><th>Layout</th><th class="num">Stages</th><th class="num">TTFT 31 / 975 / 7.7k tok</th><th class="num">Decode tok/s</th><th class="num">Chain power</th><th class="num">GPU busy / copy (head)</th><th class="num">GPU shared (head)</th><th class="num">GSM8K-20</th></tr>
+<tr class="dim"><td class="cfg">3 NUCs, 17.2 GiB budgets (D3)</td><td class="num">3</td><td class="num">3.8 / 12 / 79 s</td><td class="num">0.57</td><td class="num">—</td><td class="num">30% / 26%</td><td class="num">18.0 GB (cap)</td><td class="num">not run</td></tr>
+<tr class="hl"><td class="cfg">3 NUCs, 26.1 GiB budgets (D3b)</td><td class="num">3</td><td class="num">1.2–1.5 / 5.7–6.3 / 41–45 s</td><td class="num"><b>2.9–3.3</b></td><td class="num">24.3 W (8.7 + 8.9 + 6.7)</td><td class="num">14% / 9%</td><td class="num">20.6 GB</td><td class="num">17/20</td></tr>
+<tr><td class="cfg">3 NUCs + 64 GB tail over the Tiber relay (D2sym)</td><td class="num">4</td><td class="num">2.0 / 18.5 / 108–137 s</td><td class="num">1.2–2.7</td><td class="num">28.7 W</td><td class="num">5% / 3%</td><td class="num">13.2 GB</td><td class="num">17/20 (token-identical)</td></tr>
+<tr class="dim"><td class="cfg">3 NUCs · staged n-gram speculation n=3, k=5 (P1)</td><td class="num">3</td><td class="num">1.9–2.0 / 7.2–7.3 / 51–52 s</td><td class="num">1.5–1.7 (0.95 on 7.7k)</td><td class="num">—</td><td class="num">—</td><td class="num">20.6 GB</td><td class="num">not run</td></tr>
+<tr class="hl"><td class="cfg">3 NUCs · GPU keep-alive 2 ms (K5 / D3k; 5 ms + pinned clock is equivalent)</td><td class="num">3</td><td class="num">0.61 / 5.45 / 41 s</td><td class="num"><b>10.5</b> (10.0 on 7.7k)</td><td class="num">58.1 W (19.9 + 18.8 + 19.4)</td><td class="num">93–95% / 80–86%</td><td class="num">20.6 GB</td><td class="num">17/20 (same three misses; 9.7 min instead of 41)</td></tr>
 </table></div>
-<p class="note">Budget = segment − 0.75 GiB in every case. Intel documents the slider's ceiling as 87% on the consumer driver and 93% on the Arc Pro workstation driver (release notes 101.8517/8805); the OS key is not capped by the slider, but Windows and the serving process still need RAM, so 85% on a 32 GB box (4.8 GB left for the OS) is the practical value used here. The setting is left enabled on the three NUCs; delta still carries the GMM key only.</p>
-<h3>Same runs, real window: whole 35B on one NUC (B5) and the all-local 122B (D3b)</h3>
+<p>The two layouts that fit produce token-identical answers (the same 5,482 completion tokens on GSM8K-20) and differ only in speed: the local chain is 1.4x faster than the relay chain and 6x faster than the paging case. At 2.9 tok/s the head GPU was 14% busy and pulled 5 GB/s from DRAM against the 56 GB/s the same box sustains on the 35B; the per-stage profile in the clocks section shows why (idle-induced stalls on 40–50% of steps) and the keep-alive fix takes the same chain to 10.5 tok/s.</p>
+<div class="callout">Expert parallelism does not help this case. A token touches 8 of 256 experts per layer; spreading them over three boxes saves at most two thirds of a ~1 ms matvec per layer and pays two network exchanges per layer (96 per token) for it. Layer pipelining costs two exchanges per token in total, and the 35B pipeline shows those are worth about 25 ms. Expert sharding pays off with large batches and a sub-100 µs interconnect, neither of which a single-stream edge deployment has.</div>
+
+<h2 id="spec">Speculative decoding</h2>
+<p>Two kinds were added and measured. For the whole model, OpenVINO GenAI's own speculative paths (prompt lookup, and FastDraft with a separate draft model) were enabled through the runtime's <span class="mono">--prompt-lookup</span> / <span class="mono">--draft-model</span> flags; GenAI 2026.4.1 refuses them with prefix caching on, so the shim now passes a scheduler config with prefix caching disabled for those pipelines. For the staged pipeline engine, greedy n-gram (prompt-lookup) speculation was implemented from scratch on branch <span class="mono">ecg/spec-decode</span>: the head drafts up to k tokens from n-gram matches in the prompt and generated text, the chain verifies them in one T=k+1 pass (the last stage now emits logits for every position, <span class="mono">cascadia shard --full-logits</span>), rank 0 accepts the longest matching prefix, and because the Gated DeltaNet recurrent state cannot be rewound, every rank snapshots its DeltaNet variables before the verify pass and, on a partial accept, restores them, masks the rejected cache slots and re-feeds the accepted tokens. New wire frames VERIFY / TOKENS / COMMIT carry this through the pipeline.</p>
 <div class="tablewrap"><table>
-<tr><th>Run</th><th class="num">Before (17.2 GiB budget)</th><th class="num">After (26.1 GiB budget)</th></tr>
-<tr><td class="cfg">Whole Qwen3.6-35B-A3B on one 32 GB NUC GPU</td><td class="num">1.7–1.9 tok/s · TTFT 0.6 / 1.2 / 4.1 s · copy engine 26%</td><td class="num"><b>33 (steady 30) tok/s</b> · TTFT 0.15 / 0.75 / 3.9 s · 33.5 W, 56 GB/s DDR, 1.0 tok/J (idle 3.3 W) · GPU 95% busy, copy 12%</td></tr>
-<tr><td class="cfg">Qwen3.5-122B-A10B, 3 stages (20.7 / 24.7 / 25.0 GB) on alpha + beta + charlie</td><td class="num">0.57 tok/s · TTFT 3.8 / 12 / 79 s</td><td class="num"><b>2.9–3.3 tok/s</b> · TTFT 1.2–1.5 / 5.7–6.3 / 41–45 s · 24.3 W chain (8.7 + 8.9 + 6.7) · GSM8K-20 17/20</td></tr>
+<tr><th>Configuration</th><th class="num">Plain</th><th class="num">Speculative</th><th class="num">Ratio</th><th>What limits it</th></tr>
+<tr><td class="cfg">Whole 35B · 64 GB GPU · GenAI prompt lookup (n=3 k=5 and n=2 k=8)</td><td class="num">47 tok/s, TTFT 0.61 s</td><td class="num">31–32 tok/s, TTFT 1.22 s</td><td class="num">0.66x</td><td>GenAI runs speculation on its continuous-batching pipeline, whose per-step overhead on this GPU exceeds what the accepted drafts return; TTFT doubles (3x on the 7.7k prompt).</td></tr>
+<tr><td class="cfg">Whole 35B · GenAI draft model (Qwen3.5-0.8B)</td><td class="num">—</td><td class="num">refused</td><td class="num">—</td><td>The runtime rejects <span class="mono">--draft-model</span> on VLM-layout exports; both the official Qwen3.6 IR and the GPTQ-sym rebuild are VLM-layout (inputs_embeds), so FastDraft needs a text-only re-export.</td></tr>
+<tr><td class="cfg">Staged 35B · 3 stages co-located on the 64 GB GPU · n-gram n=3 k=5</td><td class="num">31.6 tok/s</td><td class="num">14–15 tok/s</td><td class="num">0.47x</td><td>Draft acceptance 1.6% on the incident log, 19.7% on the telemetry prompt (26 and 63 verify steps, 26 and 57 rollbacks); each step pays a 122 ms DeltaNet snapshot plus a 92 ms verify pass and a re-feed, against a 32 ms plain step.</td></tr>
+<tr><td class="cfg">Staged 122B · three NUCs · n-gram n=3 k=5</td><td class="num">2.8–3.3 tok/s</td><td class="num">1.5–1.7 (0.95 on the 7.7k prompt) tok/s</td><td class="num">0.55x (0.18x on 7.7k)</td><td>Acceptance 14% on the incident log and 23% on the telemetry prompt (17 and 76 verify steps). Across three ranks one verify step costs a 0.37 s DeltaNet snapshot, a 0.73 s verify pass, a 0.75 s restore and a 0.84 s re-feed, against a 0.33 s plain token; the pipeline multiplies every rollback cost by its depth.</td></tr>
 </table></div>
-<p>Both pipelines now hold their weights resident (head rank 20.4 GiB used of 26.06; ranks at 19.4–20.8 GiB; copy engines at a few percent). The 35B on a single 32 GB box goes from unusable to 33 (steady 30) tok/s, 1.7–1.8x the 3-NUC sharded chain and about 70% of the 64 GB box: a 32 GB Panther Lake node <em>can</em> serve the 35B whole. The 122B runs on three ordinary NUCs with no 64 GB node and no relay, token-identical to the relay layout (same 5,482 completion tokens on GSM8K-20) and 1.4x faster; at 2.9 tok/s with GPU compute at 14–15% and 5–6 GB/s of DDR traffic per box it is now kernel-launch and expert-gather bound (the 256-expert MoE path of the OpenVINO GPU plugin), a runtime question rather than a memory one.</p>
-<h3>Concurrency: OVMS continuous batching on the 64 GB box</h3>
+<p>The staged implementation is correct to the extent greedy speculation can be on this export: short outputs are byte-identical to plain decoding, the longer ones differ by one or two characters, the same f16 near-tie behaviour the surgery documents for any T&gt;1 pass versus T=1 decode on the DeltaNet scan. It is not a win on this hardware for two structural reasons: prompt-lookup drafts rarely match the model on prose and telemetry (2–20% accepted), and the recurrent state makes rollback expensive (a snapshot/restore round trip costs more than three plain tokens). A learned draft (the MTP head that ships in these IRs, or a 0.8B draft on a text-only export) would raise acceptance, but the rollback cost stays unless the verify can run on a cloned state; that is the next experiment, not this one. The flags remain in the branch, off by default.</p>
+
+<h2 id="clocks">GPU clocks and the per-stage profile</h2>
+<div class="two">
+<div>
+<h3>Clocks</h3>
+<p>During 122B decode the iGPU's actual frequency bounces between 100 and 2,500 MHz (median 1,450 on alpha, 1,750 on beta), the signature of a GPU that is idle most of the time. Three interventions were measured on the all-local 122B and on the whole 35B on a NUC, all with every stage resident:</p>
+<div class="tablewrap"><table>
+<tr><th>Run</th><th class="num">122B 3 NUCs, 975-tok decode</th><th class="num">35B whole on a NUC</th></tr>
+<tr><td class="cfg">As is (Intel power plan already Maximum Performance)</td><td class="num">2.8–3.3 tok/s</td><td class="num">33.2 tok/s</td></tr>
+<tr><td class="cfg">iGPU pinned at 2,500 MHz (Level Zero <span class="mono">zesFrequencySetRange</span>)</td><td class="num">1.4–3.3 tok/s</td><td class="num">33.0–33.2 tok/s</td></tr>
+<tr><td class="cfg">OpenVINO <span class="mono">GPU_QUEUE_THROTTLE=HIGH</span>, <span class="mono">GPU_QUEUE_PRIORITY=HIGH</span></td><td class="num">2.6–2.7 tok/s</td><td class="num">—</td></tr>
+<tr><td class="cfg">Pinned + queue hints, single stage standalone</td><td class="num">48.0 vs 50.9 ms per step (6%)</td><td class="num">—</td></tr>
+</table></div>
+<p class="note">Clock state is a symptom, not the cause: forcing the clock high does not shorten the stalls, and the whole 35B, which keeps its GPU 98% busy, gains nothing either.</p>
+</div>
+<div>
+<h3>Where a 122B token's time goes</h3>
+<p>The runtime branch adds per-token instrumentation (<span class="mono">CASCADIA_QWEN36_PROFILE=1</span>: embed, per-stage set/infer/output, transport wait, sampling; and an OpenVINO per-op dump with <span class="mono">PERF_COUNT</span>). On the all-local 122B it reports, per rank and decode step:</p>
+<div class="tablewrap"><table>
+<tr><th>Measure (per rank, per step)</th><th class="num">p50</th><th class="num">p95</th></tr>
+<tr><td class="cfg">Stage inference (16 layers, 20–25 GB resident)</td><td class="num">33–34 ms</td><td class="num">250–550 ms</td></tr>
+<tr><td class="cfg">Input copy / output copy / sampling</td><td class="num">0.07 / 0.2 / 0.3 ms</td><td class="num">&lt;1 ms</td></tr>
+<tr><td class="cfg">Wire (frame on the 2.5 GbE hop)</td><td class="num">1.7 ms</td><td class="num">2–11 ms</td></tr>
+<tr><td class="cfg">Waiting for the other two ranks</td><td class="num">68–70 ms</td><td class="num">540–670 ms</td></tr>
+</table></div>
+<p>The medians add up to a 105 ms token (9.5 tok/s); the measured 330 ms comes from the tails. A standalone OpenVINO loop on one stage never stalls (300 steps, p99 57 ms, with or without a kernel cache) until a 70 ms pause is inserted between steps, which the pipeline naturally has while the other two ranks work: then 16% of steps take ~570 ms, pinned clock or not. Filling the pause with a 1.7 ms keep-alive inference every 5 ms removes the stalls (p99 68 ms). The fix is in the engine as <span class="mono">CASCADIA_QWEN36_GPU_KEEPALIVE_MS</span>: each rank keeps its device busy with a tiny model while it waits on the network. Measured on the all-local 122B:</p>
+<div class="tablewrap"><table>
+<tr><th>Configuration</th><th class="num">TTFT 31 / 975 / 7.7k</th><th class="num">Decode 975 tok</th><th class="num">Decode 7.7k</th><th class="num">Last-rank step p50 / p95</th></tr>
+<tr><td class="cfg">Baseline (P0)</td><td class="num">1.5–2.1 / 7.3–7.5 / 51 s</td><td class="num">2.8–3.3</td><td class="num">5.2</td><td class="num">33 / 549 ms</td></tr>
+<tr><td class="cfg">Keep-alive 5 ms (K1)</td><td class="num">0.64 / 5.6 / 44.5 s</td><td class="num">5.1</td><td class="num">10.1</td><td class="num">69 / 114 ms</td></tr>
+<tr class="hl"><td class="cfg">Keep-alive 5 ms + iGPU pinned at 2.5 GHz (K3)</td><td class="num">0.61 / 5.45 / 41 s</td><td class="num"><b>10.5</b></td><td class="num">10.0</td><td class="num">31.6 / 32.9 ms</td></tr>
+<tr class="dim"><td class="cfg">Keep-alive 25 ms, clock free (K4)</td><td class="num">0.84–0.95 / 5.8–6.1 / 47–50 s</td><td class="num">3.6</td><td class="num">9.4–10.0</td><td class="num">117 / 120 ms (no stalls, but every step at a low clock)</td></tr>
+<tr class="hl"><td class="cfg">Keep-alive 2 ms, clock free (K5, used for the full run below)</td><td class="num">0.61 / 5.5 / 41 s</td><td class="num"><b>10.5–10.6</b></td><td class="num">10.1</td><td class="num">31.9 / 33.2 ms</td></tr>
+</table></div>
+<p>A 5 ms keep-alive removes the stalls but lets the frequency governor settle low between the tiny kernels (the last rank's step doubles; at 25 ms every step runs slow); pinning the clock alone (G1) changed nothing because the idle penalty dominated. Either a 2 ms keep-alive on its own or 5 ms with the clock pinned gives the token its median cost back: 3.3x the baseline on the same hardware, and the per-step distribution is now tight enough (p95 within 4% of p50) that the remaining cost is the kernel time itself. The full protocol with the 2 ms keep-alive (D3k): 10.5–10.7 tok/s on every prompt length, steady loop 10.6 tok/s, TTFT 0.62 / 5.5 / 41.3 s, 58 W for the chain at 16–20 GB/s of DDR traffic per box (0.18 tok/J, against 24 W and 0.12 tok/J when it stalled), GSM8K-20 17/20 with the same three truncations in 9.7 minutes instead of 41. The busy counters now read 93–95% per GPU because the keep-alive kernels fill the waits; the real work per token is unchanged.</p>
+<p class="note">Of the 51 ms standalone step, OpenVINO's per-op profile accounts for 18–22 ms of kernel time (149 compressed matmuls 13–17 ms, transposes 2.4 ms, 12 Gated DeltaNet ops 1.1 ms; the fused MoE experts are not attributed), so roughly 30 ms per step is the plugin's host-side dispatch across ~1,100 nodes of a dynamic-shape graph. The first requests after a load are slower still (14–18 s for 16 tokens) while kernels are specialised for new prompt lengths; a persistent OpenVINO cache directory does not change the steady-state step.</p>
+</div>
+</div>
+
+<h2 id="concurrency">Concurrency: continuous batching on the 64 GB box</h2>
 <div class="tablewrap"><table>
 <tr><th class="num">Streams</th><th class="num">Per-stream tok/s</th><th class="num">Combined tok/s</th><th class="num">Package W</th><th class="num">tok/J</th></tr>
 <tr><td class="num">1</td><td class="num">32</td><td class="num">32</td><td class="num">34.0</td><td class="num">0.9</td></tr>
@@ -260,61 +249,72 @@ Node: constant:..._postponed_decompression_byfx_moecompressed:
 <tr><td class="num">4</td><td class="num">16.8</td><td class="num">67</td><td class="num">31.6</td><td class="num">2.1</td></tr>
 <tr><td class="num">8</td><td class="num">16.6</td><td class="num">132</td><td class="num">35.9</td><td class="num">3.7</td></tr>
 </table></div>
-<p class="note">Enterprise OVMS backend, continuous batching, 8 GB KV cache, up to 8 sequences, official 35B IR, 975-token prompts and 256-token answers. Per-stream speed halves once batching starts and then stays flat, so combined throughput scales linearly at nearly constant power.</p>
+<p class="note">Enterprise OVMS backend (continuous batching, 8 GB KV cache, up to 8 sequences) serving the official 35B IR on tate-07's GPU, 975-token prompts and 256-token answers. Per-stream speed halves once batching starts and then stays flat, so combined throughput scales linearly at nearly constant power: 3x the tokens per joule of single-stream serving. The OSS runtime's <span class="mono">--cb</span> path refuses VLM-layout exports, which the official Qwen3.6 IR is; OVMS does not. The staged pipeline engine is single-flight, so a 3-NUC chain serves one stream at a time.</p>
 
-<h3>Device mix on one 32 GB box: GPU, CPU, NPU</h3>
+<h2 id="devices">Device mix on one 32 GB box: GPU, CPU, NPU</h2>
 <div class="tablewrap"><table>
 <tr><th>Model · device</th><th class="num">TTFT 31 / 974 / 7.7k tok</th><th class="num">Decode tok/s (31 / 974 / 7.7k)</th><th class="num">CPU %</th><th class="num">GPU compute %</th><th class="num">GPU shared</th></tr>
 <tr><td class="cfg">Qwen3-8B · GPU</td><td class="num">0.1 / 0.3–0.4 / 3.4–4.5 s</td><td class="num">22 / 22–23 / 19–20</td><td class="num">20</td><td class="num">80</td><td class="num">6.4 GB</td></tr>
 <tr><td class="cfg">Qwen3-8B · CPU</td><td class="num">0.7 / 22 / 220 s</td><td class="num">11–12 / 11 / 6–7</td><td class="num">49</td><td class="num">0</td><td class="num">0.5 GB</td></tr>
 <tr><td class="cfg">Qwen3-0.6B · GPU</td><td class="num">0.04–0.13 / 0.06 / 0.5–0.7 s</td><td class="num">118–130 / 138–151 / 85–108</td><td class="num">20</td><td class="num">43</td><td class="num">1.6 GB</td></tr>
 <tr><td class="cfg">Qwen3-0.6B · CPU</td><td class="num">0.06–0.09 / 1.3–1.8 / 35 s</td><td class="num">80–90 / 66–67 / 24</td><td class="num">48</td><td class="num">0</td><td class="num">0.4 GB</td></tr>
-<tr><td class="cfg">Qwen3-8B or 0.6B · NPU</td><td colspan="5">does not load: <span class="mono">ZE_RESULT_ERROR_INVALID_NULL_POINTER [NPU_VCL]</span> from the NPU compiler, also with a 1,024-token static prompt length</td></tr>
-<tr><td class="cfg">Qwen3.6-35B · 2 shards: GPU head (alpha) + GPU tail (beta), C1</td><td class="num">0.32 / 3.5 / 22 s</td><td class="num">20 / 19–20 / 15–19</td><td class="num">8 (head)</td><td class="num">44 (head)</td><td class="num">9.1 GB per NUC</td></tr>
-<tr><td class="cfg">Qwen3.6-35B · 2 shards: GPU head (alpha) + <b>CPU tail</b> (charlie), C3</td><td class="num">0.8–1.2 / 18 / 174 s</td><td class="num">11–19 / 10–13 / 3.1–3.7</td><td class="num">2 (head)</td><td class="num">6 (head)</td><td class="num">9.3 GB head; tail 19.3 GB RAM</td></tr>
-<tr><td class="cfg">Qwen3.6-35B whole · <span class="mono">HETERO:GPU,CPU</span> (charlie, 24.8 GiB window)</td><td class="num">0.73 / 1.34 / 3.97 s</td><td class="num">1.3 / 1.4 / 1.4</td><td class="num">22</td><td class="num">98</td><td class="num">18.0 GB</td></tr>
+<tr class="dim"><td class="cfg">Qwen3-8B or 0.6B · NPU</td><td colspan="5">does not load: <span class="mono">ZE_RESULT_ERROR_INVALID_NULL_POINTER [NPU_VCL]</span> from the NPU compiler, also with a 1,024-token static prompt length</td></tr>
+<tr><td class="cfg">Qwen3.6-35B · 2 shards: GPU head + GPU tail (C1)</td><td class="num">0.32 / 3.5 / 22 s</td><td class="num">20 / 19–20 / 15–19</td><td class="num">8 (head)</td><td class="num">44 (head)</td><td class="num">9.1 GB / NUC</td></tr>
+<tr class="dim"><td class="cfg">Qwen3.6-35B · 2 shards: GPU head + <b>CPU tail</b> (C3)</td><td class="num">0.8–1.2 / 18 / 174 s</td><td class="num">11–19 / 10–13 / 3.1–3.7</td><td class="num">2 (head)</td><td class="num">6 (head)</td><td class="num">9.3 GB head; tail 19.3 GB RAM</td></tr>
+<tr class="dim"><td class="cfg">Qwen3.6-35B whole · HETERO:GPU,CPU</td><td class="num">0.73 / 1.34 / 3.97 s</td><td class="num">1.3 / 1.4 / 1.4</td><td class="num">22</td><td class="num">98</td><td class="num">18.0 GB</td></tr>
 </table></div>
-<p class="note">Measured on delta (Panther Lake, 32 GB, the only box with an NPU driver) with dense INT4 exports that fit every device; quick protocol, two runs each; decode is the end-to-end rate of the second, prefix-cached request. The CPU has the same DRAM bandwidth as the iGPU but far less compute, so it loses 2x on decode and 55–75x on prefill; for the 35B the CPU plugin's 2x weight residency makes it worse still. The engines run prefill and decode on one device: the NPU pipeline as two static sub-models on the NPU, the GPU pipeline on the GPU; there is no cross-device KV hand-off. Cascadia's pipeline engine splits by layers, so the available "mixed" layouts are a GPU head rank feeding a CPU tail rank and OpenVINO's <span class="mono">HETERO:GPU,CPU</span>; both are in the last rows.</p>
-<p>The mixed pipeline answers "CPU for decode" directly: with half of the 35B's layers on a CPU rank, decode halves on a 1k-token prompt and falls 5x on a 7.7k-token prompt (the CPU stage's attention over a long KV cache dominates), prefill is 5–8x slower, the GPU head idles 94% of the time waiting for the tail, and the CPU rank needs twice its stage size in RAM. The CPU is a fallback for a box whose GPU window is full, not a decode device.</p>
-<p>OpenVINO's heterogeneous plugin does not help either: with GPU first and CPU as fallback it places every supported layer on the GPU (the utilization profile is identical to plain GPU) and decodes the whole 35B at 1.3–1.4 tok/s on a 32 GB box, 20% slower than the plain-GPU oversubscribed run. It does not spill weights to the CPU to relieve the GPU window.</p>
+<p class="note">Measured on delta (the only box with an NPU driver) with dense INT4 exports that fit every device, quick protocol, two runs each; decode is the end-to-end rate of the second, prefix-cached request. The CPU has the same DRAM bandwidth as the iGPU but far less compute, so it loses 2x on decode and 55–75x on prefill; for the 35B the CPU plugin's 2x weight residency makes it worse still. The engines run prefill and decode on one device: the NPU pipeline as two static sub-models on the NPU, the GPU pipeline on the GPU, with no cross-device KV hand-off. A GPU head feeding a CPU tail halves decode and makes long-prompt decode 5x slower; OpenVINO's heterogeneous plugin places every supported layer on the GPU anyway (same utilization profile as plain GPU) and ends up 20% slower.</p>
 
-<h3>GPTQ-sym 35B whole on the 64 GB GPU (A6) vs Intel's export (A1b)</h3>
+<h2 id="accuracy">Accuracy: parity and task score</h2>
+<div class="two">
+<div>
 <div class="tablewrap"><table>
-<tr><th>IR</th><th class="num">TTFT 31 / 975 / 7.7k</th><th class="num">Decode tok/s (975 / steady / e2e)</th><th class="num">Decode W</th><th class="num">tok/J</th><th class="num">GPU busy %</th><th class="num">GPU shared</th><th class="num">GSM8K</th></tr>
-<tr><td class="cfg">Intel NNCF export (u4, asym)</td><td class="num">0.12 / 0.60 / 2.89 s</td><td class="num">47.5 / 41.9 / 38.3</td><td class="num">34.2</td><td class="num">1.23</td><td class="num">98</td><td class="num">19.1 GB</td><td class="num">37/40</td></tr>
-<tr><td class="cfg">GPTQ build, <span class="mono">--expert-sym</span> (i4, no zero point)</td><td class="num">0.12 / 0.60 / 3.23 s</td><td class="num">53.4 / 45.7 / 41.3</td><td class="num">34.7</td><td class="num">1.32</td><td class="num">99</td><td class="num">19.4 GB</td><td class="num">19/20</td></tr>
+<tr><th>Run</th><th class="num">GSM8K</th><th class="num">Accuracy</th></tr>
+<tr><td class="cfg">35B whole · 64 GB GPU</td><td class="num">37/40</td><td class="num">92.5%</td></tr>
+<tr><td class="cfg">35B 2 shards co-located</td><td class="num">36/40</td><td class="num">90.0%</td></tr>
+<tr><td class="cfg">35B 3 NUCs</td><td class="num">36/40</td><td class="num">90.0%</td></tr>
+<tr><td class="cfg">35B GPTQ-sym rebuild · whole</td><td class="num">19/20</td><td class="num">95.0%</td></tr>
+<tr><td class="cfg">122B · 3 NUCs all-local</td><td class="num">17/20</td><td class="num">85.0%</td></tr>
+<tr><td class="cfg">122B · 3 NUCs + 64 GB tail</td><td class="num">17/20</td><td class="num">85.0%</td></tr>
 </table></div>
-<p class="note">A layer-0 MoE block extracted from the GPTQ IR reproduced the GPU failure in isolation and compiled in 2 s once its expert stacks were rewritten as signed INT4 (packed bytes XOR 0x88, Convert→Multiply, no Subtract), with matching output on CPU. The builder patch is in <span class="mono">results/F-gptq-builder-gpu-fix/</span>.</p>
-
-<h3>Qwen3.5-122B-A10B all-local on three NUCs (D3)</h3>
+<p class="note">Greedy, thinking off, 400-token cap. All three 122B misses are 400-token truncations (it writes longer solutions); the 35B scored 18/20 and 19/20 on the same first 20 questions, so at this sample size there is no measurable capability gain from the larger model, consistent with the vendor's 1–3 point gaps on knowledge evals being below what a 20–40 question local check resolves.</p>
+</div>
+<div>
 <div class="tablewrap"><table>
-<tr><th>Layout</th><th class="num">Stages</th><th class="num">TTFT 31 / 975 / 7.7k tok</th><th class="num">Decode tok/s</th><th class="num">Head GPU compute / copy %</th><th class="num">Head GPU shared</th><th class="num">GSM8K</th></tr>
-<tr><td class="cfg">alpha + beta + charlie, 85% windows (19.8 / 23 / 23 GB)</td><td class="num">3</td><td class="num">3.8 / 12 / 79 s</td><td class="num">0.57</td><td class="num">30 / 26</td><td class="num">18.0 GB</td><td class="num">not run (cut)</td></tr>
-<tr><td class="cfg">alpha + beta + charlie (13 / 16 / 16 GB) + tate-07 tail (26 GB) over the Tiber relay</td><td class="num">4</td><td class="num">2.0 / 18.5 / 108–137 s</td><td class="num">1.2–2.7</td><td class="num">5 / 3</td><td class="num">13.2 GB</td><td class="num">17/20 (3 misses = 400-token truncations; 35B: 18–19/20 on the same questions)</td></tr>
+<tr><th>Comparison vs the 64 GB whole model (6 prompts, 160 tokens, greedy)</th><th class="num">Exact</th><th class="num">Common prefix</th></tr>
+<tr><td class="cfg">Same IR, 64 GB box, after a server restart</td><td class="num">6/6</td><td class="num">1.00</td></tr>
+<tr><td class="cfg">Same IR, 32 GB NUC, window raised</td><td class="num">6/6</td><td class="num">1.00</td></tr>
+<tr><td class="cfg">Same IR, 32 GB NUC, paging</td><td class="num">6/6</td><td class="num">1.00</td></tr>
+<tr><td class="cfg">2 or 3 shards (co-located or across NUCs)</td><td class="num">0/6</td><td class="num">0.085</td></tr>
+<tr><td class="cfg">Whole model on CPU</td><td class="num">0/6</td><td class="num">0.106</td></tr>
+<tr><td class="cfg">GPTQ-sym rebuild</td><td class="num">0/6</td><td class="num">0.028</td></tr>
 </table></div>
-<p class="note">The GPU plugin compiles every 122B stage with the <span class="mono">--expert-sym</span> build (the fix at 122B scale), and the pipeline is healthy 14 s after launch. Decode is flat at 0.57 tok/s on every prompt length because all three ranks page weights through an 18.4 GB resident segment (the copy engine at 26% is the paging); the whole 35B on one NUC shows the same signature at 1.7–1.9 tok/s with a 1 GB overshoot, here it is 1.4–4.6 GB per rank. The run was cut after the first repeats; the task-accuracy pass moved to the 4-stage layout.</p>
-<p>In the 4-stage layout every stage fits its GPU and the speed is set by the network alone: each token crosses the NUC-to-Tiber relay twice (activations out to the tail, the sampled token back to the head) at 110–350 ms a crossing, so decode is about 2 tok/s at every prompt length and the GPUs idle 95% of the time; the 7.7k-token prefill takes two minutes because 7.7k tokens of activations cross the relay at each hop. Head package power 3.1 W idle, 6.8 W decoding; chain total 28.7 W (alpha 7.6 + beta 8.3 + charlie 4.5 + tate-07 8.3), i.e. 0.07 tok/J: four GPUs mostly idling on the relay. What the run establishes is that the 122B IR is correct end to end, that four stages load and run inside their GPU segments, and that the LAN hops between the NUCs cost nothing visible. By the 35B chain's scaling (18 tok/s on 3 NUCs with 3B active parameters, 3.3x fewer than the 122B's 10B), a 4-NUC all-local 122B would land at roughly 5–8 tok/s: an estimate, not a measurement.</p>
+<p class="note">The whole model is deterministic when driven the same way, on any GPU box. Sharded output agrees for the first sentence and then takes a different, equally coherent continuation (f16 near-tie flips in the MoE router), as does the CPU path. Validate deployments with task-level checks, not token-exact comparisons.</p>
+</div>
+</div>
 
-<h2>What this means for ECG deployments</h2>
+<h2 id="ecg">What this means for ECG deployments</h2>
 <ul class="tight">
-  <li><b>Raise the GPU memory window on every 32 GB box first</b> (<span class="mono">SystemPartitionCommitLimitPercentage</span> = 85, reboot): a single NUC then serves Qwen3.6-35B-A3B whole at 30–33 tok/s. Sharding still works (three NUCs: 18 tok/s, 28 W, 6 GB per box, same accuracy) and is what makes the 122B run, but it is no longer the only way to run the 35B.</li>
-  <li><b>If the budget allows one 64 GB node, run the model whole on it</b>: 2.3x the speed and 2x the energy efficiency of the NUC chain, 0.6 s to first token on a 1k-token prompt, and multi-stream serving through the OVMS backend.</li>
-  <li><b>Design around prefill.</b> Shards cost 35–57% of decode but 4–11x of time to first token on long prompts. Feed per-minute telemetry windows or pre-summarized context rather than hour-long dumps.</li>
-  <li><b>Keep shard links on a local 2.5 GbE segment.</b> A 15 ms relay hop is tolerable; the 110–350 ms NUC-to-cloud path is not.</li>
-  <li><b>The NPU plays no part</b> in LLM serving with these engines today (the 8B and 0.6B do not even compile for it), NPU-capable SKUs gain nothing here, and there is no NPU-prefill / GPU-decode split to be had. CPU decode is a 2x loss on a dense 8B and worse on a 35B shard.</li>
-  <li><b>Validate deployments with task-level checks</b>, not token-exact comparisons.</li>
-  <li><b>Default to Qwen3.6-35B-A3B.</b> The 122B now runs on Panther Lake (builder fixed): three 32 GB NUCs with the window raised serve it all-local at 2.9–3.3 tok/s and 24 W, with the same GSM8K-20 score as the 35B (17/20 vs 18–19/20), so it is a selective upgrade at ~10x the per-token cost.</li>
+  <li><b>Set the GPU memory window on every 32 GB box first.</b> One registry value and a reboot turn a 32 GB Panther Lake node from "pages at 1.7 tok/s" into a 33 tok/s single-stream server for Qwen3.6-35B-A3B, byte-identical to the 64 GB box's output. Ship it in the provisioning image.</li>
+  <li><b>With the window set, one 32 GB node per stream is the unit for the 35B.</b> It runs at 70% of the 64 GB box's speed at the same power, and three such nodes serving three independent streams beat one 3-NUC sharded chain serving one stream by 5x in aggregate throughput.</li>
+  <li><b>Shard when the model does not fit, not to go faster.</b> Sharding across NUCs costs 55% of decode and 4–11x of TTFT and keeps accuracy. It is what makes the 122B run on three ordinary NUCs, and what lets a box hold a second model beside the first.</li>
+  <li><b>The 122B is a selective upgrade, not a general one.</b> It scored the same as the 35B on GSM8K-20 at roughly ten times the per-token cost, and its speed on these iGPUs is set by kernel launch overhead rather than memory. Default to Qwen3.6-35B-A3B; reserve the 122B for knowledge-heavy or long-video tasks where the vendor's benchmarks show a gap.</li>
+  <li><b>Design around prefill.</b> Long prompts cost 4–11x more TTFT when staged. Feed per-minute telemetry windows or pre-summarized context rather than hour-long dumps.</li>
+  <li><b>Keep shard links on a local 2.5 GbE segment.</b> A 15 ms hop is tolerable; the 110–350 ms NUC-to-cloud path makes a 122B chain relay-bound at 2 tok/s regardless of the GPUs.</li>
+  <li><b>The NPU plays no part in LLM serving today</b> and there is no NPU-prefill / GPU-decode split to be had; NPU-capable SKUs gain nothing here. CPU decode is a 2x loss on a dense 8B and worse on a 35B shard.</li>
+  <li><b>Use OVMS continuous batching on 64 GB nodes</b> when several users share one box: 4x the tokens per joule at 8 streams.</li>
+  <li><b>Run the pipeline ranks with the GPU keep-alive on</b> (<span class="mono">CASCADIA_QWEN36_GPU_KEEPALIVE_MS=2</span>) wherever a stage spends most of its time waiting on other boxes; it took the all-local 122B from 3 to 10.5 tok/s, and it costs nothing when a rank is not waiting. Do not spend effort on GPU clock settings.</li>
+  <li><b>Leave speculative decoding off on Panther Lake iGPUs for these models.</b> Prompt lookup costs a third of the whole model's speed and n-gram speculation halves the staged engine; the DeltaNet rollback cost and low n-gram acceptance decide it. Revisit only with the MTP head or a text-only draft export.</li>
 </ul>
 
-<h2>Method and scope notes</h2>
+<h2 id="method">Method, scope, and corrections</h2>
 <ul class="tight">
-  <li>Whole model: <span class="mono">cascadia run --engine ov-genai --device GPU</span>. Shards: <span class="mono">cascadia shard</span> (IR surgery at layer boundaries, no re-quantization, byte-identical manifests verified on every rank) then <span class="mono">cascadia run &lt;tree&gt; --engine qwen35</span> for co-located shards or one <span class="mono">cascadia worker --rank i --total N</span> per box; prefix cache off.</li>
-  <li>Client on the serving box over loopback; 1 warmup, 3 repeats, medians. The ov-genai engine returns each completion as a single stream chunk, hence the two-call TTFT/decode method; the staged engine streams per token.</li>
-  <li>Power and DDR bandwidth: Intel SoC Watch (driver 2.20.5), 60 s window during a continuous decode loop and 30 s idle with the model loaded. Utilization: 1 s Windows performance-counter sampler with GPU engines attributed per adapter.</li>
-  <li>Continuous batching: the runtime's <span class="mono">--cb</span> path refuses VLM-layout exports (which is what the official Qwen3.6 IR is) and the staged engine is single-flight by design; concurrency was measured through the enterprise OVMS backend instead (follow-up round).</li>
-  <li>Decode on these boxes is memory-bandwidth-bound (77–81 GB/s DDR reads on the 64 GB box); the NUCs run their DDR5-6400 modules at the 4800 default, so enabling XMP would lift the 32 GB figures.</li>
-  <li>Machines borrowed for the run (honyaku ranks on two NUCs, the Acrow node on the third, the enterprise node service on the 64 GB box) were paused and restored afterwards; the first whole-model attempt was discarded because that service auto-restarted and co-resided with the benchmark.</li>
+  <li>Whole model: <span class="mono">cascadia run --engine ov-genai --device GPU</span>. Shards: <span class="mono">cascadia shard</span> (IR surgery at layer boundaries, byte-identical manifests verified on every rank) then one <span class="mono">cascadia worker --engine qwen35 --rank r --total N</span> per box. Client on the serving box over loopback; 1 warmup, 3 repeats, medians (quick runs: 2 repeats). The ov-genai engine returns each completion as a single stream chunk, hence the two-call TTFT/decode method; the staged engine streams per token.</li>
+  <li>Power and DDR bandwidth: Intel SoC Watch (driver 2.20.5), 60 s window during a continuous decode loop and 30 s idle with the model loaded, on every rank of a chain. Utilization: 1 s Windows performance-counter sampler with GPU engines attributed per adapter. Memory budgets: <span class="mono">D3DKMTQueryVideoMemoryInfo</span>; GPU frequency: Level Zero Sysman (<span class="mono">zesFrequencyGetState</span>).</li>
+  <li>The 122B IR was built with the runtime's GPTQ-to-OpenVINO builder; its <span class="mono">--expert-sym</span> option is the fix described in §4. Stage trees were cut on an 8-vCPU VM and distributed over the LAN; every rank's manifest hash and stage byte counts were checked before launch.</li>
+  <li><b>Corrections.</b> The first round of this benchmark concluded that raising the GPU window "does not help" because it changed Intel's GMM key only; measuring the OS budget directly showed the dxgkrnl commit limit is the operative setting, and every 32 GB result involving the whole 35B or the 122B was re-measured with it. Two HETERO attempts failed before loading because PowerShell turns an unquoted <span class="mono">HETERO:GPU,CPU</span> into an array; the launcher now quotes it.</li>
+  <li>Machines were borrowed and restored: the honyaku ranks and watchdogs on alpha/beta, the Acrow node on charlie, the enterprise node service on tate-07. The commit-limit change is left enabled on the three NUCs; model trees are left in <span class="mono">C:\ecgbench</span> for reproduction.</li>
 </ul>
 
-<footer>Data, harness and per-run JSONL: private repository <span class="mono">labscommunity/cascadia-ecg-bench</span> (results/, harness/, report/tables.md). Published model-card benchmarks quoted from the Qwen3.6-35B-A3B and Qwen3.5-122B-A10B cards on Hugging Face (fetched 11 Nov 2026).</footer>
+<footer>labscommunity/cascadia-ecg-bench · measured 11–12 November 2026 · Cascadia runtime v0.2.7 + branch ecg/spec-decode · OpenVINO GenAI 2026.4.1</footer>
 </div>
