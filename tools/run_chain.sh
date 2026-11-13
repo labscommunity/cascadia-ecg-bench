@@ -13,7 +13,7 @@ for ((r=N-1; r>=0; r--)); do
   if [ $r -eq $((N-1)) ]; then NEXT=""; else NEXT="-Next ${IP[$((r+1))]}:$LP"; fi
   if [ $r -eq 0 ]; then APIARG="-Api '$API'"; LISTEN=""; else APIARG=""; LISTEN="-Listen :$LP"; fi
   log "launch rank $r on $h $LISTEN $NEXT $APIARG"
-  ps "$h" "& '$HZ\\win\\server.ps1' -Mode worker -Model '$TREE' -Engine qwen35 -Device $DEVICE -Rank $r -Total $N $LISTEN $NEXT $APIARG -CacheDir none -Extra '--prefix-cache-gb 0 ${EXTRA:-}' -Log '$R\\rank$r.log'" | grep -E "CMD|LAUNCH" | tee -a "$OUT/orchestrator.log"
+  ps "$h" "& '$HZ\\win\\server.ps1' ${EXE:+-Exe '$EXE'} ${ENVS:+-Env '$ENVS'} -Mode worker -Model '$TREE' -Engine qwen35 -Device $DEVICE -Rank $r -Total $N $LISTEN $NEXT $APIARG -CacheDir none -Extra '--prefix-cache-gb 0 ${EXTRA:-}' -Log '$R\\rank$r.log'" | grep -E "CMD|LAUNCH" | tee -a "$OUT/orchestrator.log"
   sleep ${RANK_GAP:-20}
 done
 # rank 0 host runs the standard measurement sequence (server already launched)

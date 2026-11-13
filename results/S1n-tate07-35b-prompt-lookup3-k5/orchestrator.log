@@ -1,0 +1,36 @@
+[00:49:03] [tate07/S1n-tate07-35b-prompt-lookup3-k5] waiting for health
+[00:49:19] [tate07/S1n-tate07-35b-prompt-lookup3-k5] HEALTHY after 14s model=Qwen3.6-35B-A3B-int4-ov
+[00:49:19] [tate07/S1n-tate07-35b-prompt-lookup3-k5] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": null, "completion_tokens": null, "wall_s": 0.251, "status": 503, "error": "{\"error\":\"openvino-genai error: Check '!m_scheduler->get_config(
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": null, "completion_tokens": null, "wall_s": 0.216, "status": 503, "error": "{\"error\":\"openvino-genai error: Check '!m_scheduler->get_co
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": null, "completion_tokens": null, "wall_s": 0.245, "status": 503, "error": "{\"error\":\"openvino-genai error: Check '!m_scheduler->get_config
+[00:49:28] [tate07/S1n-tate07-35b-prompt-lookup3-k5] bench perf (warmup 1, repeats 2)
+warmup short ttft 0.1252 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench short ttft 0.0462 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench medium ttft 0.6187 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench long ttft 3.2213 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench short ttft 0.1064 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench medium ttft 0.6027 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench long ttft 3.226 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+[00:49:42] [tate07/S1n-tate07-35b-prompt-lookup3-k5] stop server
+STOPPED n=1
+[00:49:43] [tate07/S1n-tate07-35b-prompt-lookup3-k5] collect results
+[00:49:46] [tate07/S1n-tate07-35b-prompt-lookup3-k5] done
+[00:52:35] [tate07/S1n-tate07-35b-prompt-lookup3-k5] waiting for health
+[00:52:51] [tate07/S1n-tate07-35b-prompt-lookup3-k5] HEALTHY after 14s model=Qwen3.6-35B-A3B-int4-ov
+[00:52:51] [tate07/S1n-tate07-35b-prompt-lookup3-k5] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": null, "completion_tokens": null, "wall_s": 0.254, "status": 503, "error": "{\"error\":\"openvino-genai error: Check '!m_scheduler->get_config(
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": null, "completion_tokens": null, "wall_s": 0.23, "status": 503, "error": "{\"error\":\"openvino-genai error: Check '!m_scheduler->get_con
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": null, "completion_tokens": null, "wall_s": 0.249, "status": 503, "error": "{\"error\":\"openvino-genai error: Check '!m_scheduler->get_config
+[00:53:00] [tate07/S1n-tate07-35b-prompt-lookup3-k5] bench perf (warmup 1, repeats 2)
+warmup short ttft 0.1266 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench short ttft 0.0451 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench medium ttft 0.6285 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench long ttft 3.2822 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench short ttft 0.119 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench medium ttft 0.6219 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench long ttft 3.2702 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+[00:53:14] [tate07/S1n-tate07-35b-prompt-lookup3-k5] stop server
+STOPPED n=1
+[00:53:15] [tate07/S1n-tate07-35b-prompt-lookup3-k5] collect results
+[00:53:19] [tate07/S1n-tate07-35b-prompt-lookup3-k5] done

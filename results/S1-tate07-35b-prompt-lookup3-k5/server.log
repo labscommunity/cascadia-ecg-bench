@@ -1,0 +1,149 @@
+[2m2026-11-13T06:03:15.101384Z[0m [32m INFO[0m [2mcascadia_cli[0m[2m:[0m cascadia worker starting [3mengine[0m[2m=[0mOvGenai [3mrank[0m[2m=[0m0 [3mtotal[0m[2m=[0m1 [3mdevice[0m[2m=[0mGPU [3mmodel[0m[2m=[0mC:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov
+[2m2026-11-13T06:03:15.101772Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner connect [3mupstream[0m[2m=[0mNone [3mdownstream[0m[2m=[0mNone
+[2m2026-11-13T06:03:15.101793Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner load
+[2m2026-11-13T06:03:32.182673Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m load progress locating IR at C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov
+[2m2026-11-13T06:03:32.182708Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m load progress VLM-layout export detected; compiling VLMPipeline + prompt_lookup on GPU
+[2m2026-11-13T06:03:32.182712Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m load progress ready
+[2m2026-11-13T06:03:32.182715Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner build engine
+[2m2026-11-13T06:03:32.182770Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner warmup
+[2m2026-11-13T06:03:32.450060Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m ov-genai warmup failed [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:32.450118Z[0m [32m INFO[0m [2mcascadia_runner[0m[2m:[0m runner ready
+[2m2026-11-13T06:03:32.451336Z[0m [32m INFO[0m [2mcascadia_cli[0m[2m:[0m probe listener bound [3maddr[0m[2m=[0m0.0.0.0:9100
+[2m2026-11-13T06:03:32.557853Z[0m [32m INFO[0m [2mcascadia_discovery[0m[2m:[0m cascadia service registered [3mnode_id[0m[2m=[0mpdx88-pa0794-r0 [3mport[0m[2m=[0m9100
+[2m2026-11-13T06:03:32.558135Z[0m [32m INFO[0m [2mcascadia_cli[0m[2m:[0m loaded chat_template from tokenizer_config.json [3mmodel[0m[2m=[0mC:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov [3mbos[0m[2m=[0mfalse [3meos[0m[2m=[0mtrue
+[2m2026-11-13T06:03:32.559028Z[0m [32m INFO[0m [2mcascadia_cli[0m[2m:[0m API + dashboard serving [3mhost[0m[2m=[0m0.0.0.0 [3mport[0m[2m=[0m8130
+[2m2026-11-13T06:03:36.580217Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-b7a9f7655ff04df4b274d773cbc5e5d8 [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:36.580290Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task; returning 503 [3mtask[0m[2m=[0mchatcmpl-b7a9f7655ff04df4b274d773cbc5e5d8 [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:37.491447Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-2e4d94f56e8e4e62961687d9c189eb13 [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:37.491527Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task; returning 503 [3mtask[0m[2m=[0mchatcmpl-2e4d94f56e8e4e62961687d9c189eb13 [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:41.261138Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-39f9f2473684447a91e66424320f3eec [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:41.261193Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task; returning 503 [3mtask[0m[2m=[0mchatcmpl-39f9f2473684447a91e66424320f3eec [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:41.804283Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-0103f73ced354c3fb8d5307163cd5a57 [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:41.804333Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task; returning 503 [3mtask[0m[2m=[0mchatcmpl-0103f73ced354c3fb8d5307163cd5a57 [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:42.153873Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-6af434de310041c4b9a81403a3bdf92c [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:42.153928Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task; returning 503 [3mtask[0m[2m=[0mchatcmpl-6af434de310041c4b9a81403a3bdf92c [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:42.905830Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-fba2e4c1712343e994070cd179b99fe6 [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:42.905886Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task; returning 503 [3mtask[0m[2m=[0mchatcmpl-fba2e4c1712343e994070cd179b99fe6 [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:43.226226Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-ca6e68b916524903851ee448783ab0cc [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:43.226272Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task; returning 503 [3mtask[0m[2m=[0mchatcmpl-ca6e68b916524903851ee448783ab0cc [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:43.457988Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-1534e6fdc6014985a4509f2ace31c41d [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:43.458036Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task; returning 503 [3mtask[0m[2m=[0mchatcmpl-1534e6fdc6014985a4509f2ace31c41d [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:43.717866Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-1ff5e1db0d924df7acd8a0f59180017f [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:43.717916Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task; returning 503 [3mtask[0m[2m=[0mchatcmpl-1ff5e1db0d924df7acd8a0f59180017f [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:43.963257Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-ed01e3e0b0034fc39d1b496cd013d2d2 [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:43.963305Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task; returning 503 [3mtask[0m[2m=[0mchatcmpl-ed01e3e0b0034fc39d1b496cd013d2d2 [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:44.290371Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-197fbd7e0631473690a20dc24bd7d732 [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:44.290432Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task; returning 503 [3mtask[0m[2m=[0mchatcmpl-197fbd7e0631473690a20dc24bd7d732 [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:49.483614Z[0m [32m INFO[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m task done [3mtask[0m[2m=[0mchatcmpl-60fe3395372043618cf2c34e69b8abbf [3mtokens[0m[2m=[0m1 [3melapsed_s[0m[2m=[0m0.1574517 [3mtok_s[0m[2m=[0m6.351154036444192
+[2m2026-11-13T06:03:49.651138Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-2020e6acbeca4e6cab5c7449024f41fa [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:49.651187Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task; returning 503 [3mtask[0m[2m=[0mchatcmpl-2020e6acbeca4e6cab5c7449024f41fa [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:49.821835Z[0m [32m INFO[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m task done [3mtask[0m[2m=[0mchatcmpl-7ece2253b15b4246bd583205b686bff1 [3mtokens[0m[2m=[0m1 [3melapsed_s[0m[2m=[0m0.1519341 [3mtok_s[0m[2m=[0m6.581800925532846
+[2m2026-11-13T06:03:49.987589Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-530af71d37e4401f942e76cb6d6a86ca [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:49.987640Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task; returning 503 [3mtask[0m[2m=[0mchatcmpl-530af71d37e4401f942e76cb6d6a86ca [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:50.155023Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-ab72064abfc246d2b3b20b387df781b9 [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:50.155084Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task mid-stream; emitting SSE error [3mtask[0m[2m=[0mchatcmpl-ab72064abfc246d2b3b20b387df781b9 [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:50.786362Z[0m [32m INFO[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m task done [3mtask[0m[2m=[0mchatcmpl-9a93ea806936426c98cbd32720f95bd4 [3mtokens[0m[2m=[0m1 [3melapsed_s[0m[2m=[0m0.6134263 [3mtok_s[0m[2m=[0m1.6301876851383776
+[2m2026-11-13T06:03:51.420576Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-5d7c1cb33bdf4bd1ba52e6ee2721871e [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:51.420664Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task; returning 503 [3mtask[0m[2m=[0mchatcmpl-5d7c1cb33bdf4bd1ba52e6ee2721871e [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:52.027524Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-50835ef3956a4f2eb0dacf088dc10968 [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:52.027597Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task mid-stream; emitting SSE error [3mtask[0m[2m=[0mchatcmpl-50835ef3956a4f2eb0dacf088dc10968 [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:55.369123Z[0m [32m INFO[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m task done [3mtask[0m[2m=[0mchatcmpl-7b00f0103b454e578d975b2defb0d6a4 [3mtokens[0m[2m=[0m1 [3melapsed_s[0m[2m=[0m3.323158 [3mtok_s[0m[2m=[0m0.30091858406973127
+[2m2026-11-13T06:03:58.767632Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-e24149a9406446b798396a278c7d5dec [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:03:58.767684Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task; returning 503 [3mtask[0m[2m=[0mchatcmpl-e24149a9406446b798396a278c7d5dec [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:04:02.063717Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-f706b8a747cb44ef837d138c246eedf7 [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:04:02.063772Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task mid-stream; emitting SSE error [3mtask[0m[2m=[0mchatcmpl-f706b8a747cb44ef837d138c246eedf7 [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:04:02.288548Z[0m [32m INFO[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m task done [3mtask[0m[2m=[0mchatcmpl-4604547348c0452a94987d71aabd2c1b [3mtokens[0m[2m=[0m1 [3melapsed_s[0m[2m=[0m0.2230218 [3mtok_s[0m[2m=[0m4.483866599588023
+[2m2026-11-13T06:04:02.460912Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-6b38be8240614566a878eaf6fb4a5095 [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:04:02.460969Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task; returning 503 [3mtask[0m[2m=[0mchatcmpl-6b38be8240614566a878eaf6fb4a5095 [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:04:03.124923Z[0m [32m INFO[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m task done [3mtask[0m[2m=[0mchatcmpl-a523112e5ed44fb9abe560335709d5f3 [3mtokens[0m[2m=[0m1 [3melapsed_s[0m[2m=[0m0.6458843 [3mtok_s[0m[2m=[0m1.548264913700488
+[2m2026-11-13T06:04:03.738206Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-52880f66e95645a0adab3c9b48bf04c3 [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:04:03.738270Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task; returning 503 [3mtask[0m[2m=[0mchatcmpl-52880f66e95645a0adab3c9b48bf04c3 [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:04:06.902443Z[0m [32m INFO[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m task done [3mtask[0m[2m=[0mchatcmpl-71f651f1924645a994a20d882a0d947c [3mtokens[0m[2m=[0m1 [3melapsed_s[0m[2m=[0m3.1465392 [3mtok_s[0m[2m=[0m0.3178094841469002
+[2m2026-11-13T06:04:10.015063Z[0m [33m WARN[0m [2mcascadia_engine_openvino::genai[0m[2m:[0m generate failed [3mtask[0m[2m=[0mchatcmpl-b9d62a907a274c50b37c549316e3471f [3merror[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+
+[2m2026-11-13T06:04:10.015160Z[0m [33m WARN[0m [2mcascadia_api[0m[2m:[0m engine failed task; returning 503 [3mtask[0m[2m=[0mchatcmpl-b9d62a907a274c50b37c549316e3471f [3mreason[0m[2m=[0mopenvino-genai error: Check '!m_scheduler->get_config().enable_prefix_caching' failed at src\cpp\src\continuous_batching\pipeline_impl.cpp:389:
+Linear-attention verifier speculative decoding requires enable_prefix_caching=false (not yet supported).
+

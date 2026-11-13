@@ -1,0 +1,17 @@
+[00:36:35] [beta/B6-beta-whole-gpu-unpin] launch server: C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov engine=ov-genai device=GPU api=:8130 extra=
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" run "C:\ecgbench\models\Qwen3.6-35B-A3B-int4-ov" --engine ov-genai --device "GPU" --api :8130 
+LAUNCH rc=0 cmdpid=1892 childpid=7996
+[00:36:38] [beta/B6-beta-whole-gpu-unpin] waiting for health
+[00:38:03] [beta/B6-beta-whole-gpu-unpin] HEALTHY after 85s model=Qwen3.6-35B-A3B-int4-ov
+[00:38:03] [beta/B6-beta-whole-gpu-unpin] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 0.79, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the numb
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 0.814, "status": 200, "error": null, "text": "**Spanish:**  \nLa carril 2 está cerrada más adelant
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 0.821, "status": 200, "error": null, "text": "The control room hums with the low, steady vibration of 
+[00:38:20] [beta/B6-beta-whole-gpu-unpin] bench perf (warmup 1, repeats 2)
+warmup short ttft 0.2365 dec 42.626 tok 15 status 200 
+bench short ttft 0.1507 dec 33.672 tok 15 status 200 
+bench medium ttft 0.7791 dec 33.108 tok 256 status 200 
+bench long ttft 3.9122 dec 49.364 tok 256 status 200 
+bench short ttft 0.1627 dec 33.124 tok 15 status 200 
+bench medium ttft 0.772 dec 33.015 tok 256 status 200 
+bench long ttft 3.934 dec 48.732 tok 256 status 200 

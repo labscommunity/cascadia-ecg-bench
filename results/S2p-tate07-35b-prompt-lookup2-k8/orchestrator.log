@@ -1,0 +1,7 @@
+[01:07:27] [tate07/S2p-tate07-35b-prompt-lookup2-k8] waiting for health
+[01:07:43] [tate07/S2p-tate07-35b-prompt-lookup2-k8] HEALTHY after 14s model=Qwen3.6-35B-A3B-int4-ov
+[01:07:43] [tate07/S2p-tate07-35b-prompt-lookup2-k8] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 0.879, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the num
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 0.813, "status": 200, "error": null, "text": "**Spanish:**  \nLa carril 2 está cerrada más adelant
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 0.863, "status": 200, "error": null, "text": "The control room hums with the low, steady vibration of 
+[01:08:05] [tate07/S2p-tate07-35b-prompt-lookup2-k8] bench perf (warmup 1, repeats 2)

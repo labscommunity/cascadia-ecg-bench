@@ -1,0 +1,35 @@
+[00:09:02] [chain/G2-122b-3nuc-throttle-high] launch rank 2 on charlie -Listen :9100  
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" worker --rank 2 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --prefix-cache-gb 0 --ov-config GPU_QUEUE_THROTTLE=HIGH --ov-config GPU_QUEUE_PRIORITY=HIGH
+LAUNCH rc=0 cmdpid=8524 childpid=6096
+[00:09:26] [chain/G2-122b-3nuc-throttle-high] launch rank 1 on beta -Listen :9100 -Next 192.168.0.188:9100 
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" worker --rank 1 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --next 192.168.0.188:9100 --prefix-cache-gb 0 --ov-config GPU_QUEUE_THROTTLE=HIGH --ov-config GPU_QUEUE_PRIORITY=HIGH
+LAUNCH rc=0 cmdpid=7372 childpid=2028
+[00:09:50] [chain/G2-122b-3nuc-throttle-high] launch rank 0 on alpha  -Next 192.168.0.103:9100 -Api ':8130'
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" worker --rank 0 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --next 192.168.0.103:9100 --api :8130 --prefix-cache-gb 0 --ov-config GPU_QUEUE_THROTTLE=HIGH --ov-config GPU_QUEUE_PRIORITY=HIGH
+LAUNCH rc=0 cmdpid=8960 childpid=4972
+[00:10:15] [alpha/G2-122b-3nuc-throttle-high] waiting for health
+[00:10:29] [alpha/G2-122b-3nuc-throttle-high] HEALTHY after 14s model=q122-sym-3
+[00:10:29] [alpha/G2-122b-3nuc-throttle-high] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 12.792, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the nu
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 16.206, "status": 200, "error": null, "text": "**Español:**  \nEl carril 2 está cerrado más adelan
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 18.679, "status": 200, "error": null, "text": "At 03:00, the highway stretches into a void of silence"
+[00:13:54] [alpha/G2-122b-3nuc-throttle-high] bench perf (warmup 1, repeats 2)
+warmup short ttft 1.6974 dec 2.624 tok 24 status 200 
+bench short ttft 1.9573 dec 1.108 tok 24 status 200 
+bench medium ttft 7.2314 dec 2.59 tok 256 status 200 
+bench long ttft 47.7095 dec 2.759 tok 256 status 200 
+bench short ttft 2.1473 dec 3.376 tok 24 status 200 
+bench medium ttft 6.8202 dec 2.683 tok 256 status 200 
+bench long ttft 48.0195 dec 2.253 tok 256 status 200 
+[00:26:57] [alpha/G2-122b-3nuc-throttle-high] collect results
+[00:26:57] [alpha/G2-122b-3nuc-throttle-high] done
+[00:26:57] [chain/G2-122b-3nuc-throttle-high] chain-wide steady window: samplers + SoC Watch on every rank
+rank1(beta): {"seconds":60,"started":"2026-11-12T22:27:14.6047943-08:00","host":"BETA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.2041,"pkg_power_mw_avg":8745.18,"pkg_energy_mj":525717.41,"ddr_reads_mb_s":4635.17,"ddr_writes_mb_s":292.30999999999995,"ddr_total_gb_s":4.81}
+rank2(charlie): {"seconds":60,"started":"2026-11-12T22:27:14.5425160-08:00","host":"CHARLIE","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.2213,"pkg_power_mw_avg":8951.05,"pkg_energy_mj":538064.03,"ddr_reads_mb_s":5838.33,"ddr_writes_mb_s":307.48,"ddr_total_gb_s":6}
+rank0(alpha): {"seconds":60,"started":"2026-11-12T22:27:15.4530238-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.1964,"pkg_power_mw_avg":10239.72,"pkg_energy_mj":615297.85,"ddr_reads_mb_s":4809.3099999999995,"ddr_writes_mb_s":349.85999999999996,"ddr_total_gb_s":5.04}
+[00:28:45] [chain/G2-122b-3nuc-throttle-high] stop all ranks
+alpha: STOPPED n=1
+beta: STOPPED n=1
+charlie: STOPPED n=1
+[00:28:47] [chain/G2-122b-3nuc-throttle-high] collect from every rank
+[00:28:51] [chain/G2-122b-3nuc-throttle-high] done

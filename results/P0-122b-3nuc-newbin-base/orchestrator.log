@@ -1,0 +1,26 @@
+[00:48:38] [chain/P0-122b-3nuc-newbin-base] launch rank 2 on charlie -Listen :9100  
+CMD="C:\ecgbench\rt\spec\cascadia.exe" worker --rank 2 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=2588 childpid=4176
+[00:49:02] [chain/P0-122b-3nuc-newbin-base] launch rank 1 on beta -Listen :9100 -Next 192.168.0.188:9100 
+CMD="C:\ecgbench\rt\spec\cascadia.exe" worker --rank 1 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --next 192.168.0.188:9100 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=7776 childpid=5888
+[00:49:26] [chain/P0-122b-3nuc-newbin-base] launch rank 0 on alpha  -Next 192.168.0.103:9100 -Api ':8130'
+CMD="C:\ecgbench\rt\spec\cascadia.exe" worker --rank 0 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --next 192.168.0.103:9100 --api :8130 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=1056 childpid=7896
+[00:49:50] [alpha/P0-122b-3nuc-newbin-base] waiting for health
+[00:50:05] [alpha/P0-122b-3nuc-newbin-base] HEALTHY after 14s model=q122-sym-3
+[00:50:05] [alpha/P0-122b-3nuc-newbin-base] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 8.279, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the num
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 17.94, "status": 200, "error": null, "text": "**Español:**  \nEl carril 2 está cerrado más adelant
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 13.992, "status": 200, "error": null, "text": "At 03:00, the highway stretches into a void of silence"
+[00:53:17] [alpha/P0-122b-3nuc-newbin-base] bench perf (warmup 1, repeats 2)
+warmup short ttft 1.7024 dec 1.29 tok 24 status 200 
+bench short ttft 2.1079 dec 4.586 tok 24 status 200 
+bench medium ttft 7.4667 dec 3.245 tok 256 status 200 
+bench long ttft 51.6587 dec 5.176 tok 256 status 200 
+bench short ttft 1.5131 dec 3.191 tok 24 status 200 
+bench medium ttft 7.3431 dec 2.77 tok 256 status 200 
+bench long ttft 51.3509 dec 5.193 tok 256 status 200 
+[01:04:08] [alpha/P0-122b-3nuc-newbin-base] collect results
+[01:04:09] [alpha/P0-122b-3nuc-newbin-base] done
+[01:04:09] [chain/P0-122b-3nuc-newbin-base] chain-wide steady window: samplers + SoC Watch on every rank

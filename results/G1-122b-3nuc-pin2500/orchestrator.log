@@ -1,0 +1,33 @@
+[23:47:08] [chain/G1-122b-3nuc-pin2500] launch rank 2 on charlie -Listen :9100  
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" worker --rank 2 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=1836 childpid=4944
+[23:47:32] [chain/G1-122b-3nuc-pin2500] launch rank 1 on beta -Listen :9100 -Next 192.168.0.188:9100 
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" worker --rank 1 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --next 192.168.0.188:9100 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=4608 childpid=4296
+[23:47:56] [chain/G1-122b-3nuc-pin2500] launch rank 0 on alpha  -Next 192.168.0.103:9100 -Api ':8130'
+CMD="C:\ecgbench\rt\cascadia-0.2.7-windows-x86_64\cascadia.exe" worker --rank 0 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --next 192.168.0.103:9100 --api :8130 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=8772 childpid=3580
+[23:48:20] [alpha/G1-122b-3nuc-pin2500] waiting for health
+[23:48:35] [alpha/G1-122b-3nuc-pin2500] HEALTHY after 14s model=q122-sym-3
+[23:48:35] [alpha/G1-122b-3nuc-pin2500] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 17.928, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the nu
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 18.081, "status": 200, "error": null, "text": "**Español:**  \nEl carril 2 está cerrado más adelan
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 9.012, "status": 200, "error": null, "text": "At 03:00, the highway stretches into a void of silence",
+[23:52:14] [alpha/G1-122b-3nuc-pin2500] bench perf (warmup 1, repeats 2)
+warmup short ttft 1.5416 dec 3.259 tok 24 status 200 
+bench short ttft 2.0742 dec 2.546 tok 24 status 200 
+bench medium ttft 6.1339 dec 1.358 tok 256 status 200 
+bench long ttft 42.7724 dec 1.79 tok 256 status 200 
+bench short ttft 1.5978 dec 4.004 tok 24 status 200 
+bench medium ttft 6.0775 dec 2.173 tok 256 status 200 
+bench long ttft 42.2355 dec 2.978 tok 256 status 200 
+[00:06:56] [chain/G1-122b-3nuc-pin2500] chain-wide steady window: samplers + SoC Watch on every rank
+rank1(beta): {"seconds":60,"started":"2026-11-12T22:07:13.5173899-08:00","host":"BETA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.2212,"pkg_power_mw_avg":8601.73,"pkg_energy_mj":516978.64,"ddr_reads_mb_s":4120.65,"ddr_writes_mb_s":278.09000000000003,"ddr_total_gb_s":4.3}
+rank2(charlie): {"seconds":60,"started":"2026-11-12T22:07:13.4815219-08:00","host":"CHARLIE","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.2192,"pkg_power_mw_avg":11536.34,"pkg_energy_mj":693284.73,"ddr_reads_mb_s":5137.5999999999995,"ddr_writes_mb_s":293.15,"ddr_total_gb_s":5.3}
+rank0(alpha): {"seconds":60,"started":"2026-11-12T22:07:14.3880501-08:00","host":"ALPHA","features":"power,ddr-bw,gfx-cstate,cpu-pstate","duration_s":60.1795,"pkg_power_mw_avg":13061.82,"pkg_energy_mj":784850.46,"ddr_reads_mb_s":4136.75,"ddr_writes_mb_s":301.65999999999997,"ddr_total_gb_s":4.33}
+[00:08:51] [chain/G1-122b-3nuc-pin2500] stop all ranks
+alpha: STOPPED n=1
+beta: STOPPED n=1
+charlie: STOPPED n=1
+[00:08:53] [chain/G1-122b-3nuc-pin2500] collect from every rank
+[00:08:58] [chain/G1-122b-3nuc-pin2500] done

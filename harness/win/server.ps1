@@ -3,8 +3,9 @@
 #        server.ps1 -Mode worker -Model C:\tree -Engine qwen35 -Device GPU -Rank 1 -Total 3 -Listen :9100 [-Next host:9100] [-Api :8130] -Log ...
 param([string]$Mode = "run", [string]$Model, [string]$Engine = "ov-genai", [string]$Device = "GPU", [string]$Api = "",
       [int]$Rank = -1, [int]$Total = 0, [string]$Listen = "", [string]$Next = "", [string]$Extra = "", [string]$Log,
-      [string]$CacheDir = "C:\ecgbench\ovcache", [string]$Priority = "High")
-$exe = (Get-ChildItem C:\ecgbench\rt -Recurse -Filter cascadia.exe | Select-Object -First 1).FullName
+      [string]$CacheDir = "C:\ecgbench\ovcache", [string]$Priority = "High", [string]$Exe = "", [string]$Env = "")
+$exe = if ($Exe) { $Exe } elseif ($env:CASCADIA_EXE) { $env:CASCADIA_EXE } else { (Get-ChildItem C:\ecgbench\rt -Recurse -Filter cascadia.exe | Select-Object -First 1).FullName }
+"EXE=" + $exe
 New-Item -ItemType Directory -Force -Path (Split-Path $Log) | Out-Null
 if ($CacheDir -and $CacheDir -ne 'none') { New-Item -ItemType Directory -Force -Path $CacheDir | Out-Null }
 if ($Mode -eq "run") {
@@ -18,7 +19,8 @@ if ($Mode -eq "run") {
   $cmd += ' ' + $Extra
 }
 "CMD=" + $cmd
-$cl = 'cmd /c "' + $cmd + ' > ' + $Log + ' 2>&1"'
+$envPrefix = ''; if ($Env) { foreach ($kv in $Env.Split(';')) { if ($kv) { $envPrefix += 'set ' + $kv + '&& ' } } }
+$cl = 'cmd /c "' + $envPrefix + $cmd + ' > ' + $Log + ' 2>&1"'
 $r = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{ CommandLine = $cl; CurrentDirectory = "C:\ecgbench" }
 Start-Sleep -Seconds 3
 $child = Get-CimInstance Win32_Process | Where-Object { $_.ParentProcessId -eq $r.ProcessId -and $_.Name -eq "cascadia.exe" } | Select-Object -First 1

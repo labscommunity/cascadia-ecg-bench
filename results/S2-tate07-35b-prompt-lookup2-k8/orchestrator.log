@@ -1,0 +1,25 @@
+[00:00:01] [tate07/S2-tate07-35b-prompt-lookup2-k8] waiting for health
+[00:00:17] [tate07/S2-tate07-35b-prompt-lookup2-k8] HEALTHY after 14s model=Qwen3.6-35B-A3B-int4-ov
+[00:00:17] [tate07/S2-tate07-35b-prompt-lookup2-k8] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": null, "completion_tokens": null, "wall_s": 0.241, "status": 503, "error": "{\"error\":\"openvino-genai error: Check '!m_scheduler->get_config(
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": null, "completion_tokens": null, "wall_s": 0.233, "status": 503, "error": "{\"error\":\"openvino-genai error: Check '!m_scheduler->get_co
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": null, "completion_tokens": null, "wall_s": 0.247, "status": 503, "error": "{\"error\":\"openvino-genai error: Check '!m_scheduler->get_config
+[00:00:26] [tate07/S2-tate07-35b-prompt-lookup2-k8] bench perf (warmup 1, repeats 2)
+[00:04:25] [tate07/S2-tate07-35b-prompt-lookup2-k8] waiting for health
+[00:04:40] [tate07/S2-tate07-35b-prompt-lookup2-k8] HEALTHY after 14s model=Qwen3.6-35B-A3B-int4-ov
+[00:04:40] [tate07/S2-tate07-35b-prompt-lookup2-k8] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": null, "completion_tokens": null, "wall_s": 0.276, "status": 503, "error": "{\"error\":\"openvino-genai error: Check '!m_scheduler->get_config(
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": null, "completion_tokens": null, "wall_s": 0.261, "status": 503, "error": "{\"error\":\"openvino-genai error: Check '!m_scheduler->get_co
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": null, "completion_tokens": null, "wall_s": 0.33, "status": 503, "error": "{\"error\":\"openvino-genai error: Check '!m_scheduler->get_config(
+[00:04:50] [tate07/S2-tate07-35b-prompt-lookup2-k8] bench perf (warmup 1, repeats 2)
+warmup short ttft 0.1826 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench short ttft 0.1755 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench medium ttft 0.6396 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench long ttft 3.3717 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench short ttft 0.2578 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench medium ttft 0.6946 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench long ttft 3.14 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+[00:05:16] [tate07/S2-tate07-35b-prompt-lookup2-k8] stop server
+STOPPED n=1
+[00:05:17] [tate07/S2-tate07-35b-prompt-lookup2-k8] collect results
+[00:05:21] [tate07/S2-tate07-35b-prompt-lookup2-k8] done

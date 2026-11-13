@@ -1,0 +1,36 @@
+[00:49:55] [tate07/S2n-tate07-35b-prompt-lookup2-k8] waiting for health
+[00:50:10] [tate07/S2n-tate07-35b-prompt-lookup2-k8] HEALTHY after 14s model=Qwen3.6-35B-A3B-int4-ov
+[00:50:10] [tate07/S2n-tate07-35b-prompt-lookup2-k8] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": null, "completion_tokens": null, "wall_s": 0.247, "status": 503, "error": "{\"error\":\"openvino-genai error: Check '!m_scheduler->get_config(
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": null, "completion_tokens": null, "wall_s": 0.234, "status": 503, "error": "{\"error\":\"openvino-genai error: Check '!m_scheduler->get_co
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": null, "completion_tokens": null, "wall_s": 0.248, "status": 503, "error": "{\"error\":\"openvino-genai error: Check '!m_scheduler->get_config
+[00:50:19] [tate07/S2n-tate07-35b-prompt-lookup2-k8] bench perf (warmup 1, repeats 2)
+warmup short ttft 0.1152 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench short ttft 0.0456 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench medium ttft 0.6152 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench long ttft 3.2743 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench short ttft 0.1147 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench medium ttft 0.6123 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench long ttft 3.2787 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+[00:50:33] [tate07/S2n-tate07-35b-prompt-lookup2-k8] stop server
+STOPPED n=1
+[00:50:34] [tate07/S2n-tate07-35b-prompt-lookup2-k8] collect results
+[00:50:38] [tate07/S2n-tate07-35b-prompt-lookup2-k8] done
+[00:53:27] [tate07/S2n-tate07-35b-prompt-lookup2-k8] waiting for health
+[00:53:42] [tate07/S2n-tate07-35b-prompt-lookup2-k8] HEALTHY after 14s model=Qwen3.6-35B-A3B-int4-ov
+[00:53:42] [tate07/S2n-tate07-35b-prompt-lookup2-k8] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": null, "completion_tokens": null, "wall_s": 0.247, "status": 503, "error": "{\"error\":\"openvino-genai error: Check '!m_scheduler->get_config(
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": null, "completion_tokens": null, "wall_s": 0.217, "status": 503, "error": "{\"error\":\"openvino-genai error: Check '!m_scheduler->get_co
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": null, "completion_tokens": null, "wall_s": 0.232, "status": 503, "error": "{\"error\":\"openvino-genai error: Check '!m_scheduler->get_config
+[00:53:52] [tate07/S2n-tate07-35b-prompt-lookup2-k8] bench perf (warmup 1, repeats 2)
+warmup short ttft 0.1075 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench short ttft 0.0384 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench medium ttft 0.6208 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench long ttft 3.2702 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench short ttft 0.1184 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench medium ttft 0.6227 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+bench long ttft 3.2745 dec None tok None status 503 {"error":"openvino-genai error: Check '!m_scheduler->get_config().enable_prefix_
+[00:54:05] [tate07/S2n-tate07-35b-prompt-lookup2-k8] stop server
+STOPPED n=1
+[00:54:06] [tate07/S2n-tate07-35b-prompt-lookup2-k8] collect results
+[00:54:10] [tate07/S2n-tate07-35b-prompt-lookup2-k8] done

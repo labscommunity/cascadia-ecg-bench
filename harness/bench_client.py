@@ -23,6 +23,7 @@ ap.add_argument('--repeats', type=int, default=3); ap.add_argument('--warmup', t
 ap.add_argument('--thinking', default='off', choices=['off', 'on']); ap.add_argument('--mode', default='bench', choices=['bench', 'steady', 'calib'])
 ap.add_argument('--seconds', type=float, default=90); ap.add_argument('--steady-prompt', default='medium'); ap.add_argument('--stream-diag', action='store_true')
 ap.add_argument('--timeout', type=float, default=3600); ap.add_argument('--out', default=''); ap.add_argument('--tag', action='append', default=[])
+ap.add_argument('--nonce', action='store_true', help='prepend a unique tag to each request so prefix caches never hit (needed for GenAI speculative pipelines)')
 ap.add_argument('--path', default='/v1/chat/completions', help='chat completions path (OVMS: /v3/chat/completions)')
 ap.add_argument('--api-style', default='cascadia', choices=['cascadia', 'ovms'], help='ovms: no legacy enable_thinking field, no bearer token')
 args = ap.parse_args()
@@ -41,7 +42,20 @@ def model_id():
     except Exception: return 'default'
 MODEL = model_id()
 
+_nonce_n = [0]
+def _with_nonce(messages):
+    """--nonce: make every request's prompt unique (prepend a short tag to the last user turn) so a server-side prefix
+    cache never serves it; OpenVINO GenAI's prompt-lookup / draft-model pipelines refuse prefix-cached requests."""
+    if not getattr(args, 'nonce', False): return messages
+    _nonce_n[0] += 1; tag = f"[req {os.getpid() % 10000}-{_nonce_n[0]}] "
+    out = [dict(m) for m in messages]
+    # put the tag at the very start of the conversation (first message, system if present) so not even the
+    # first KV block is shared between requests (block-granular prefix caches hash whole blocks)
+    for m in out:
+        if isinstance(m.get('content'), str): m['content'] = tag + m['content']; break
+    return out
 def body(messages, max_tokens, stream=False):
+    messages = _with_nonce(messages)
     b = {'model': MODEL, 'messages': messages, 'max_tokens': max_tokens, 'temperature': 0, 'stream': stream,
          'chat_template_kwargs': {'enable_thinking': args.thinking == 'on'}}
     if args.api_style != 'ovms': b['enable_thinking'] = args.thinking == 'on'
