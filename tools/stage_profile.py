@@ -22,11 +22,24 @@ def run(n):
     t=time.perf_counter(); req.infer(feeds); dt=time.perf_counter()-t; pos+=n; return dt
 req.reset_state(); pos=0
 pf=run(64); print(f"prefill 64 tok: {pf*1000:.0f} ms")
-NSTEP=int(os.environ.get('NSTEP','24')); SLEEP=float(os.environ.get('SLEEP_MS','0'))/1000.0
-steps=[]
+NSTEP=int(os.environ.get('NSTEP','24')); SLEEP=float(os.environ.get('SLEEP_MS','0'))/1000.0; HB=os.environ.get('HEARTBEAT','')
+hb_req=None
+if HB:
+    # keep the GPU awake during the gap with back-to-back tiny infers on a small model (the tree's text-embeddings IR)
+    emb=os.path.join(os.path.dirname(stage_dir.rstrip('\\/')),'openvino_text_embeddings_model.xml')
+    hb_cm=core.compile_model(core.read_model(emb), device, {'PERFORMANCE_HINT':'LATENCY'}); hb_req=hb_cm.create_infer_request(); hb_in=hb_cm.inputs[0].get_any_name()
+    hb_feed={hb_in: np.zeros((1,1),np.int64)}; t=time.perf_counter(); hb_req.infer(hb_feed); print(f'heartbeat infer {1000*(time.perf_counter()-t):.2f} ms')
+steps=[]; hb_count=0
 for _ in range(NSTEP):
-    if SLEEP>0: time.sleep(SLEEP)
+    if SLEEP>0:
+        if hb_req is not None:
+            t_end=time.perf_counter()+SLEEP
+            while time.perf_counter()<t_end:
+                hb_req.infer(hb_feed); hb_count+=1
+                if HB!='busy': time.sleep(min(0.005, max(0.0, t_end-time.perf_counter())))
+        else: time.sleep(SLEEP)
     steps.append(run(1))
+if hb_req is not None: print('heartbeat infers during gaps:', hb_count)
 if NSTEP>=100:
     import numpy as _np; a=_np.array(steps)*1000; idx=_np.argsort(-a)[:12]
     print('slowest steps (index:ms):', ', '.join(f'{i}:{a[i]:.0f}' for i in sorted(idx)))
