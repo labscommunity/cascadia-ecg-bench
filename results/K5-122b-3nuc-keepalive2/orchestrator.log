@@ -1,0 +1,16 @@
+[02:28:54] [chain/K5-122b-3nuc-keepalive2] launch rank 2 on charlie -Listen :9100  
+CMD="C:\ecgbench\rt\spec\cascadia.exe" worker --rank 2 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=3696 childpid=9080
+[02:29:18] [chain/K5-122b-3nuc-keepalive2] launch rank 1 on beta -Listen :9100 -Next 192.168.0.188:9100 
+CMD="C:\ecgbench\rt\spec\cascadia.exe" worker --rank 1 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --listen :9100 --next 192.168.0.188:9100 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=7736 childpid=5068
+[02:29:42] [chain/K5-122b-3nuc-keepalive2] launch rank 0 on alpha  -Next 192.168.0.103:9100 -Api ':8130'
+CMD="C:\ecgbench\rt\spec\cascadia.exe" worker --rank 0 --total 3 --model "C:\ecgbench\shards\q122-sym-3" --engine qwen35 --device "GPU" --ov-cache-dir ""  --next 192.168.0.103:9100 --api :8130 --prefix-cache-gb 0 
+LAUNCH rc=0 cmdpid=8760 childpid=7540
+[02:30:07] [alpha/K5-122b-3nuc-keepalive2] waiting for health
+[02:30:21] [alpha/K5-122b-3nuc-keepalive2] HEALTHY after 14s model=q122-sym-3
+[02:30:21] [alpha/K5-122b-3nuc-keepalive2] calib
+{"prompt_id": "p_math", "kind": "calib", "prompt_tokens": 73, "completion_tokens": 16, "wall_s": 2.418, "status": 200, "error": null, "text": "Here is the step-by-step calculation to determine the num
+{"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 2.443, "status": 200, "error": null, "text": "**Español:**  \nEl carril 2 está cerrado más adelant
+{"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 2.506, "status": 200, "error": null, "text": "At 03:00, the highway stretches into a void of silence",
+[02:31:42] [alpha/K5-122b-3nuc-keepalive2] bench perf (warmup 1, repeats 2)
