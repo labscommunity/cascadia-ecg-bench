@@ -5,3 +5,14 @@
 {"prompt_id": "p_translate", "kind": "calib", "prompt_tokens": 37, "completion_tokens": 16, "wall_s": 0.813, "status": 200, "error": null, "text": "**Spanish:**  \nLa carril 2 está cerrada más adelant
 {"prompt_id": "p_story", "kind": "calib", "prompt_tokens": 56, "completion_tokens": 16, "wall_s": 0.863, "status": 200, "error": null, "text": "The control room hums with the low, steady vibration of 
 [01:08:05] [tate07/S2p-tate07-35b-prompt-lookup2-k8] bench perf (warmup 1, repeats 2)
+warmup short ttft 0.1267 dec 29.024 tok 15 status 200 
+bench short ttft 0.1033 dec 29.344 tok 15 status 200 
+bench medium ttft 1.2146 dec 31.792 tok 256 status 200 
+bench long ttft 9.7368 dec 36.202 tok 256 status 200 
+bench short ttft 0.1268 dec 29.346 tok 15 status 200 
+bench medium ttft 1.2156 dec 31.904 tok 256 status 200 
+bench long ttft 9.7103 dec 36.316 tok 256 status 200 
+[01:09:41] [tate07/S2p-tate07-35b-prompt-lookup2-k8] stop server
+STOPPED n=1
+[01:09:43] [tate07/S2p-tate07-35b-prompt-lookup2-k8] collect results
+[01:09:46] [tate07/S2p-tate07-35b-prompt-lookup2-k8] done

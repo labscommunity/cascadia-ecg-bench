@@ -329,7 +329,7 @@ pass and on a partial accept restores them, masks the rejected cache slots and r
 | whole 35B, GenAI draft model Qwen3.5-0.8B | — | refused | — | `--draft-model` is rejected on VLM-layout exports; the official IR and the GPTQ-sym build are both VLM-layout |
 | staged 35B, 3 stages co-located on the 64 GB GPU, plain (S7p, new build) | 31.6 tok/s, TTFT 0.33 s | | | |
 | staged 35B, same, n-gram n=3 k=5 (S8p) | 31.6 | 14–15 tok/s | 0.47x | acceptance 1.6% (975-tok prompt, 127 drafted / 2 accepted) and 19.7% (7.7k prompt, 305 / 60); snapshot 122 ms + verify 92 ms per step vs a 32 ms plain step |
-| staged 122B, 3 NUCs, n-gram n=3 k=5 (P1) | P0_MED tok/s | P1_MED tok/s | P1_RATIO | P1_WHY |
+| staged 122B, 3 NUCs, n-gram n=3 k=5 (P1) | 2.8–3.3 tok/s | 1.5–1.7 tok/s (0.95 on the 7.7k prompt) | 0.55x (0.18x long) | acceptance 14% / 23%; per verify step across three ranks: snapshot 0.37 s + verify 0.73 s + restore 0.75 s + re-feed 0.84 s vs a 0.33 s plain token; parity 4/6 identical |
 
 Parity: short outputs identical to plain decoding; the 975- and 7,690-token outputs differ by one or two characters (the f16 T>1-vs-T=1 DeltaNet effect the
 surgery documents). Verdict: speculative decoding is a net loss on these iGPUs for these models: n-gram drafts rarely match on prose/telemetry, and a recurrent
