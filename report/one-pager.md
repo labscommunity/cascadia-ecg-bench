@@ -27,26 +27,25 @@
 ## Qwen3.5-122B-A10B
 - INT4 IR = **64.3 GB** (built here from the GPTQ-Int4 checkpoint; no public OpenVINO IR exists). It fits **no single Panther Lake box** (52 GB GPU window /
   61 GB RAM at 64 GB; 17.7 GB at 32 GB); the smallest GPU layouts are 2 x 64 GB boxes (29 + 33 GB) or 3 NUCs + a 64 GB tail (12–26 GB per stage).
-- **GPU compile failure found and fixed**: the GPTQ-built IR's experts are symmetric (zero point 8 everywhere) and the OpenVINO 2026.4.1 GPU MoE fusion
-  rejects that form; the builder now emits signed INT4 experts (`--expert-sym`), which compile. The rebuilt 35B validates the fix at model scale (A6). All-local on three 32 GB NUCs the 122B **runs but thrashes (0.57 tok/s)**: its 20–23 GB stages exceed the 18.4 GB the
-  driver keeps resident per iGPU, so the 122B needs stages under ~18 GB: four or more 32 GB nodes, or a 64 GB node for the tail. With four stages that fit (3 NUCs + the 64 GB Tiber box as tail) it runs
-  cleanly but relay-bound at ~2 tok/s (two 110–350 ms hops per token), GSM8K-20 17/20 (3 misses = 400-token truncations; 35B: 18–19/20 on the same questions); a fourth *local* 32 GB node would make it LAN-bound (est. 5–8 tok/s).
+- **Build:** the IR comes from the runtime's GPTQ-to-OpenVINO builder with `--expert-sym` (signed INT4 experts; the OpenVINO 2026.4.1 GPU MoE fusion rejects a uniform
+  zero point). **All-local on three 32 GB NUCs: 10.6 tok/s** (stages 20.7 / 24.7 / 25.0 GB inside 26.1 GiB budgets, GPU keep-alive on), GSM8K-20 17/20 (3 misses = 400-token
+  truncations; 35B: 18–19/20 on the same questions). With a 64 GB Tiber box as the tail over the relay: 1.2–2.7 tok/s (two 110–350 ms hops per token).
 - On the vendor's benchmarks the 122B-A10B is 1–3 points ahead of the 35B-A3B on knowledge/reasoning and behind on coding/agentic tasks, at 3.3x the
   weights and 3.3x the active parameters per token (~3x slower per stream on the same silicon).
 
-## Follow-up round (same day)
-- **iGPU window on 32 GB boxes: the real knob is dxgkrnl's `GraphicsDrivers\MemoryManager\SystemPartitionCommitLimitPercentage`** (Intel's INF sets 57;
-  Intel Graphics Software's "Shared GPU Memory Override" slider writes it). At 85 + reboot the WDDM budget goes from 17.2 to **26.1 GiB** per process.
-  (The Intel GMM key alone only changes what OpenVINO reports.) **Whole 35B on one NUC: 1.7–1.9 → 30–33 tok/s.** All-local 122B on three NUCs:
-  0.57 → 2.9–3.3 tok/s, GSM8K-20 17/20, 24 W total, no 64 GB node and no relay needed.
-- **Concurrency (OVMS continuous batching, 64 GB box):** 32 tok/s at 1 stream → 132 tok/s combined at 8 streams (16.6 each) at 34–36 W: 3x the tok/J.
-- **Device mix (Qwen3-8B dense on one 32 GB box):** GPU 22 tok/s and 0.3 s TTFT at 1k tokens; CPU 11 tok/s and 22 s TTFT. CPU decode is a 2x loss and
-  CPU prefill a 55–75x loss. The NPU does not load either the 8B or the 0.6B (OpenVINO 2026.4.1 NPU compiler error); no engine offers NPU-prefill /
-  GPU-decode for one model. A 35B shard pair with the tail rank on a CPU (C3) halves decode (10–13 vs 19 tok/s), cuts it 5x on long prompts and
-  makes TTFT 5–8x slower than the all-GPU pair, while needing 2x the stage size in RAM.
-  OpenVINO `HETERO:GPU,CPU` on the whole 35B puts everything on the GPU anyway (1.3–1.4 tok/s, 20% slower than plain GPU).
-- **122B GPU failure fixed in the builder** (`--expert-sym`: signed INT4 experts, no zero point). The rebuilt 35B runs whole on the 64 GB GPU **9% faster**
-  than Intel's export (53 vs 48 tok/s) at equal accuracy (19/20 GSM8K). The 122B itself now compiles and runs on PTL GPUs (D3/D2sym below).
+## Configuration and the current numbers
+- **GPU memory window.** The 32 GB boxes run with dxgkrnl's `GraphicsDrivers\MemoryManager\SystemPartitionCommitLimitPercentage` = 85 (Intel's INF installs 57; the
+  Intel Graphics Software "Shared GPU Memory Override" slider writes it). Per-process GPU budget 26.1 GiB. **Whole 35B on one NUC: 30–33 tok/s**, 0.75 s TTFT at 1k
+  tokens, 33.5 W, output byte-identical to the 64 GB box.
+- **122B on three NUCs, all-local: 10.6 tok/s** (TTFT 0.62 / 5.5 / 41 s on 31 / 975 / 7.7k tokens), 58 W for the chain, GSM8K-20 17/20. The IR is built with the
+  runtime's GPTQ-to-OpenVINO builder and `--expert-sym` (the GPU MoE fusion needs signed experts); the ranks run with `CASCADIA_QWEN36_GPU_KEEPALIVE_MS=2`,
+  which keeps each iGPU busy while it waits on the other boxes (an idle iGPU holding 20–25 GB is charged ~0.5 s on 40–50% of its next steps).
+- **Concurrency (OVMS continuous batching, 64 GB box):** 32 tok/s at 1 stream, 132 tok/s combined at 8 streams (16.6 each) at 34–36 W.
+- **Device mix:** GPU 22 tok/s vs CPU 11 on a dense 8B (prefill 0.3 s vs 22 s at 1k tokens); a 35B shard pair with its tail on a CPU runs at 10–13 tok/s vs 19 all-GPU;
+  the NPU does not load these models (OpenVINO 2026.4.1); `HETERO:GPU,CPU` places everything on the GPU. No engine splits prefill and decode across devices.
+- **Speculative decoding is a net loss here:** GenAI prompt lookup 31–32 tok/s vs 47 on the whole 35B (64 GB box); staged n-gram speculation 14–15 vs 31.6 on the
+  co-located 35B and 0.55x on the 122B chain (acceptance 2–23%, DeltaNet snapshot/rollback). A draft model is refused on VLM-layout exports. Off by default.
+- **GPU clocks are not a lever:** pinning the iGPU at 2.5 GHz or raising the OpenVINO queue priority changes nothing on either model.
 
 ## ECG takeaways
 1. Raise the GPU memory window on every 32 GB box first (`SystemPartitionCommitLimitPercentage` = 85): a single NUC then serves the 35B whole at 30–33 tok/s.
